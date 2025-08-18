@@ -29,6 +29,7 @@
     "dist",
     ".next",
     "out",
-    "app"
+    "app",
+    "examples"
   ]
 }

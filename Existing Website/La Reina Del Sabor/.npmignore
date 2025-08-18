@@ -112,6 +112,8 @@ docs/
 # Examples
 examples/
 demo/
+# GitHub Actions
+.github/
 
 # Source maps (optional - remove if you want to include them)
 *.map
