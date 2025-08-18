@@ -1,6 +1,127 @@
 # La Reina Del Sabor - Modern Dominican Restaurant Website
 
-A modern, responsive website for La Reina Del Sabor, an authentic Dominican restaurant in Hackensack, NJ. Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
+[![npm version](https://badge.fury.io/js/la-reina-del-sabor.svg)](https://badge.fury.io/js/la-reina-del-sabor)
+[![npm downloads](https://img.shields.io/npm/dm/la-reina-del-sabor.svg)](https://www.npmjs.com/package/la-reina-del-sabor)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A modern, responsive website template for La Reina Del Sabor, an authentic Dominican restaurant. Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
+
+## 📦 NPM Package
+
+This project is available as an npm package for easy integration into your projects.
+
+### Installation
+
+```bash
+npm install la-reina-del-sabor
+# or
+yarn add la-reina-del-sabor
+# or
+pnpm add la-reina-del-sabor
+```
+
+### Quick Start
+
+```tsx
+import { LaReinaDelSabor } from 'la-reina-del-sabor';
+
+function App() {
+  return (
+    <LaReinaDelSabor 
+      restaurantName="Your Restaurant Name"
+      restaurantAddress="123 Main St, City, State"
+      restaurantPhone="(555) 123-4567"
+      restaurantHours="Daily 9:00 AM - 10:00 PM"
+      grubhubUrl="https://your-grubhub-url.com"
+      seamlessUrl="https://your-seamless-url.com"
+      customStyles={{
+        primaryColor: "#FF6B35",
+        secondaryColor: "#FFE5D9",
+        accentColor: "#4A90E2"
+      }}
+    />
+  );
+}
+```
+
+### Individual Components
+
+You can also import and use individual components:
+
+```tsx
+import { 
+  Header, 
+  Hero, 
+  FeaturedMenu, 
+  About, 
+  Reviews, 
+  Contact, 
+  OrderNowBanner, 
+  Footer 
+} from 'la-reina-del-sabor';
+
+// Use components individually
+<Header restaurantName="Your Restaurant" />
+<Hero restaurantName="Your Restaurant" />
+<FeaturedMenu />
+<About 
+  restaurantName="Your Restaurant"
+  restaurantAddress="123 Main St"
+  restaurantPhone="(555) 123-4567"
+  restaurantHours="Daily 9:00 AM - 10:00 PM"
+/>
+```
+
+### Available Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `restaurantName` | string | "La Reina Del Sabor" | Name of your restaurant |
+| `restaurantAddress` | string | "137 1/2 Main St, Hackensack, NJ 07601" | Restaurant address |
+| `restaurantPhone` | string | "(201) 880-5153" | Restaurant phone number |
+| `restaurantHours` | string | "Daily 7:30 AM - 8:00 PM" | Operating hours |
+| `grubhubUrl` | string | Grubhub URL | Link to your Grubhub page |
+| `seamlessUrl` | string | Seamless URL | Link to your Seamless page |
+| `customStyles` | object | Default colors | Custom color scheme |
+| `className` | string | "" | Additional CSS classes |
+
+### Custom Styling
+
+```tsx
+const customStyles = {
+  primaryColor: "#FF6B35",    // Main brand color
+  secondaryColor: "#FFE5D9",  // Secondary/accent color
+  accentColor: "#4A90E2"      // Interactive elements
+};
+
+<LaReinaDelSabor customStyles={customStyles} />
+```
+
+### Utilities
+
+The package also exports useful utility functions:
+
+```tsx
+import { 
+  formatPhoneNumber, 
+  generateGoogleMapsUrl, 
+  isMobile, 
+  isDesktop 
+} from 'la-reina-del-sabor';
+
+// Format phone number
+const formatted = formatPhoneNumber("5551234567"); // "(555) 123-4567"
+
+// Generate Google Maps URL
+const mapsUrl = generateGoogleMapsUrl("123 Main St, City, State");
+
+// Check device type
+if (isMobile()) {
+  // Mobile-specific logic
+}
+```
+
+---
 
 ## 🍽️ About
 
