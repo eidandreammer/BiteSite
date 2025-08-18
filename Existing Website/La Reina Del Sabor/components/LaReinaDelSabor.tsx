@@ -35,41 +35,14 @@ const LaReinaDelSabor: React.FC<LaReinaDelSaborProps> = ({
 }) => {
   return (
     <div className={`la-reina-del-sabor ${className}`}>
-      <Header 
-        restaurantName={restaurantName}
-        customStyles={customStyles}
-      />
-      <Hero 
-        restaurantName={restaurantName}
-        customStyles={customStyles}
-      />
-      <FeaturedMenu customStyles={customStyles} />
-      <About 
-        restaurantName={restaurantName}
-        restaurantAddress={restaurantAddress}
-        restaurantPhone={restaurantPhone}
-        restaurantHours={restaurantHours}
-        customStyles={customStyles}
-      />
-      <Reviews customStyles={customStyles} />
-      <Contact 
-        restaurantAddress={restaurantAddress}
-        restaurantPhone={restaurantPhone}
-        restaurantHours={restaurantHours}
-        customStyles={customStyles}
-      />
-      <OrderNowBanner 
-        grubhubUrl={grubhubUrl}
-        seamlessUrl={seamlessUrl}
-        customStyles={customStyles}
-      />
-      <Footer 
-        restaurantName={restaurantName}
-        restaurantAddress={restaurantAddress}
-        restaurantPhone={restaurantPhone}
-        restaurantHours={restaurantHours}
-        customStyles={customStyles}
-      />
+      <Header />
+      <Hero />
+      <FeaturedMenu />
+      <About />
+      <Reviews />
+      <Contact />
+      <OrderNowBanner />
+      <Footer />
     </div>
   );
 };

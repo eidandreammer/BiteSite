@@ -1,8 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
   images: {
-    domains: ['images.unsplash.com', 'res.cloudinary.com'],
+    unoptimized: true
   },
+  basePath: process.env.NODE_ENV === 'production' ? '/la-reina-del-sabor' : '',
 }
 
 module.exports = nextConfig 

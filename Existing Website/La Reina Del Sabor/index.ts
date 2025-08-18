@@ -8,16 +8,6 @@ export { default as Hero } from './components/Hero';
 export { default as OrderNowBanner } from './components/OrderNowBanner';
 export { default as Reviews } from './components/Reviews';
 
-// Export types
-export type { AboutProps } from './components/About';
-export type { ContactProps } from './components/Contact';
-export type { FeaturedMenuProps } from './components/FeaturedMenu';
-export type { FooterProps } from './components/Footer';
-export type { HeaderProps } from './components/Header';
-export type { HeroProps } from './components/Hero';
-export type { OrderNowBannerProps } from './components/OrderNowBanner';
-export type { ReviewsProps } from './components/Reviews';
-
 // Export utilities and constants
 export * from './utils/constants';
 export * from './utils/helpers';

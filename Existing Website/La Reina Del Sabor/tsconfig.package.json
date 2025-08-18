@@ -20,13 +20,15 @@
     "noEmit": false
   },
   "include": [
+    "index.ts",
     "components/**/*",
-    "app/**/*"
+    "utils/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
     ".next",
-    "out"
+    "out",
+    "app"
   ]
 }
