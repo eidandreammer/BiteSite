@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
+import BackgroundSlider from './BackgroundSlider'
 
 const Aurora = dynamic(() => import('@/blocks/Backgrounds/Aurora/Aurora.jsx'), { ssr: false })
 const Galaxy = dynamic(() => import('@/blocks/Backgrounds/Galaxy/Galaxy.jsx'), { ssr: false })
@@ -129,29 +130,18 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
-            className="mb-12 max-w-md mx-auto"
+            className="mb-12"
           >
-            <label htmlFor="bg-slider" className={`block text-sm font-medium ${backgrounds[bgIndex].textColors.slider || backgrounds[bgIndex].textColors.secondary} mb-2`}>
+            <div className={`text-center text-sm font-medium ${backgrounds[bgIndex].textColors.slider || backgrounds[bgIndex].textColors.secondary} mb-4`}>
               Background: <span className="font-semibold">{backgrounds[bgIndex].label}</span>
-            </label>
-            <input
-              id="bg-slider"
-              type="range"
-              min={0}
-              max={backgrounds.length - 1}
-              step={1}
-              value={bgIndex}
-              onChange={(e) => setBgIndex(Number(e.target.value))}
-              className="w-full accent-primary"
-              aria-valuetext={backgrounds[bgIndex].label}
-            />
-            <div className="mt-2 flex justify-between text-xs">
-              {backgrounds.map((b, i) => (
-                <span key={b.key} className={`w-0.5 ${i === bgIndex ? `${backgrounds[bgIndex].textColors.primary} font-semibold` : (backgrounds[bgIndex].textColors.slider || backgrounds[bgIndex].textColors.secondary)}`}>
-                  {b.label}
-                </span>
-              ))}
             </div>
+            <BackgroundSlider
+              value={bgIndex}
+              onChange={setBgIndex}
+              max={backgrounds.length - 1}
+              labels={backgrounds.map(b => b.label)}
+              textColors={backgrounds[bgIndex].textColors}
+            />
           </motion.div>
 
           <motion.div
