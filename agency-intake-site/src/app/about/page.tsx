@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import ThreadsBackground from '@/components/ThreadsBackground'
 
 export const metadata: Metadata = {
   title: 'About Us - Professional Web Design Agency',
@@ -16,11 +17,18 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4">
+      <section className="relative py-20 text-black overflow-hidden">
+        {/* Threads Background */}
+        <ThreadsBackground 
+          color={[0.2, 0.45, 1]} 
+          amplitude={2} 
+          distance={0.5}
+        />
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">About Our Agency</h1>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
+            <p className="text-xl text-black max-w-2xl mx-auto">
               We're passionate about creating websites that don't just look great, but drive real business results.
             </p>
           </div>
@@ -181,11 +189,18 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4">
+      <section className="relative py-20 text-black overflow-hidden">
+        {/* Threads Background */}
+        <ThreadsBackground 
+          color={[0.2, 0.45, 1]} 
+          amplitude={2} 
+          distance={0.5}
+        />
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">Ready to Work Together?</h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-black mb-8 max-w-2xl mx-auto">
               Let's discuss your project and see how we can help bring your vision to life.
             </p>
             <a

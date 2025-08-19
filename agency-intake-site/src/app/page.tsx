@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
 import Hero from '@/components/Hero'
 import Features from '@/components/Features'
-import Testimonials from '@/components/Testimonials'
 import Pricing from '@/components/Pricing'
 import LazyVisible from '@/components/LazyVisible'
 import IntakeForm from '@/components/IntakeForm'
@@ -32,9 +31,7 @@ export default function Home() {
       <LazyVisible>
         <Features />
       </LazyVisible>
-      <LazyVisible>
-        <Testimonials />
-      </LazyVisible>
+      {/* Testimonials section removed */}
       <LazyVisible>
         <Pricing />
       </LazyVisible>

@@ -19,7 +19,7 @@ export default function Navigation() {
   const navItems = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About Us' },
-    { href: '/reviews', label: 'Reviews' },
+    // Reviews link removed
   ]
 
   return (
