@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -57,6 +57,18 @@ export default function BackgroundSlider({
     return (value / max) * 100
   }
 
+  // Gooey slide springs
+  const headPercent = useSpring(getRangePercentage(), { stiffness: 320, damping: 20, mass: 0.4 })
+  const tailPercent = useSpring(getRangePercentage(), { stiffness: 140, damping: 26, mass: 0.6 })
+  const headLeft = useTransform(headPercent, v => `${v}%`)
+  const tailWidth = useTransform(tailPercent, v => `${v}%`)
+
+  useEffect(() => {
+    const p = (value / max) * 100
+    headPercent.set(p)
+    tailPercent.set(p)
+  }, [value, max, headPercent, tailPercent])
+
   // Standardized colors within the slider card
   const ACCENT_COLOR_CLASS = 'text-blue-600'
   const INACTIVE_TEXT_CLASS = 'text-gray-700'
@@ -70,6 +82,16 @@ export default function BackgroundSlider({
       className="w-full max-w-md mx-auto"
     >
       <div className="relative rounded-2xl bg-white/95 shadow-2xl ring-1 ring-black/5 p-5">
+        {/* SVG defs for gooey filter */}
+        <svg className="absolute pointer-events-none w-0 h-0">
+          <defs>
+            <filter id="gooey-bg">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </defs>
+        </svg>
         <div className="flex items-center justify-center gap-4 mb-3">
           <motion.button
             whileHover={{ scale: 1.15, rotate: -8, boxShadow: '0 10px 20px rgba(59,130,246,0.25), 0 2px 6px rgba(0,0,0,0.08)' }}
@@ -98,16 +120,22 @@ export default function BackgroundSlider({
             onPointerUp={handlePointerUp}
           >
             <div className="relative h-3.5 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full overflow-hidden ring-1 ring-black/5">
-              <motion.div
-                className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
-                style={{ width: `${getRangePercentage()}%` }}
-                transition={{ duration: 0.12 }}
-              />
+              {/* Gooey fill and blob */}
+              <div className="absolute inset-0" style={{ filter: 'url(#gooey-bg)' }}>
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+                  style={{ width: tailWidth }}
+                />
+                <motion.div
+                  className="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+                  style={{ left: headLeft }}
+                />
+              </div>
 
               {/* Slider thumb (wrapper centers; inner scales without breaking centering) */}
-              <div
+              <motion.div
                 className="absolute top-1/2"
-                style={{ left: `${getRangePercentage()}%`, transform: 'translate(-50%, -50%)' }}
+                style={{ left: headLeft, transform: 'translate(-50%, -50%)' }}
               >
                 <motion.div
                   className="z-10 w-6 h-6 bg-white rounded-full ring-2 ring-blue-500 shadow-lg shadow-blue-500/20"
@@ -115,7 +143,7 @@ export default function BackgroundSlider({
                   whileTap={{ scale: 0.92 }}
                   transition={{ duration: 0.1 }}
                 />
-              </div>
+              </motion.div>
             </div>
           </div>
 
