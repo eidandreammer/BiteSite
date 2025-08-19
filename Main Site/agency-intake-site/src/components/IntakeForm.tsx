@@ -23,6 +23,7 @@ export default function IntakeForm() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [slideDirection, setSlideDirection] = useState<1 | -1>(1)
 
   const {
     control,
@@ -68,12 +69,14 @@ export default function IntakeForm() {
 
   const nextStep = () => {
     if (currentStep < steps.length) {
+      setSlideDirection(1)
       setCurrentStep(currentStep + 1)
     }
   }
 
   const prevStep = () => {
     if (currentStep > 1) {
+      setSlideDirection(-1)
       setCurrentStep(currentStep - 1)
     }
   }
@@ -590,30 +593,74 @@ export default function IntakeForm() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Progress Bar */}
+      {/* Progress Bar - Carousel */}
       <div className="mb-8">
-        <div className="overflow-x-auto -mx-4 px-4 mb-4">
-          <div className="inline-flex items-center justify-start w-max">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center shrink-0">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
-                  currentStep >= step.id
-                    ? 'border-primary bg-primary text-white'
-                    : 'border-gray-300 bg-white text-gray-500'
-                }`}>
-                  {currentStep > step.id ? (
-                    <Check className="w-5 h-5" />
-                  ) : (
-                    step.id
-                  )}
-                </div>
-                {index < steps.length - 1 && (
-                  <div className={`h-0.5 mx-1 sm:mx-2 w-10 sm:w-12 md:w-16 ${
-                    currentStep > step.id ? 'bg-primary' : 'bg-gray-300'
-                  }`} />
-                )}
-              </div>
-            ))}
+        <div className="relative mb-4">
+          {/* Edge indicators (lines going off-screen) */}
+          {currentStep > 3 && (
+            <div className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-0.5 w-8 bg-gray-300" />
+          )}
+          {steps.length - currentStep > 2 && (
+            <div className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-0.5 w-8 bg-gray-300" />
+          )}
+
+          <div className="overflow-hidden">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                key={currentStep}
+                initial={{ x: slideDirection * 40, opacity: 0.9 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -slideDirection * 40, opacity: 0.9 }}
+                transition={{ type: 'tween', duration: 0.25 }}
+                className="flex items-center justify-center gap-3 sm:gap-4"
+              >
+                {(() => {
+                  const currentIndex = currentStep - 1
+                  const visible: Array<{ id: number; title: string; description: string; index: number }> = []
+                  for (let i = currentIndex - 2; i <= currentIndex + 2; i++) {
+                    if (i >= 0 && i < steps.length) {
+                      visible.push({ ...steps[i], index: i })
+                    }
+                  }
+
+                  return visible.map((step, idx) => {
+                    const distance = Math.abs(step.index - currentIndex)
+                    const sizeClass = distance === 0
+                      ? 'w-12 h-12 text-base'
+                      : distance === 1
+                      ? 'w-8 h-8 text-sm'
+                      : 'w-6 h-6 text-xs'
+                    const circleActive = currentStep >= step.id
+                    const isCompleted = currentStep > step.id
+
+                    const circleClass = circleActive
+                      ? 'border-primary bg-primary text-white'
+                      : 'border-gray-300 bg-white text-gray-500'
+
+                    return (
+                      <div key={step.id} className="flex items-center">
+                        <div className={`flex items-center justify-center rounded-full border-2 ${sizeClass} ${circleClass}`}>
+                          {isCompleted ? (
+                            <Check className={distance === 0 ? 'w-6 h-6' : distance === 1 ? 'w-4 h-4' : 'w-3 h-3'} />
+                          ) : (
+                            step.id
+                          )}
+                        </div>
+
+                        {idx < visible.length - 1 && (
+                          <div
+                            className={`h-0.5 mx-1 sm:mx-2 ${distance === 0 ? 'w-12 sm:w-16' : distance === 1 ? 'w-10 sm:w-12' : 'w-8 sm:w-10'} ${
+                              // Connector is active if the next step is <= current step
+                              visible[idx + 1].id <= currentStep ? 'bg-primary' : 'bg-gray-300'
+                            }`}
+                          />
+                        )}
+                      </div>
+                    )
+                  })
+                })()}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
         
