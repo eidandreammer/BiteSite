@@ -13,7 +13,23 @@ const LiquidChrome = dynamic(() => import('@/blocks/Backgrounds/LiquidChrome/Liq
 const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
 
 export default function Hero() {
-  const backgrounds = [
+  type BackgroundTextColors = {
+    primary: string
+    secondary: string
+    accent: string
+    slider?: string
+  }
+
+  type BackgroundItem = {
+    key: string
+    label: string
+    word: string
+    Component: any
+    props: Record<string, any>
+    textColors: BackgroundTextColors
+  }
+
+  const backgrounds: ReadonlyArray<BackgroundItem> = [
     { 
       key: 'orb', 
       label: 'Orb', 
@@ -80,7 +96,7 @@ export default function Hero() {
         slider: 'text-gray-800'
       }
     },
-  ] as const
+  ]
   const [bgIndex, setBgIndex] = useState(0)
   const SelectedBg = backgrounds[bgIndex].Component
   const isWhitePricing = ['aurora', 'galaxy', 'liquid'].includes(backgrounds[bgIndex].key)

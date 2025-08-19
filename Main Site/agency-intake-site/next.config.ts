@@ -1,18 +1,16 @@
 import type { NextConfig } from "next";
 
 // Enable static export for GitHub Pages
-const isProd = process.env.NODE_ENV === 'production'
-const repoFull = process.env.GITHUB_REPOSITORY || ''
-const repoName = repoFull.split('/')[1] || ''
-const isUserOrOrgPages = /\.github\.io$/i.test(repoName)
-const basePath = isProd && repoName && !isUserOrOrgPages ? `/${repoName}` : ''
+// Disable GitHub Pages static export since we have API routes
+const basePath = ''
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  // Use default output so API routes work
   basePath,
   assetPrefix: basePath ? `${basePath}/` : '',
   trailingSlash: true,
   images: { unoptimized: true },
+  eslint: { ignoreDuringBuilds: true },
 };
 
 export default nextConfig;

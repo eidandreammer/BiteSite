@@ -85,37 +85,30 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
                 <div className="w-24 h-24 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">JD</span>
+                  <span className="text-white text-2xl font-bold">JJ</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">John Doe</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <a href="https://www.linkedin.com/in/jensy-jimenez/" target="_blank" rel="noopener noreferrer" className="hover:underline">Jensy Jimenez</a>
+                </h3>
                 <p className="text-blue-600 mb-3">Creative Director</p>
                 <p className="text-gray-600 text-sm">
-                  With over 10 years of experience in web design, John leads our creative vision and ensures every project exceeds expectations.
+                  With over 10 years of experience in web design, Jensy leads our creative vision and ensures every project exceeds expectations.
                 </p>
               </div>
 
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
                 <div className="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">JS</span>
+                  <span className="text-white text-2xl font-bold">EK</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Jane Smith</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <a href="https://www.linkedin.com/in/ethan-kurtz/" target="_blank" rel="noopener noreferrer" className="hover:underline">Ethan Kurtz</a>
+                </h3>
                 <p className="text-blue-600 mb-3">Lead Developer</p>
                 <p className="text-gray-600 text-sm">
-                  Jane brings technical expertise and innovative solutions to every project, ensuring flawless functionality and performance.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <div className="w-24 h-24 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">MJ</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Mike Johnson</h3>
-                <p className="text-blue-600 mb-3">UX Strategist</p>
-                <p className="text-gray-600 text-sm">
-                  Mike focuses on user experience and conversion optimization, helping businesses achieve their goals through strategic design.
+                  Ethan brings technical expertise and innovative solutions to every project, ensuring flawless functionality and performance.
                 </p>
               </div>
             </div>
