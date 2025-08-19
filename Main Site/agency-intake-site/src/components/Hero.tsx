@@ -33,9 +33,9 @@ export default function Hero() {
       Component: Galaxy, 
       props: {},
       textColors: {
-        primary: 'text-white',
-        secondary: 'text-gray-200',
-        accent: 'text-blue-300'
+        primary: 'text-gray-900',
+        secondary: 'text-gray-700',
+        accent: 'text-blue-600'
       }
     },
     { 
