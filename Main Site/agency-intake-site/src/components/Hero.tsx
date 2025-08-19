@@ -13,11 +13,17 @@ const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx')
 
 export default function Hero() {
   const backgrounds = [
-    { key: 'aurora', label: 'Aurora', word: 'Beautiful', Component: Aurora },
-    { key: 'galaxy', label: 'Galaxy', word: 'Revolutionary', Component: Galaxy },
-    { key: 'liquid', label: 'Liquid Chrome', word: 'Game-Changing', Component: LiquidChrome },
-    { key: 'orb', label: 'Orb', word: 'Fantastic', Component: Orb },
-    { key: 'threads', label: 'Threads', word: 'Customizable', Component: Threads },
+    { key: 'aurora', label: 'Aurora', word: 'Beautiful', Component: Aurora, props: {} },
+    { key: 'galaxy', label: 'Galaxy', word: 'Revolutionary', Component: Galaxy, props: {} },
+    { key: 'liquid', label: 'Liquid Chrome', word: 'Game-Changing', Component: LiquidChrome, props: {} },
+    { key: 'orb', label: 'Orb', word: 'Fantastic', Component: Orb, props: {} },
+    {
+      key: 'threads',
+      label: 'Threads',
+      word: 'Customizable',
+      Component: Threads,
+      props: { color: [0.2, 0.45, 1], amplitude: 2, distance: 0.5 }
+    },
   ] as const
   const [bgIndex, setBgIndex] = useState(0)
   const SelectedBg = backgrounds[bgIndex].Component
@@ -26,7 +32,8 @@ export default function Hero() {
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <SelectedBg />
+        {/* Pass any per-background props to improve visibility */}
+        <SelectedBg {...(backgrounds[bgIndex].props as any)} />
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">

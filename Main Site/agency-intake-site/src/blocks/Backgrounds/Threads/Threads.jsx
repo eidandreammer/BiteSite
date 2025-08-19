@@ -138,11 +138,12 @@ const Threads = ({
     if (!containerRef.current) return;
     const container = containerRef.current;
 
-    const renderer = new Renderer({ alpha: true, webgl: 2 });
+    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false, webgl: 2 });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clear(gl.COLOR_BUFFER_BIT);
     container.appendChild(gl.canvas);
 
     const geometry = new Triangle(gl);
@@ -158,7 +159,7 @@ const Threads = ({
             gl.canvas.width / gl.canvas.height,
           ),
         },
-        uColor: { value: new Color(...color) },
+        uColor: { value: new Color(color[0], color[1], color[2]) },
         uAmplitude: { value: amplitude },
         uDistance: { value: distance },
         uMouse: { value: new Float32Array([0.5, 0.5]) },
@@ -169,7 +170,10 @@ const Threads = ({
 
     function resize() {
       const { clientWidth, clientHeight } = container;
-      renderer.setSize(clientWidth, clientHeight);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      renderer.setSize(clientWidth * dpr, clientHeight * dpr);
+      gl.canvas.style.width = clientWidth + 'px';
+      gl.canvas.style.height = clientHeight + 'px';
       program.uniforms.iResolution.value.r = clientWidth;
       program.uniforms.iResolution.value.g = clientHeight;
       program.uniforms.iResolution.value.b = clientWidth / clientHeight;
@@ -193,6 +197,8 @@ const Threads = ({
       container.addEventListener("mousemove", handleMouseMove);
       container.addEventListener("mouseleave", handleMouseLeave);
     }
+    // Ensure the canvas is appended and sized before first render
+    if (!gl.canvas.parentElement) container.appendChild(gl.canvas);
 
     function update(t) {
       if (enableMouseInteraction) {
