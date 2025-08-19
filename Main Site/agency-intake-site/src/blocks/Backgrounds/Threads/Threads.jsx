@@ -134,6 +134,7 @@ const Threads = ({
 }) => {
   const containerRef = useRef(null);
   const animationFrameId = useRef();
+  const isRunningRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -173,7 +174,9 @@ const Threads = ({
 
     function resize() {
       const { clientWidth, clientHeight } = container;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const coarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const baseDpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+      const dpr = Math.min(coarse ? 1 : baseDpr, 1.5);
       renderer.setSize(clientWidth * dpr, clientHeight * dpr);
       gl.canvas.style.width = clientWidth + 'px';
       gl.canvas.style.height = clientHeight + 'px';
@@ -204,6 +207,7 @@ const Threads = ({
     if (!gl.canvas.parentElement) container.appendChild(gl.canvas);
 
     function update(t) {
+      if (!isRunningRef.current) return;
       if (enableMouseInteraction && !isCoarsePointer) {
         const smoothing = 0.05;
         currentMouse[0] += smoothing * (targetMouse[0] - currentMouse[0]);
@@ -223,11 +227,34 @@ const Threads = ({
         animationFrameId.current = requestAnimationFrame(update);
       }
     }
-    animationFrameId.current = requestAnimationFrame(update);
+    const start = () => {
+      if (isRunningRef.current) return;
+      isRunningRef.current = true;
+      animationFrameId.current = requestAnimationFrame(update);
+    };
+    const stop = () => {
+      isRunningRef.current = false;
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+    };
+    start();
+
+    // Pause when offscreen and resume when visible
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) start(); else stop();
+      },
+      { root: null, threshold: 0.1 }
+    );
+    io.observe(container);
+
+    const handleVisibility = () => {
+      if (document.hidden) stop(); else start();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
-      if (animationFrameId.current)
-        cancelAnimationFrame(animationFrameId.current);
+      stop();
       window.removeEventListener("resize", resize);
 
       if (enableMouseInteraction && !isCoarsePointer) {
@@ -235,6 +262,8 @@ const Threads = ({
         container.removeEventListener("mouseleave", handleMouseLeave);
       }
       if (container.contains(gl.canvas)) container.removeChild(gl.canvas);
+      io.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
   }, [color, amplitude, distance, enableMouseInteraction]);

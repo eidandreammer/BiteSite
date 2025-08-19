@@ -25,8 +25,20 @@ export const intakeSchema = z.object({
     palette: z.array(z.string().regex(/^#[0-9A-F]{6}$/i, 'Must be a valid hex color')).min(1, 'At least one palette color is required'),
   }),
   fonts: z.object({
-    headings: z.enum(['modern', 'classic_serif', 'geometric_sans', 'playful']).default('modern'),
-    body: z.enum(['modern', 'classic_serif', 'geometric_sans', 'playful']).default('modern'),
+    headings: z.enum([
+      // Categories (back-compat)
+      'modern', 'classic_serif', 'geometric_sans', 'playful',
+      // Specific families
+      'inter', 'poppins', 'montserrat', 'raleway', 'nunito', 'lato', 'quicksand',
+      'playfair_display', 'merriweather', 'lora', 'roboto_slab', 'comic_neue'
+    ]).default('modern'),
+    body: z.enum([
+      // Categories (back-compat)
+      'modern', 'classic_serif', 'geometric_sans', 'playful',
+      // Specific families
+      'inter', 'poppins', 'montserrat', 'raleway', 'nunito', 'lato', 'quicksand',
+      'playfair_display', 'merriweather', 'lora', 'roboto_slab', 'comic_neue'
+    ]).default('modern'),
   }),
   templates: z.array(z.enum(['Template A', 'Template B'])).min(1, 'At least one template must be selected').max(2, 'Maximum 2 templates allowed'),
   features: z.array(z.enum([

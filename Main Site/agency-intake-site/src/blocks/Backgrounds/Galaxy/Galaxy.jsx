@@ -199,6 +199,7 @@ export default function Galaxy({
   const smoothMousePos = useRef({ x: 0.5, y: 0.5 });
   const targetMouseActive = useRef(0.0);
   const smoothMouseActive = useRef(0.0);
+  const isRunningRef = useRef(false);
 
   useEffect(() => {
     if (!ctnDom.current) return;
@@ -224,7 +225,10 @@ export default function Galaxy({
 
     function resize() {
       const { clientWidth, clientHeight } = ctn;
-      const dpr = Math.min(typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1, 2);
+      // Cap DPR to reduce GPU/CPU load, and lower further on coarse pointers (mobile)
+      const coarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const baseDpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+      const dpr = Math.min(coarse ? 1 : baseDpr, 1.5);
       renderer.setSize(clientWidth * dpr, clientHeight * dpr);
       gl.canvas.style.width = clientWidth + 'px';
       gl.canvas.style.height = clientHeight + 'px';
@@ -280,6 +284,8 @@ export default function Galaxy({
     let animateId;
 
     function update(t) {
+      // If not running (offscreen or tab hidden), skip heavy work
+      if (!isRunningRef.current) return;
       animateId = requestAnimationFrame(update);
       if (!(disableAnimation || prefersReducedMotion)) {
         program.uniforms.uTime.value = t * 0.001;
@@ -301,7 +307,16 @@ export default function Galaxy({
 
       renderer.render({ scene: mesh });
     }
-    animateId = requestAnimationFrame(update);
+    const start = () => {
+      if (isRunningRef.current) return;
+      isRunningRef.current = true;
+      animateId = requestAnimationFrame(update);
+    };
+    const stop = () => {
+      isRunningRef.current = false;
+      if (animateId) cancelAnimationFrame(animateId);
+    };
+    start();
     ctn.appendChild(gl.canvas);
 
     function handleMouseMove(e) {
@@ -321,13 +336,31 @@ export default function Galaxy({
       ctn.addEventListener("mouseleave", handleMouseLeave);
     }
 
+    // Pause when offscreen and resume when visible
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) start(); else stop();
+      },
+      { root: null, threshold: 0.1 }
+    );
+    io.observe(ctn);
+
+    // Pause on tab hidden
+    const handleVisibility = () => {
+      if (document.hidden) stop(); else start();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
-      cancelAnimationFrame(animateId);
+      stop();
       window.removeEventListener("resize", resize);
       if (mouseInteraction && !isCoarsePointer) {
         ctn.removeEventListener("mousemove", handleMouseMove);
         ctn.removeEventListener("mouseleave", handleMouseLeave);
       }
+      io.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
       ctn.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };

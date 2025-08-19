@@ -17,6 +17,7 @@ export const LiquidChrome = ({
   ...props
 }) => {
   const containerRef = useRef(null);
+  const isRunningRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -103,10 +104,12 @@ export const LiquidChrome = ({
     const mesh = new Mesh(gl, { geometry, program });
 
     function resize() {
-      const scale = 1;
+      const coarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const baseDpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+      const dpr = Math.min(coarse ? 1 : baseDpr, 1.5);
       renderer.setSize(
-        container.offsetWidth * scale,
-        container.offsetHeight * scale,
+        container.offsetWidth * dpr,
+        container.offsetHeight * dpr,
       );
       const resUniform = program.uniforms.uResolution.value;
       resUniform[0] = gl.canvas.width;
@@ -144,16 +147,40 @@ export const LiquidChrome = ({
 
     let animationId;
     function update(t) {
+      if (!isRunningRef.current) return;
       animationId = requestAnimationFrame(update);
       program.uniforms.uTime.value = t * 0.001 * speed;
       renderer.render({ scene: mesh });
     }
-    animationId = requestAnimationFrame(update);
+    const start = () => {
+      if (isRunningRef.current) return;
+      isRunningRef.current = true;
+      animationId = requestAnimationFrame(update);
+    };
+    const stop = () => {
+      isRunningRef.current = false;
+      if (animationId) cancelAnimationFrame(animationId);
+    };
+    start();
 
     container.appendChild(gl.canvas);
 
+    // Pause when offscreen and on tab hidden
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) start(); else stop();
+      },
+      { root: null, threshold: 0.1 }
+    );
+    io.observe(container);
+    const handleVisibility = () => {
+      if (document.hidden) stop(); else start();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
-      cancelAnimationFrame(animationId);
+      stop();
       window.removeEventListener("resize", resize);
       if (interactive) {
         container.removeEventListener("mousemove", handleMouseMove);
@@ -162,6 +189,8 @@ export const LiquidChrome = ({
       if (gl.canvas.parentElement) {
         gl.canvas.parentElement.removeChild(gl.canvas);
       }
+      io.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
   }, [baseColor, speed, amplitude, frequencyX, frequencyY, interactive]);

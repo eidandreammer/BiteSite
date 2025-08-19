@@ -32,10 +32,24 @@ export interface DesignTokens {
 }
 
 const fontMap = {
+  // Category presets
   modern: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   classic_serif: "'Playfair Display', Georgia, 'Times New Roman', serif",
   geometric_sans: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-  playful: "'Comic Neue', 'Comic Sans MS', cursive, sans-serif"
+  playful: "'Comic Neue', 'Comic Sans MS', cursive, sans-serif",
+  // Specific families
+  inter: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  poppins: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  montserrat: "'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  raleway: "'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  nunito: "'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  lato: "'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  quicksand: "'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  playfair_display: "'Playfair Display', Georgia, 'Times New Roman', serif",
+  merriweather: "'Merriweather', Georgia, 'Times New Roman', serif",
+  lora: "'Lora', Georgia, 'Times New Roman', serif",
+  roboto_slab: "'Roboto Slab', Georgia, 'Times New Roman', serif",
+  comic_neue: "'Comic Neue', 'Comic Sans MS', cursive, sans-serif"
 }
 
 const defaultTokens: DesignTokens = {

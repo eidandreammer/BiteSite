@@ -85,8 +85,6 @@ export default function BackgroundSlider({
           >
             <motion.div
               className="relative h-3 bg-gray-200 rounded-full overflow-hidden"
-              whileHover={{ height: 12 }}
-              transition={{ duration: 0.2 }}
             >
               <motion.div
                 className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"

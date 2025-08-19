@@ -17,14 +17,14 @@ const templateOptions = [
     name: 'Template A',
     description: 'Conversion-focused one-pager with clear CTAs and streamlined user flow',
     features: ['Hero with CTA', 'Services grid', 'Testimonials', 'Contact form'],
-    preview: '/api/preview/template-a'
+    preview: 'https://foliofy.webflow.io/'
   },
   {
     id: 'Template B',
     name: 'Template B',
     description: 'Editorial multi-page layout with rich content sections and storytelling',
     features: ['Multi-page navigation', 'Blog integration', 'Gallery showcase', 'About page'],
-    preview: '/api/preview/template-b'
+    preview: 'https://newport-template.webflow.io/'
   }
 ]
 
@@ -35,6 +35,11 @@ export default function TemplatePicker({
   onReferenceUrlsChange
 }: TemplatePickerProps) {
   const [newUrl, setNewUrl] = useState('')
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [previewTemplate, setPreviewTemplate] = useState<{
+    name: string
+    preview: string
+  } | null>(null)
 
   const handleTemplateToggle = (templateId: string) => {
     if (selectedTemplates.includes(templateId)) {
@@ -111,7 +116,8 @@ export default function TemplatePicker({
                   className="text-primary hover:text-primary/80 text-sm font-medium flex items-center"
                   onClick={(e) => {
                     e.stopPropagation()
-                    window.open(template.preview, '_blank')
+                    setPreviewTemplate({ name: template.name, preview: template.preview })
+                    setIsPreviewOpen(true)
                   }}
                 >
                   <ExternalLink className="w-4 h-4 mr-1" />
@@ -189,6 +195,93 @@ export default function TemplatePicker({
           Note: These URLs are for inspiration only. We'll create a unique design based on your preferences.
         </p>
       </div>
+      
+      {/* Preview Modal */}
+      {isPreviewOpen && previewTemplate && (
+        <div className="fixed inset-0 z-[100]">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => {
+              setIsPreviewOpen(false)
+              setPreviewTemplate(null)
+            }}
+          />
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: 10 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+              className="w-[95vw] max-w-6xl h-[80vh] md:h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Preview ${previewTemplate.name}`}
+            >
+              <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-gray-50">
+                <div className="min-w-0">
+                  <p className="text-sm text-gray-500 truncate">Preview</p>
+                  <h4 className="text-base font-semibold text-gray-900 truncate">{previewTemplate.name}</h4>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={previewTemplate.preview}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-1" />
+                    Open in new tab
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPreviewOpen(false)
+                      setPreviewTemplate(null)
+                    }}
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    aria-label="Close preview"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 bg-white">
+                {(() => {
+                  try {
+                    const host = new URL(previewTemplate.preview).hostname
+                    const blocksIframe = /(^|\.)webflow\.io$|(^|\.)webflow\.com$/.test(host)
+                    if (!blocksIframe) {
+                      return (
+                        <iframe
+                          src={previewTemplate.preview}
+                          title={previewTemplate.name}
+                          className="w-full h-full border-0"
+                        />
+                      )
+                    }
+                  } catch {}
+
+                  const encodedUrl = encodeURIComponent(previewTemplate.preview)
+                  const screenshotUrl = `https://image.thum.io/get/fullpage/${encodedUrl}`
+                  return (
+                    <div className="w-full h-full overflow-auto bg-white">
+                      <div className="px-4 py-2 text-xs text-gray-500">
+                        Live embedding is blocked by the site. Showing a scrollable snapshot instead.
+                      </div>
+                      <img
+                        src={screenshotUrl}
+                        alt={`${previewTemplate.name} snapshot`}
+                        className="w-full h-auto"
+                        loading="lazy"
+                      />
+                    </div>
+                  )
+                })()}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
