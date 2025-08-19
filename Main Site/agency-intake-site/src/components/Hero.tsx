@@ -13,16 +13,66 @@ const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx')
 
 export default function Hero() {
   const backgrounds = [
-    { key: 'aurora', label: 'Aurora', word: 'Beautiful', Component: Aurora, props: {} },
-    { key: 'galaxy', label: 'Galaxy', word: 'Revolutionary', Component: Galaxy, props: {} },
-    { key: 'liquid', label: 'Liquid Chrome', word: 'Game-Changing', Component: LiquidChrome, props: {} },
-    { key: 'orb', label: 'Orb', word: 'Fantastic', Component: Orb, props: {} },
+    { 
+      key: 'aurora', 
+      label: 'Aurora', 
+      word: 'Beautiful', 
+      Component: Aurora, 
+      props: {},
+      textColors: {
+        primary: 'text-white',
+        secondary: 'text-blue-100',
+        accent: 'text-blue-200',
+        slider: 'text-gray-800'
+      }
+    },
+    { 
+      key: 'galaxy', 
+      label: 'Galaxy', 
+      word: 'Revolutionary', 
+      Component: Galaxy, 
+      props: {},
+      textColors: {
+        primary: 'text-white',
+        secondary: 'text-gray-200',
+        accent: 'text-blue-300'
+      }
+    },
+    { 
+      key: 'liquid', 
+      label: 'Liquid Chrome', 
+      word: 'Game-Changing', 
+      Component: LiquidChrome, 
+      props: {},
+      textColors: {
+        primary: 'text-white',
+        secondary: 'text-gray-100',
+        accent: 'text-blue-200'
+      }
+    },
+    { 
+      key: 'orb', 
+      label: 'Orb', 
+      word: 'Fantastic', 
+      Component: Orb, 
+      props: {},
+      textColors: {
+        primary: 'text-gray-900',
+        secondary: 'text-gray-700',
+        accent: 'text-blue-600'
+      }
+    },
     {
       key: 'threads',
       label: 'Threads',
       word: 'Customizable',
       Component: Threads,
-      props: { color: [0.2, 0.45, 1], amplitude: 2, distance: 0.5 }
+      props: { color: [0.2, 0.45, 1], amplitude: 2, distance: 0.5 },
+      textColors: {
+        primary: 'text-gray-900',
+        secondary: 'text-gray-700',
+        accent: 'text-blue-600'
+      }
     },
   ] as const
   const [bgIndex, setBgIndex] = useState(0)
@@ -43,11 +93,11 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="mb-8"
           >
-            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className={`text-5xl lg:text-6xl font-bold ${backgrounds[bgIndex].textColors.primary} mb-6 leading-tight`}>
               Transform Your Business with
-              <span className="text-primary block">{backgrounds[bgIndex].word} Web Design</span>
+              <span className={`${backgrounds[bgIndex].textColors.accent} block`}>{backgrounds[bgIndex].word} Web Design</span>
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className={`text-xl lg:text-2xl ${backgrounds[bgIndex].textColors.secondary} max-w-3xl mx-auto leading-relaxed`}>
               Get a custom website that converts visitors into customers. Modern, responsive designs 
               that perfectly represent your brand and drive real business results.
             </p>
@@ -81,7 +131,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.25 }}
             className="mb-12 max-w-md mx-auto"
           >
-            <label htmlFor="bg-slider" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="bg-slider" className={`block text-sm font-medium ${backgrounds[bgIndex].textColors.slider || backgrounds[bgIndex].textColors.secondary} mb-2`}>
               Background: <span className="font-semibold">{backgrounds[bgIndex].label}</span>
             </label>
             <input
@@ -95,9 +145,9 @@ export default function Hero() {
               className="w-full accent-primary"
               aria-valuetext={backgrounds[bgIndex].label}
             />
-            <div className="mt-2 flex justify-between text-xs text-gray-500">
+            <div className="mt-2 flex justify-between text-xs">
               {backgrounds.map((b, i) => (
-                <span key={b.key} className={`w-0.5 ${i === bgIndex ? 'text-gray-800 font-semibold' : ''}`}>
+                <span key={b.key} className={`w-0.5 ${i === bgIndex ? `${backgrounds[bgIndex].textColors.primary} font-semibold` : (backgrounds[bgIndex].textColors.slider || backgrounds[bgIndex].textColors.secondary)}`}>
                   {b.label}
                 </span>
               ))}
@@ -110,27 +160,27 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-primary" />
+            <div className="text-center bg-white rounded-lg shadow-lg p-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Custom Design</h3>
+              <h3 className="text-lg font-bold text-black mb-2">Custom Design</h3>
               <p className="text-gray-600">Unique websites tailored to your brand and business goals</p>
             </div>
             
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-primary" />
+            <div className="text-center bg-white rounded-lg shadow-lg p-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Mobile-First</h3>
+              <h3 className="text-lg font-bold text-black mb-2">Mobile-First</h3>
               <p className="text-gray-600">Responsive designs that work perfectly on all devices</p>
             </div>
             
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-primary" />
+            <div className="text-center bg-white rounded-lg shadow-lg p-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Results-Driven</h3>
+              <h3 className="text-lg font-bold text-black mb-2">Results-Driven</h3>
               <p className="text-gray-600">Optimized for conversions and business growth</p>
             </div>
           </motion.div>
@@ -139,8 +189,8 @@ export default function Hero() {
 
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+        <div className={`absolute top-20 left-10 w-72 h-72 ${backgrounds[bgIndex].textColors.accent}/10 rounded-full blur-3xl`}></div>
+        <div className={`absolute bottom-20 right-10 w-96 h-96 ${backgrounds[bgIndex].textColors.accent}/10 rounded-full blur-3xl`}></div>
       </div>
     </section>
   )
