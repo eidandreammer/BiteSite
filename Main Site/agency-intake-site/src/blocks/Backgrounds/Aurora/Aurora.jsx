@@ -115,7 +115,7 @@ void main() {
 
 export default function Aurora(props) {
   const {
-    colorStops = ["#5227FF", "#7cff67", "#5227FF"],
+    colorStops = ["var(--color-primary)", "var(--color-accent)", "var(--color-primary)"],
     amplitude = 1.0,
     blend = 0.5,
   } = props;
@@ -158,10 +158,18 @@ export default function Aurora(props) {
       delete geometry.attributes.uv;
     }
 
-    const colorStopsArray = colorStops.map((hex) => {
-      const c = new Color(hex);
+    const resolveStop = (value) => {
+      let resolved = value;
+      if (typeof value === "string" && value.startsWith("var(")) {
+        const varName = value.slice(4, -1).trim();
+        const cssValue = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        if (cssValue) resolved = cssValue;
+      }
+      const c = new Color(resolved);
       return [c.r, c.g, c.b];
-    });
+    };
+
+    const colorStopsArray = colorStops.map(resolveStop);
 
     program = new Program(gl, {
       vertex: VERT,
@@ -186,10 +194,7 @@ export default function Aurora(props) {
       program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
       program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
       const stops = propsRef.current.colorStops ?? colorStops;
-      program.uniforms.uColorStops.value = stops.map((hex) => {
-        const c = new Color(hex);
-        return [c.r, c.g, c.b];
-      });
+      program.uniforms.uColorStops.value = stops.map(resolveStop);
       renderer.render({ scene: mesh });
     };
     animateId = requestAnimationFrame(update);

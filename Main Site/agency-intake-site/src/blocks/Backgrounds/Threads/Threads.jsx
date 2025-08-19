@@ -129,6 +129,7 @@ const Threads = ({
   amplitude = 1,
   distance = 0,
   enableMouseInteraction = false,
+  disableAnimation = false,
   ...rest
 }) => {
   const containerRef = useRef(null);
@@ -137,6 +138,8 @@ const Threads = ({
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
+    const isCoarsePointer = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const renderer = new Renderer({ alpha: true, premultipliedAlpha: false, webgl: 2 });
     const gl = renderer.gl;
@@ -193,7 +196,7 @@ const Threads = ({
     function handleMouseLeave() {
       targetMouse = [0.5, 0.5];
     }
-    if (enableMouseInteraction) {
+    if (enableMouseInteraction && !isCoarsePointer) {
       container.addEventListener("mousemove", handleMouseMove);
       container.addEventListener("mouseleave", handleMouseLeave);
     }
@@ -201,7 +204,7 @@ const Threads = ({
     if (!gl.canvas.parentElement) container.appendChild(gl.canvas);
 
     function update(t) {
-      if (enableMouseInteraction) {
+      if (enableMouseInteraction && !isCoarsePointer) {
         const smoothing = 0.05;
         currentMouse[0] += smoothing * (targetMouse[0] - currentMouse[0]);
         currentMouse[1] += smoothing * (targetMouse[1] - currentMouse[1]);
@@ -211,10 +214,14 @@ const Threads = ({
         program.uniforms.uMouse.value[0] = 0.5;
         program.uniforms.uMouse.value[1] = 0.5;
       }
-      program.uniforms.iTime.value = t * 0.001;
+      if (!(disableAnimation || prefersReducedMotion)) {
+        program.uniforms.iTime.value = t * 0.001;
+      }
 
       renderer.render({ scene: mesh });
-      animationFrameId.current = requestAnimationFrame(update);
+      if (!(disableAnimation || prefersReducedMotion)) {
+        animationFrameId.current = requestAnimationFrame(update);
+      }
     }
     animationFrameId.current = requestAnimationFrame(update);
 
@@ -223,7 +230,7 @@ const Threads = ({
         cancelAnimationFrame(animationFrameId.current);
       window.removeEventListener("resize", resize);
 
-      if (enableMouseInteraction) {
+      if (enableMouseInteraction && !isCoarsePointer) {
         container.removeEventListener("mousemove", handleMouseMove);
         container.removeEventListener("mouseleave", handleMouseLeave);
       }

@@ -68,7 +68,12 @@ export default function Hero() {
       label: 'Threads',
       word: 'Customizable',
       Component: Threads,
-      props: { color: [0.2, 0.45, 1], amplitude: 2, distance: 0.5 },
+      props: { 
+        color: [0.2, 0.45, 1], 
+        amplitude: 2, 
+        distance: 0.5,
+        className: 'h-[140%] -translate-y-10 md:h-full md:translate-y-0'
+      },
       textColors: {
         primary: 'text-gray-900',
         secondary: 'text-gray-700',
@@ -78,6 +83,7 @@ export default function Hero() {
   ] as const
   const [bgIndex, setBgIndex] = useState(0)
   const SelectedBg = backgrounds[bgIndex].Component
+  const isWhitePricing = ['aurora', 'galaxy', 'liquid'].includes(backgrounds[bgIndex].key)
 
   return (
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
@@ -94,7 +100,7 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="mb-8"
           >
-            <h1 className={`text-5xl lg:text-6xl font-bold ${backgrounds[bgIndex].textColors.primary} mb-6 leading-tight`}>
+            <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${backgrounds[bgIndex].textColors.primary} mb-6 leading-tight`}>
               Transform Your Business with
               <span className={`${backgrounds[bgIndex].textColors.accent} block`}>{backgrounds[bgIndex].word} Web Design</span>
             </h1>
@@ -119,7 +125,11 @@ export default function Hero() {
             </a>
             <a
               href="#pricing"
-              className="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
+              className={`inline-flex items-center justify-center px-8 py-4 font-semibold rounded-lg transition-all duration-200 ${
+                isWhitePricing
+                  ? 'bg-white text-black border border-gray-200 hover:bg-white/90 shadow-sm'
+                  : 'border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+              }`}
             >
               View Pricing
             </a>

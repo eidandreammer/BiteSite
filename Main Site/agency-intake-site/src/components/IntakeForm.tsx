@@ -592,27 +592,29 @@ export default function IntakeForm() {
     <div className="max-w-4xl mx-auto">
       {/* Progress Bar */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          {steps.map((step, index) => (
-            <div key={step.id} className="flex items-center">
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
-                currentStep >= step.id
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-gray-300 bg-white text-gray-500'
-              }`}>
-                {currentStep > step.id ? (
-                  <Check className="w-5 h-5" />
-                ) : (
-                  step.id
+        <div className="overflow-x-auto -mx-4 px-4 mb-4">
+          <div className="inline-flex items-center justify-start w-max">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex items-center shrink-0">
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
+                  currentStep >= step.id
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-gray-300 bg-white text-gray-500'
+                }`}>
+                  {currentStep > step.id ? (
+                    <Check className="w-5 h-5" />
+                  ) : (
+                    step.id
+                  )}
+                </div>
+                {index < steps.length - 1 && (
+                  <div className={`h-0.5 mx-1 sm:mx-2 w-10 sm:w-12 md:w-16 ${
+                    currentStep > step.id ? 'bg-primary' : 'bg-gray-300'
+                  }`} />
                 )}
               </div>
-              {index < steps.length - 1 && (
-                <div className={`w-16 h-0.5 mx-2 ${
-                  currentStep > step.id ? 'bg-primary' : 'bg-gray-300'
-                }`} />
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
         
         <div className="text-center">

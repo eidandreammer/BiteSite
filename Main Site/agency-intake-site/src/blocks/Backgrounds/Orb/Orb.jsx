@@ -12,6 +12,7 @@ export default function Orb({
   hoverIntensity = 0.2,
   rotateOnHover = true,
   forceHoverState = false,
+  sizeScale = 1,
 }) {
   const ctnDom = useRef(null);
 
@@ -35,6 +36,7 @@ export default function Orb({
     uniform float hover;
     uniform float rot;
     uniform float hoverIntensity;
+    uniform vec2 uvScale;
     varying vec2 vUv;
 
     vec3 rgb2yiq(vec3 c) {
@@ -160,6 +162,8 @@ export default function Orb({
       float c = cos(angle);
       uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
       
+      uv *= uvScale; // scale/oval adjustment
+      
       uv.x += hover * hoverIntensity * 0.1 * sin(uv.y * 10.0 + iTime);
       uv.y += hover * hoverIntensity * 0.1 * sin(uv.x * 10.0 + iTime);
       
@@ -199,6 +203,7 @@ export default function Orb({
         hover: { value: 0 },
         rot: { value: 0 },
         hoverIntensity: { value: hoverIntensity },
+        uvScale: { value: new Float32Array([1.0, 1.0]) },
       },
     });
 
@@ -206,7 +211,7 @@ export default function Orb({
 
     function resize() {
       if (!container) return;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = container.clientWidth;
       const height = container.clientHeight;
       renderer.setSize(width * dpr, height * dpr);
@@ -260,6 +265,23 @@ export default function Orb({
       program.uniforms.iTime.value = t * 0.001;
       program.uniforms.hue.value = hue;
       program.uniforms.hoverIntensity.value = hoverIntensity;
+      
+      // Mobile adjustments: make bigger and ovular on coarse pointers
+      if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+        const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+        if (isPortrait) {
+          // Stronger vertical oval and overall zoom in portrait
+          program.uniforms.uvScale.value[0] = 0.55 * sizeScale; // more zoom X
+          program.uniforms.uvScale.value[1] = 0.35 * sizeScale; // even more zoom Y (taller ellipse)
+        } else {
+          // Slightly less aggressive in landscape
+          program.uniforms.uvScale.value[0] = 0.7 * sizeScale;
+          program.uniforms.uvScale.value[1] = 0.5 * sizeScale;
+        }
+      } else {
+        program.uniforms.uvScale.value[0] = 1.0 * sizeScale;
+        program.uniforms.uvScale.value[1] = 1.0 * sizeScale;
+      }
 
       const effectiveHover = forceHoverState ? 1 : targetHover;
       program.uniforms.hover.value +=

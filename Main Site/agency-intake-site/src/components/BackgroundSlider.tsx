@@ -48,6 +48,11 @@ export default function BackgroundSlider({
     setIsDragging(false)
   }
 
+  const step = (delta: number) => {
+    const next = Math.min(max, Math.max(0, value + delta))
+    onChange(next)
+  }
+
   const getRangePercentage = () => {
     return (value / max) * 100
   }
@@ -61,13 +66,15 @@ export default function BackgroundSlider({
         className="mb-4"
       >
         <div className="flex items-center justify-center gap-4">
-          <motion.div
+          <motion.button
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: 0.9 }}
             className={`p-2 rounded-full ${textColors.accent}/20 hover:${textColors.accent}/30 transition-colors`}
+            onClick={() => step(-1)}
+            aria-label="Previous background"
           >
             <ChevronLeft className={`w-5 h-5 ${textColors.accent}`} />
-          </motion.div>
+          </motion.button>
 
           <div
             ref={sliderRef}
@@ -87,27 +94,30 @@ export default function BackgroundSlider({
                 transition={{ duration: 0.1 }}
               />
               
-              {/* Slider thumb */}
-              <motion.div
-                className="absolute top-1/2 w-5 h-5 bg-white rounded-full shadow-lg border-2 border-blue-500"
-                style={{ 
-                  left: `${getRangePercentage()}%`,
-                  transform: 'translate(-50%, -50%)'
-                }}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ duration: 0.1 }}
-              />
+              {/* Slider thumb (wrapper centers; inner scales without breaking centering) */}
+              <div
+                className="absolute top-1/2"
+                style={{ left: `${getRangePercentage()}%`, transform: 'translate(-50%, -50%)' }}
+              >
+                <motion.div
+                  className="z-10 w-5 h-5 bg-white rounded-full shadow-lg border-2 border-blue-500"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.1 }}
+                />
+              </div>
             </motion.div>
           </div>
 
-          <motion.div
+          <motion.button
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: 0.9 }}
             className={`p-2 rounded-full ${textColors.accent}/20 hover:${textColors.accent}/30 transition-colors`}
+            onClick={() => step(1)}
+            aria-label="Next background"
           >
             <ChevronRight className={`w-5 h-5 ${textColors.accent}`} />
-          </motion.div>
+          </motion.button>
         </div>
       </motion.div>
 

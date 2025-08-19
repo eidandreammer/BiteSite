@@ -219,10 +219,15 @@ export default function Galaxy({
     }
 
     let program;
+    const isCoarsePointer = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function resize() {
-      const scale = 1;
-      renderer.setSize(ctn.offsetWidth * scale, ctn.offsetHeight * scale);
+      const { clientWidth, clientHeight } = ctn;
+      const dpr = Math.min(typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1, 2);
+      renderer.setSize(clientWidth * dpr, clientHeight * dpr);
+      gl.canvas.style.width = clientWidth + 'px';
+      gl.canvas.style.height = clientHeight + 'px';
       if (program) {
         program.uniforms.uResolution.value = new Color(
           gl.canvas.width,
@@ -276,7 +281,7 @@ export default function Galaxy({
 
     function update(t) {
       animateId = requestAnimationFrame(update);
-      if (!disableAnimation) {
+      if (!(disableAnimation || prefersReducedMotion)) {
         program.uniforms.uTime.value = t * 0.001;
         program.uniforms.uStarSpeed.value = (t * 0.001 * starSpeed) / 10.0;
       }
@@ -311,7 +316,7 @@ export default function Galaxy({
       targetMouseActive.current = 0.0;
     }
 
-    if (mouseInteraction) {
+    if (mouseInteraction && !isCoarsePointer) {
       ctn.addEventListener("mousemove", handleMouseMove);
       ctn.addEventListener("mouseleave", handleMouseLeave);
     }
@@ -319,7 +324,7 @@ export default function Galaxy({
     return () => {
       cancelAnimationFrame(animateId);
       window.removeEventListener("resize", resize);
-      if (mouseInteraction) {
+      if (mouseInteraction && !isCoarsePointer) {
         ctn.removeEventListener("mousemove", handleMouseMove);
         ctn.removeEventListener("mouseleave", handleMouseLeave);
       }
