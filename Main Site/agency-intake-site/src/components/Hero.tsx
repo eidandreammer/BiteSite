@@ -72,7 +72,7 @@ export default function Hero() {
         color: [0.2, 0.45, 1], 
         amplitude: 2, 
         distance: 0.5,
-        className: 'h-[140%] -translate-y-10 md:h-full md:translate-y-0'
+        className: 'w-full h-[220vh] -translate-y-[40vh] md:h-full md:translate-y-0'
       },
       textColors: {
         primary: 'text-gray-900',
