@@ -57,6 +57,11 @@ export default function BackgroundSlider({
     return (value / max) * 100
   }
 
+  // Standardized colors within the slider card
+  const ACCENT_COLOR_CLASS = 'text-blue-600'
+  const INACTIVE_TEXT_CLASS = 'text-gray-700'
+  const ACTIVE_LABEL_CLASS = 'px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow'
+
   return (
     <motion.div
       onHoverStart={() => scale.set(1.06)}
@@ -67,13 +72,22 @@ export default function BackgroundSlider({
       <div className="relative rounded-2xl bg-white/95 shadow-2xl ring-1 ring-black/5 p-5">
         <div className="flex items-center justify-center gap-4 mb-3">
           <motion.button
-            whileHover={{ scale: 1.15 }}
+            whileHover={{ scale: 1.15, rotate: -8, boxShadow: '0 10px 20px rgba(59,130,246,0.25), 0 2px 6px rgba(0,0,0,0.08)' }}
             whileTap={{ scale: 0.92 }}
-            className="p-2 rounded-full bg-white/80 ring-1 ring-black/5 shadow-sm hover:shadow-md transition-all"
+            animate={{ y: [0, -1.5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+            className="relative p-2 rounded-full bg-white/80 ring-1 ring-black/5 shadow-sm hover:shadow-md transition-all overflow-visible"
             onClick={() => step(-1)}
             aria-label="Previous background"
           >
-            <ChevronLeft className={`w-5 h-5 ${textColors.accent}`} />
+            <motion.span
+              className="pointer-events-none absolute inset-0 rounded-full"
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileHover={{ opacity: 0.25, scale: 1.1 }}
+              transition={{ duration: 0.25 }}
+              style={{ background: 'radial-gradient(closest-side, rgba(59,130,246,0.25), transparent)' }}
+            />
+            <ChevronLeft className={`w-5 h-5 ${ACCENT_COLOR_CLASS}`} />
           </motion.button>
 
           <div
@@ -106,13 +120,22 @@ export default function BackgroundSlider({
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.15 }}
+            whileHover={{ scale: 1.15, rotate: 8, boxShadow: '0 10px 20px rgba(59,130,246,0.25), 0 2px 6px rgba(0,0,0,0.08)' }}
             whileTap={{ scale: 0.92 }}
-            className="p-2 rounded-full bg-white/80 ring-1 ring-black/5 shadow-sm hover:shadow-md transition-all"
+            animate={{ y: [0, -1.5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+            className="relative p-2 rounded-full bg-white/80 ring-1 ring-black/5 shadow-sm hover:shadow-md transition-all overflow-visible"
             onClick={() => step(1)}
             aria-label="Next background"
           >
-            <ChevronRight className={`w-5 h-5 ${textColors.accent}`} />
+            <motion.span
+              className="pointer-events-none absolute inset-0 rounded-full"
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileHover={{ opacity: 0.25, scale: 1.1 }}
+              transition={{ duration: 0.25 }}
+              style={{ background: 'radial-gradient(closest-side, rgba(59,130,246,0.25), transparent)' }}
+            />
+            <ChevronRight className={`w-5 h-5 ${ACCENT_COLOR_CLASS}`} />
           </motion.button>
         </div>
 
@@ -123,11 +146,10 @@ export default function BackgroundSlider({
               key={index}
               onClick={() => onChange(index)}
               className={`${
-                index === value
-                  ? 'px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow'
-                  : `${textColors.slider || textColors.secondary} hover:text-gray-900`
+                index === value ? ACTIVE_LABEL_CLASS : `${INACTIVE_TEXT_CLASS} hover:text-gray-900`
               } cursor-pointer select-none transition-all duration-200 text-center`}
-              whileHover={{ scale: 1.06 }}
+              whileHover={{ scale: 1.08, y: -1 }}
+              whileTap={{ scale: 0.96 }}
             >
               {label}
             </motion.span>
