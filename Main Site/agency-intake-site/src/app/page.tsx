@@ -3,6 +3,7 @@ import Hero from '@/components/Hero'
 import Features from '@/components/Features'
 import Testimonials from '@/components/Testimonials'
 import Pricing from '@/components/Pricing'
+import LazyVisible from '@/components/LazyVisible'
 import IntakeForm from '@/components/IntakeForm'
 
 export const metadata: Metadata = {
@@ -28,9 +29,15 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Hero />
-      <Features />
-      <Testimonials />
-      <Pricing />
+      <LazyVisible>
+        <Features />
+      </LazyVisible>
+      <LazyVisible>
+        <Testimonials />
+      </LazyVisible>
+      <LazyVisible>
+        <Pricing />
+      </LazyVisible>
       
       {/* Intake Form Section */}
       <section id="start-project" className="py-20 bg-gray-50">

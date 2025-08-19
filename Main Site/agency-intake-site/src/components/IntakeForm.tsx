@@ -9,6 +9,10 @@ import { intakeSchema, IntakeFormData } from '@/lib/schema'
 import { submitIntake } from '@/lib/supabase'
 import ColorWheel from './ColorWheel'
 import TemplatePicker from './TemplatePicker'
+import dynamic from 'next/dynamic'
+
+// Load font variables only when this step is visible to reduce global font cost
+const FontVariablesProvider = dynamic(() => import('./FontVariablesProvider'), { ssr: false, loading: () => <></> })
 
 const steps = [
   { id: 1, title: 'Business Info', description: 'Basic business details' },
@@ -66,6 +70,41 @@ export default function IntakeForm() {
   })
 
   const watchedValues = watch()
+
+  const resolveFontVar = (value: string) => {
+    switch (value) {
+      case 'modern':
+      case 'inter':
+        return 'var(--font-inter)'
+      case 'geometric_sans':
+      case 'poppins':
+        return 'var(--font-poppins)'
+      case 'montserrat':
+        return 'var(--font-montserrat)'
+      case 'raleway':
+        return 'var(--font-raleway)'
+      case 'nunito':
+        return 'var(--font-nunito)'
+      case 'lato':
+        return 'var(--font-lato)'
+      case 'quicksand':
+        return 'var(--font-quicksand)'
+      case 'classic_serif':
+      case 'playfair_display':
+        return 'var(--font-playfair)'
+      case 'merriweather':
+        return 'var(--font-merriweather)'
+      case 'lora':
+        return 'var(--font-lora)'
+      case 'roboto_slab':
+        return 'var(--font-roboto-slab)'
+      case 'playful':
+      case 'comic_neue':
+        return 'var(--font-comic-neue)'
+      default:
+        return 'inherit'
+    }
+  }
 
   const nextStep = () => {
     if (currentStep < steps.length) {
@@ -372,30 +411,33 @@ export default function IntakeForm() {
                       name="fonts.headings"
                       control={control}
                       render={({ field }) => (
-                        <select
-                          {...field}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                        >
-                          {/* Categories (original options) */}
-                          <option value="modern" style={{ fontFamily: 'var(--font-inter)' }}>Modern Sans (Inter)</option>
-                          <option value="classic_serif" style={{ fontFamily: 'var(--font-playfair)' }}>Classic Serif (Playfair Display)</option>
-                          <option value="geometric_sans" style={{ fontFamily: 'var(--font-poppins)' }}>Geometric Sans (Poppins)</option>
-                          <option value="playful" style={{ fontFamily: 'var(--font-comic-neue)' }}>Playful (Comic Neue)</option>
+                        <FontVariablesProvider>
+                          <select
+                            {...field}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            style={{ fontFamily: resolveFontVar(field.value) }}
+                          >
+                            {/* Categories (original options) */}
+                            <option value="modern" style={{ fontFamily: 'var(--font-inter)' }}>Modern Sans (Inter)</option>
+                            <option value="classic_serif" style={{ fontFamily: 'var(--font-playfair)' }}>Classic Serif (Playfair Display)</option>
+                            <option value="geometric_sans" style={{ fontFamily: 'var(--font-poppins)' }}>Geometric Sans (Poppins)</option>
+                            <option value="playful" style={{ fontFamily: 'var(--font-comic-neue)' }}>Playful (Comic Neue)</option>
 
-                          {/* Specific font families */}
-                          <option value="inter" style={{ fontFamily: 'var(--font-inter)' }}>Inter</option>
-                          <option value="poppins" style={{ fontFamily: 'var(--font-poppins)' }}>Poppins</option>
-                          <option value="montserrat" style={{ fontFamily: 'var(--font-montserrat)' }}>Montserrat</option>
-                          <option value="raleway" style={{ fontFamily: 'var(--font-raleway)' }}>Raleway</option>
-                          <option value="nunito" style={{ fontFamily: 'var(--font-nunito)' }}>Nunito</option>
-                          <option value="lato" style={{ fontFamily: 'var(--font-lato)' }}>Lato</option>
-                          <option value="quicksand" style={{ fontFamily: 'var(--font-quicksand)' }}>Quicksand</option>
-                          <option value="playfair_display" style={{ fontFamily: 'var(--font-playfair)' }}>Playfair Display</option>
-                          <option value="merriweather" style={{ fontFamily: 'var(--font-merriweather)' }}>Merriweather</option>
-                          <option value="lora" style={{ fontFamily: 'var(--font-lora)' }}>Lora</option>
-                          <option value="roboto_slab" style={{ fontFamily: 'var(--font-roboto-slab)' }}>Roboto Slab</option>
-                          <option value="comic_neue" style={{ fontFamily: 'var(--font-comic-neue)' }}>Comic Neue</option>
-                        </select>
+                            {/* Specific font families */}
+                            <option value="inter" style={{ fontFamily: 'var(--font-inter)' }}>Inter</option>
+                            <option value="poppins" style={{ fontFamily: 'var(--font-poppins)' }}>Poppins</option>
+                            <option value="montserrat" style={{ fontFamily: 'var(--font-montserrat)' }}>Montserrat</option>
+                            <option value="raleway" style={{ fontFamily: 'var(--font-raleway)' }}>Raleway</option>
+                            <option value="nunito" style={{ fontFamily: 'var(--font-nunito)' }}>Nunito</option>
+                            <option value="lato" style={{ fontFamily: 'var(--font-lato)' }}>Lato</option>
+                            <option value="quicksand" style={{ fontFamily: 'var(--font-quicksand)' }}>Quicksand</option>
+                            <option value="playfair_display" style={{ fontFamily: 'var(--font-playfair)' }}>Playfair Display</option>
+                            <option value="merriweather" style={{ fontFamily: 'var(--font-merriweather)' }}>Merriweather</option>
+                            <option value="lora" style={{ fontFamily: 'var(--font-lora)' }}>Lora</option>
+                            <option value="roboto_slab" style={{ fontFamily: 'var(--font-roboto-slab)' }}>Roboto Slab</option>
+                            <option value="comic_neue" style={{ fontFamily: 'var(--font-comic-neue)' }}>Comic Neue</option>
+                          </select>
+                        </FontVariablesProvider>
                       )}
                     />
                   </div>
@@ -405,34 +447,53 @@ export default function IntakeForm() {
                       name="fonts.body"
                       control={control}
                       render={({ field }) => (
-                        <select
-                          {...field}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                        >
-                          {/* Categories (original options) */}
-                          <option value="modern" style={{ fontFamily: 'var(--font-inter)' }}>Modern Sans (Inter)</option>
-                          <option value="classic_serif" style={{ fontFamily: 'var(--font-playfair)' }}>Classic Serif (Playfair Display)</option>
-                          <option value="geometric_sans" style={{ fontFamily: 'var(--font-poppins)' }}>Geometric Sans (Poppins)</option>
-                          <option value="playful" style={{ fontFamily: 'var(--font-comic-neue)' }}>Playful (Comic Neue)</option>
+                        <FontVariablesProvider>
+                          <select
+                            {...field}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            style={{ fontFamily: resolveFontVar(field.value) }}
+                          >
+                            {/* Categories (original options) */}
+                            <option value="modern" style={{ fontFamily: 'var(--font-inter)' }}>Modern Sans (Inter)</option>
+                            <option value="classic_serif" style={{ fontFamily: 'var(--font-playfair)' }}>Classic Serif (Playfair Display)</option>
+                            <option value="geometric_sans" style={{ fontFamily: 'var(--font-poppins)' }}>Geometric Sans (Poppins)</option>
+                            <option value="playful" style={{ fontFamily: 'var(--font-comic-neue)' }}>Playful (Comic Neue)</option>
 
-                          {/* Specific font families */}
-                          <option value="inter" style={{ fontFamily: 'var(--font-inter)' }}>Inter</option>
-                          <option value="poppins" style={{ fontFamily: 'var(--font-poppins)' }}>Poppins</option>
-                          <option value="montserrat" style={{ fontFamily: 'var(--font-montserrat)' }}>Montserrat</option>
-                          <option value="raleway" style={{ fontFamily: 'var(--font-raleway)' }}>Raleway</option>
-                          <option value="nunito" style={{ fontFamily: 'var(--font-nunito)' }}>Nunito</option>
-                          <option value="lato" style={{ fontFamily: 'var(--font-lato)' }}>Lato</option>
-                          <option value="quicksand" style={{ fontFamily: 'var(--font-quicksand)' }}>Quicksand</option>
-                          <option value="playfair_display" style={{ fontFamily: 'var(--font-playfair)' }}>Playfair Display</option>
-                          <option value="merriweather" style={{ fontFamily: 'var(--font-merriweather)' }}>Merriweather</option>
-                          <option value="lora" style={{ fontFamily: 'var(--font-lora)' }}>Lora</option>
-                          <option value="roboto_slab" style={{ fontFamily: 'var(--font-roboto-slab)' }}>Roboto Slab</option>
-                          <option value="comic_neue" style={{ fontFamily: 'var(--font-comic-neue)' }}>Comic Neue</option>
-                        </select>
+                            {/* Specific font families */}
+                            <option value="inter" style={{ fontFamily: 'var(--font-inter)' }}>Inter</option>
+                            <option value="poppins" style={{ fontFamily: 'var(--font-poppins)' }}>Poppins</option>
+                            <option value="montserrat" style={{ fontFamily: 'var(--font-montserrat)' }}>Montserrat</option>
+                            <option value="raleway" style={{ fontFamily: 'var(--font-raleway)' }}>Raleway</option>
+                            <option value="nunito" style={{ fontFamily: 'var(--font-nunito)' }}>Nunito</option>
+                            <option value="lato" style={{ fontFamily: 'var(--font-lato)' }}>Lato</option>
+                            <option value="quicksand" style={{ fontFamily: 'var(--font-quicksand)' }}>Quicksand</option>
+                            <option value="playfair_display" style={{ fontFamily: 'var(--font-playfair)' }}>Playfair Display</option>
+                            <option value="merriweather" style={{ fontFamily: 'var(--font-merriweather)' }}>Merriweather</option>
+                            <option value="lora" style={{ fontFamily: 'var(--font-lora)' }}>Lora</option>
+                            <option value="roboto_slab" style={{ fontFamily: 'var(--font-roboto-slab)' }}>Roboto Slab</option>
+                            <option value="comic_neue" style={{ fontFamily: 'var(--font-comic-neue)' }}>Comic Neue</option>
+                          </select>
+                        </FontVariablesProvider>
                       )}
                     />
                   </div>
                 </div>
+                <FontVariablesProvider>
+                  <div className="mt-4 space-y-2">
+                    <div
+                      className="text-xl font-bold text-gray-900"
+                      style={{ fontFamily: resolveFontVar(watchedValues.fonts?.headings || 'inter') }}
+                    >
+                      Heading Preview
+                    </div>
+                    <div
+                      className="text-gray-700"
+                      style={{ fontFamily: resolveFontVar(watchedValues.fonts?.body || 'inter') }}
+                    >
+                      The quick brown fox jumps over the lazy dog.
+                    </div>
+                  </div>
+                </FontVariablesProvider>
               </div>
             </div>
           </motion.div>

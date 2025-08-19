@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import BackgroundSlider from './BackgroundSlider'
 
@@ -84,22 +84,30 @@ export default function Hero() {
   const [bgIndex, setBgIndex] = useState(0)
   const SelectedBg = backgrounds[bgIndex].Component
   const isWhitePricing = ['aurora', 'galaxy', 'liquid'].includes(backgrounds[bgIndex].key)
+  const [showBg, setShowBg] = useState(false)
+
+  useEffect(() => {
+    const enable = () => setShowBg(true)
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        ;(window as any).requestIdleCallback(enable, { timeout: 600 })
+      } else {
+        setTimeout(enable, 150)
+      }
+    }
+  }, [])
 
   return (
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-        {/* Pass any per-background props to improve visibility */}
-        <SelectedBg {...(backgrounds[bgIndex].props as any)} />
+        {showBg ? (
+          <SelectedBg {...(backgrounds[bgIndex].props as any)} />
+        ) : null}
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-8"
-          >
+          <motion.div initial={false} className="mb-8">
             <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${backgrounds[bgIndex].textColors.primary} mb-6 leading-tight`}>
               Transform Your Business with
               <span className={`${backgrounds[bgIndex].textColors.accent} block`}>{backgrounds[bgIndex].word} Web Design</span>
@@ -110,12 +118,7 @@ export default function Hero() {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-          >
+          <motion.div initial={false} className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <a
               href="#start-project"
               className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"

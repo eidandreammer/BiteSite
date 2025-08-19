@@ -23,7 +23,7 @@ export default function Navigation() {
   ]
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <nav className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 will-change-transform">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 relative z-50">
           {/* Logo/Brand */}
