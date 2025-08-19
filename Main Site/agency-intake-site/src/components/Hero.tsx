@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Orb from '@/blocks/Backgrounds/Orb/Orb.jsx'
@@ -143,36 +143,7 @@ export default function Hero() {
             />
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            <div className="text-center bg-white rounded-lg shadow-lg p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-bold text-black mb-2">Custom Design</h3>
-              <p className="text-gray-600">Unique websites tailored to your brand and business goals</p>
-            </div>
-            
-            <div className="text-center bg-white rounded-lg shadow-lg p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-bold text-black mb-2">Mobile-First</h3>
-              <p className="text-gray-600">Responsive designs that work perfectly on all devices</p>
-            </div>
-            
-            <div className="text-center bg-white rounded-lg shadow-lg p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-bold text-black mb-2">Results-Driven</h3>
-              <p className="text-gray-600">Optimized for conversions and business growth</p>
-            </div>
-          </motion.div>
+          
         </div>
       </div>
 
