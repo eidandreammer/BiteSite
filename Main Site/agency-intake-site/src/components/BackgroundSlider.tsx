@@ -127,7 +127,7 @@ export default function BackgroundSlider({
                   style={{ width: tailWidth }}
                 />
                 <motion.div
-                  className="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+                  className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
                   style={{ left: headLeft }}
                 />
               </div>

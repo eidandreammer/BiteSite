@@ -211,7 +211,8 @@ export default function Orb({
 
     function resize() {
       if (!container) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const dpr = Math.min(window.devicePixelRatio || 1, isCoarse ? 1.25 : 1.75);
       const width = container.clientWidth;
       const height = container.clientHeight;
       renderer.setSize(width * dpr, height * dpr);
@@ -258,7 +259,9 @@ export default function Orb({
     container.addEventListener("mouseleave", handleMouseLeave);
 
     let rafId;
+    let running = true;
     const update = (t) => {
+      if (!running) return;
       rafId = requestAnimationFrame(update);
       const dt = (t - lastTime) * 0.001;
       lastTime = t;
@@ -296,11 +299,35 @@ export default function Orb({
     };
     rafId = requestAnimationFrame(update);
 
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        running = !!(entry && entry.isIntersecting);
+        if (running) {
+          lastTime = performance.now();
+          rafId = requestAnimationFrame(update);
+        }
+      },
+      { root: null, threshold: 0.1 }
+    );
+    io.observe(container);
+
+    const onVisibility = () => {
+      running = !document.hidden;
+      if (running) {
+        lastTime = performance.now();
+        rafId = requestAnimationFrame(update);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);
+      io.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
       container.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };

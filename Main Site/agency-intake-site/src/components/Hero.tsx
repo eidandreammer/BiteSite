@@ -4,27 +4,26 @@ import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+import Orb from '@/blocks/Backgrounds/Orb/Orb.jsx'
 import BackgroundSlider from './BackgroundSlider'
 
-const Aurora = dynamic(() => import('@/blocks/Backgrounds/Aurora/Aurora.jsx'), { ssr: false, loading: () => null })
-const Galaxy = dynamic(() => import('@/blocks/Backgrounds/Galaxy/Galaxy.jsx'), { ssr: false, loading: () => null })
-const LiquidChrome = dynamic(() => import('@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'), { ssr: false, loading: () => null })
-const Orb = dynamic(() => import('@/blocks/Backgrounds/Orb/Orb.jsx'), { ssr: false, loading: () => null })
-const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx'), { ssr: false, loading: () => null })
+const Aurora = dynamic(() => import('@/blocks/Backgrounds/Aurora/Aurora.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
+const Galaxy = dynamic(() => import('@/blocks/Backgrounds/Galaxy/Galaxy.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
+const LiquidChrome = dynamic(() => import('@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
+const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
 
 export default function Hero() {
   const backgrounds = [
     { 
-      key: 'aurora', 
-      label: 'Aurora', 
-      word: 'Beautiful', 
-      Component: Aurora, 
+      key: 'orb', 
+      label: 'Orb', 
+      word: 'Fantastic', 
+      Component: Orb, 
       props: {},
       textColors: {
-        primary: 'text-white',
-        secondary: 'text-blue-100',
-        accent: 'text-blue-200',
-        slider: 'text-gray-800'
+        primary: 'text-gray-900',
+        secondary: 'text-gray-700',
+        accent: 'text-blue-600'
       }
     },
     { 
@@ -51,18 +50,6 @@ export default function Hero() {
         accent: 'text-blue-200'
       }
     },
-    { 
-      key: 'orb', 
-      label: 'Orb', 
-      word: 'Fantastic', 
-      Component: Orb, 
-      props: {},
-      textColors: {
-        primary: 'text-gray-900',
-        secondary: 'text-gray-700',
-        accent: 'text-blue-600'
-      }
-    },
     {
       key: 'threads',
       label: 'Threads',
@@ -80,30 +67,29 @@ export default function Hero() {
         accent: 'text-blue-600'
       }
     },
+    { 
+      key: 'aurora', 
+      label: 'Aurora', 
+      word: 'Beautiful', 
+      Component: Aurora, 
+      props: {},
+      textColors: {
+        primary: 'text-white',
+        secondary: 'text-blue-100',
+        accent: 'text-blue-200',
+        slider: 'text-gray-800'
+      }
+    },
   ] as const
   const [bgIndex, setBgIndex] = useState(0)
   const SelectedBg = backgrounds[bgIndex].Component
   const isWhitePricing = ['aurora', 'galaxy', 'liquid'].includes(backgrounds[bgIndex].key)
-  const [showBg, setShowBg] = useState(false)
-
-  useEffect(() => {
-    const enable = () => setShowBg(true)
-    if (typeof window !== 'undefined') {
-      if ('requestIdleCallback' in window) {
-        ;(window as any).requestIdleCallback(enable, { timeout: 600 })
-      } else {
-        setTimeout(enable, 150)
-      }
-    }
-  }, [])
 
   return (
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-        {showBg ? (
-          <SelectedBg {...(backgrounds[bgIndex].props as any)} />
-        ) : null}
+        <SelectedBg {...(backgrounds[bgIndex].props as any)} />
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
