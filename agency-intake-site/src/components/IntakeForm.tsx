@@ -24,6 +24,14 @@ const steps = [
   { id: 6, title: 'Review', description: 'Final review & submit' }
 ]
 
+// Labels for nicer display in summary
+const GOAL_LABELS: Record<string, string> = {
+  calls: 'Phone Calls',
+  bookings: 'Appointments',
+  orders: 'Online Orders',
+  lead_form: 'Lead Capture'
+}
+
 export default function IntakeForm() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -1210,6 +1218,13 @@ export default function IntakeForm() {
                     <span className="text-blue-600 font-semibold text-sm">🏢</span>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">Business Information</h3>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(1)}
+                    className="ml-auto px-3 py-1.5 text-sm text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
+                  >
+                    Edit
+                  </button>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   <div>
@@ -1269,6 +1284,13 @@ export default function IntakeForm() {
                     <span className="text-green-600 font-semibold text-sm">🎯</span>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">Goals & Pages</h3>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(2)}
+                    className="ml-auto px-3 py-1.5 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md hover:bg-green-100 transition-colors"
+                  >
+                    Edit
+                  </button>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                                      <div>
@@ -1311,6 +1333,13 @@ export default function IntakeForm() {
                     <span className="text-purple-600 font-semibold text-sm">🎨</span>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">Style & Design</h3>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(3)}
+                    className="ml-auto px-3 py-1.5 text-sm text-purple-700 bg-purple-50 border border-purple-200 rounded-md hover:bg-purple-100 transition-colors"
+                  >
+                    Edit
+                  </button>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
@@ -1361,6 +1390,13 @@ export default function IntakeForm() {
                     <span className="text-orange-600 font-semibold text-sm">📋</span>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">Design Inspiration</h3>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(4)}
+                    className="ml-auto px-3 py-1.5 text-sm text-orange-700 bg-orange-50 border border-orange-200 rounded-md hover:bg-orange-100 transition-colors"
+                  >
+                    Edit
+                  </button>
                 </div>
                 <div className="space-y-4">
                   <div>
@@ -1440,6 +1476,13 @@ export default function IntakeForm() {
                     <span className="text-indigo-600 font-semibold text-sm">⚡</span>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">Features & Timeline</h3>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(5)}
+                    className="ml-auto px-3 py-1.5 text-sm text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-md hover:bg-indigo-100 transition-colors"
+                  >
+                    Edit
+                  </button>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                                      <div>
@@ -1492,65 +1535,36 @@ export default function IntakeForm() {
                 </div>
                 <div className="text-blue-800">
                   <p className="mb-2">
-                    <strong>{watchedValues.business?.name || 'Your business'}</strong> will receive a custom website with{' '}
-                    <strong>{watchedValues.goals?.pages?.length || 0} pages</strong> designed to achieve{' '}
-                    <strong>{watchedValues.goals?.conversions?.length || 0} conversion goals</strong>.
+                    <strong>{watchedValues.business?.name || 'Your business'}</strong> will receive a custom website with the following pages: {' '}
+                    <strong>{(watchedValues.goals?.pages?.filter((p) => p !== 'not_sure') || []).join(', ') || 'None selected'}</strong>.
+                    It will be designed to drive these conversion goals: {' '}
+                    <strong>{(watchedValues.goals?.conversions?.filter((g) => g !== 'not_sure').map((g) => GOAL_LABELS[g as keyof typeof GOAL_LABELS]) || []).join(', ') || 'None selected'}</strong>
+                    {watchedValues.goals?.conversions?.includes('not_sure') ? ' (Need help deciding)' : ''}.
+                  </p>
+                  <p className="mb-2">
+                    The design will feature a primary color of <strong>{watchedValues.color?.brand}</strong>{' '}
+                    ({watchedValues.color?.mode ? `${watchedValues.color.mode} mode` : 'auto mode'}), using {' '}
+                    <strong>{watchedValues.fonts?.headings?.replace('_', ' ')}</strong> headings and {' '}
+                    <strong>{watchedValues.fonts?.body?.replace('_', ' ')}</strong> body text.
+                    {watchedValues.color?.palette && watchedValues.color.palette.length > 1 ? ' Supporting palette: ' : ''}
+                    {watchedValues.color?.palette && watchedValues.color.palette.length > 1 ? watchedValues.color.palette.join(', ') : ''}
+                    .
+                  </p>
+                  <p className="mb-2">
+                    Inspiration: <strong>{(watchedValues.templates || []).join(', ') || 'None selected'}</strong>.
+                    {' '}Additional features: <strong>{(watchedValues.features || []).filter((f) => f !== 'not_sure').map((f) => f.replace('_', ' ')).join(', ') || 'None selected'}</strong>
+                    {watchedValues.features?.includes('not_sure') ? ' (Need help deciding)' : ''}.
                   </p>
                   <p>
-                    The design will feature a <strong>{watchedValues.color?.brand}</strong> color scheme with{' '}
-                    <strong>{watchedValues.fonts?.headings?.replace('_', ' ')}</strong> headings and{' '}
-                    <strong>{watchedValues.fonts?.body?.replace('_', ' ')}</strong> body text, delivered within{' '}
-                    <strong>{watchedValues.admin?.timeline?.replace('_', ' ')}</strong>.
+                    Timeline: <strong>{watchedValues.admin?.timeline?.replace('_', ' ') || '3-4 weeks'}</strong>; Plan: <strong>{watchedValues.admin?.plan || 'standard'}</strong>.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="pt-6 border-t border-gray-200 space-y-4">
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(1)}
-                  className="flex-1 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  ← Back to Business Info
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(2)}
-                  className="flex-1 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  ← Back to Goals
-                </button>
-              </div>
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(3)}
-                  className="flex-1 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  ← Back to Style
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(4)}
-                  className="flex-1 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  ← Back to Inspiration
-                </button>
-              </div>
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(5)}
-                  className="flex-1 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  ← Back to Features
-                </button>
-              </div>
-              
-              <div className="pt-4">
+            {/* Submit */}
+            <div className="pt-6 border-t border-gray-200">
+              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={!isValid || isSubmitting}
