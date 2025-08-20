@@ -179,7 +179,7 @@ export default function Galaxy({
   focal = [0.5, 0.5],
   rotation = [1.0, 0.0],
   starSpeed = 0.5,
-  density = 1,
+  density = 1.3,
   hueShift = 140,
   disableAnimation = false,
   speed = 1.0,
@@ -187,7 +187,7 @@ export default function Galaxy({
   glowIntensity = 0.3,
   saturation = 0.0,
   mouseRepulsion = true,
-  repulsionStrength = 2,
+  repulsionStrength = 1,
   twinkleIntensity = 0.3,
   rotationSpeed = 0.1,
   autoCenterRepulsion = 0,
@@ -323,8 +323,13 @@ export default function Galaxy({
       const rect = ctn.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
       const y = 1.0 - (e.clientY - rect.top) / rect.height;
-      targetMousePos.current = { x, y };
-      targetMouseActive.current = 1.0;
+      const isInside = x >= 0 && x <= 1 && y >= 0 && y <= 1;
+      if (isInside) {
+        targetMousePos.current = { x, y };
+        targetMouseActive.current = 1.0;
+      } else {
+        targetMouseActive.current = 0.0;
+      }
     }
 
     function handleMouseLeave() {
@@ -332,8 +337,8 @@ export default function Galaxy({
     }
 
     if (mouseInteraction && !isCoarsePointer) {
-      ctn.addEventListener("mousemove", handleMouseMove);
-      ctn.addEventListener("mouseleave", handleMouseLeave);
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseleave", handleMouseLeave);
     }
 
     // Pause when offscreen and resume when visible
@@ -356,8 +361,8 @@ export default function Galaxy({
       stop();
       window.removeEventListener("resize", resize);
       if (mouseInteraction && !isCoarsePointer) {
-        ctn.removeEventListener("mousemove", handleMouseMove);
-        ctn.removeEventListener("mouseleave", handleMouseLeave);
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseleave", handleMouseLeave);
       }
       io.disconnect();
       document.removeEventListener('visibilitychange', handleVisibility);
