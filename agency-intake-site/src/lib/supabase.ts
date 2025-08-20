@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js'
 import { IntakeFormData, Business } from './schema'
 import { IntakePayload } from './intake.schema'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '')
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
 
 // Only create client if environment variables are available
 export const supabase = supabaseUrl && supabaseAnonKey 
@@ -118,6 +118,28 @@ export function buildIntakePayload(intake: IntakeFormData, turnstileToken: strin
 }
 
 export async function submitIntake(intake: IntakeFormData, turnstileToken: string): Promise<{ success: boolean; id?: string; error?: string }> {
+  // On the client, proxy through our own API to avoid CORS/network issues
+  if (typeof window !== 'undefined') {
+    try {
+      const response = await fetch('/api/intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ turnstileToken, ...intake })
+      })
+      const result = await response.json()
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to submit intake')
+      }
+      return { success: true, id: result.id }
+    } catch (error) {
+      console.error('Error submitting intake (client):', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      }
+    }
+  }
+
   if (!supabase) {
     return { 
       success: false, 
@@ -129,8 +151,8 @@ export async function submitIntake(intake: IntakeFormData, turnstileToken: strin
     const edgeFunctionPayload: IntakePayload = buildIntakePayload(intake, turnstileToken)
     
     // Submit to Edge Function
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '');
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
     
     if (!supabaseUrl || !supabaseKey) {
       throw new Error('Missing Supabase environment variables');

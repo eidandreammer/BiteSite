@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -42,6 +42,9 @@ export default function IntakeForm() {
   const [customIndustry, setCustomIndustry] = useState('')
   const [customCountry, setCustomCountry] = useState('')
   const [mounted, setMounted] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string>('')
+  const [turnstileId, setTurnstileId] = useState<string | null>(null)
+  const turnstileContainerRef = useRef<HTMLDivElement | null>(null)
 
   const {
     control,
@@ -98,6 +101,54 @@ export default function IntakeForm() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Initialize Cloudflare Turnstile (invisible) when available on client
+  useEffect(() => {
+    if (!mounted) return
+    if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) return
+    // @ts-ignore
+    const ts = typeof window !== 'undefined' ? (window as any).turnstile : null
+    if (!ts || !turnstileContainerRef.current) return
+    try {
+      const id = ts.render(turnstileContainerRef.current, {
+        sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+        size: 'invisible',
+        callback: (token: string) => setTurnstileToken(token),
+        'expired-callback': () => setTurnstileToken(''),
+        'error-callback': () => setTurnstileToken('')
+      })
+      setTurnstileId(id)
+    } catch {
+      // ignore
+    }
+  }, [mounted])
+
+  const ensureTurnstileToken = async (): Promise<string> => {
+    // If no site key configured, allow placeholder for local/dev
+    if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) return 'placeholder-token'
+    // @ts-ignore
+    const ts = typeof window !== 'undefined' ? (window as any).turnstile : null
+    if (!ts || !turnstileId) return ''
+    if (turnstileToken) return turnstileToken
+    try {
+      ts.execute(turnstileId)
+      // wait up to 8s for callback to set token
+      const start = Date.now()
+      return await new Promise<string>((resolve) => {
+        const iv = setInterval(() => {
+          if (turnstileToken) {
+            clearInterval(iv)
+            resolve(turnstileToken)
+          } else if (Date.now() - start > 8000) {
+            clearInterval(iv)
+            resolve('')
+          }
+        }, 100)
+      })
+    } catch {
+      return ''
+    }
+  }
 
   // Get fields to validate for current step
   const getCurrentStepFields = useCallback((): string[] => {
@@ -304,17 +355,8 @@ export default function IntakeForm() {
         return;
       }
 
-      // Obtain Turnstile token if widget present
-      let turnstileToken = 'placeholder-token'
-      try {
-        // @ts-ignore
-        if (typeof window !== 'undefined' && window.turnstile && window.turnstile.getResponse) {
-          // @ts-ignore
-          const existing = window.turnstile.getResponse()
-          if (existing) turnstileToken = existing
-        }
-      } catch {}
-      const result = await submitIntake(data, turnstileToken)
+      const token = await ensureTurnstileToken()
+      const result = await submitIntake(data, token)
       if (result.success) {
         setSubmissionResult({
           success: true,
@@ -1751,12 +1793,14 @@ export default function IntakeForm() {
         </div>
       </form>
       {/* Cloudflare Turnstile invisible widget (renders if site key provided) */}
-      {mounted && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+      {mounted && (
         <div
+          ref={turnstileContainerRef}
           className="cf-turnstile"
           data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
           data-size="invisible"
           suppressHydrationWarning
+          style={{ width: 0, height: 0, overflow: 'hidden' }}
         />
       )}
     </div>
