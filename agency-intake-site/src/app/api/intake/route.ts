@@ -6,11 +6,24 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate the request body
-    const validatedData = intakeSchema.parse(body)
+    // Extract turnstile token from request body
+    const { turnstileToken, ...intakeData } = body
     
-    // Submit to Supabase
-    const result = await submitIntake(validatedData)
+    if (!turnstileToken) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Turnstile token is required' 
+        },
+        { status: 400 }
+      )
+    }
+    
+    // Validate the intake data
+    const validatedData = intakeSchema.parse(intakeData)
+    
+    // Submit to Supabase with turnstile token
+    const result = await submitIntake(validatedData, turnstileToken)
     
     if (result.success) {
       return NextResponse.json(

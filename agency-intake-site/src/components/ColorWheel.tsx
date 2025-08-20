@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { HexColorPicker } from 'react-colorful'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
 interface ColorWheelProps {
@@ -12,23 +11,155 @@ interface ColorWheelProps {
 
 type HarmonyType = 'complementary' | 'analogous' | 'split' | 'triad' | 'tetrad' | 'mono' | 'mono-tints'
 
-const harmonyTypes: { value: HarmonyType; label: string }[] = [
-  { value: 'complementary', label: 'Complementary' },
-  { value: 'analogous', label: 'Analogous' },
-  { value: 'split', label: 'Split' },
-  { value: 'triad', label: 'Triad' },
-  { value: 'tetrad', label: 'Tetrad' },
-  { value: 'mono', label: 'Monochrome' },
-  { value: 'mono-tints', label: 'Monochrome Tints' }
+const harmonyTypes: { value: HarmonyType; label: string; description: string }[] = [
+  { value: 'complementary', label: 'Complementary', description: 'Two colors opposite each other on the color wheel' },
+  { value: 'analogous', label: 'Analogous', description: 'Three colors next to each other on the color wheel' },
+  { value: 'split', label: 'Split', description: 'One base color plus two colors adjacent to its complement' },
+  { value: 'triad', label: 'Triad', description: 'Three colors equally spaced around the color wheel' },
+  { value: 'tetrad', label: 'Tetrad', description: 'Four colors forming a rectangle on the color wheel' },
+  { value: 'mono', label: 'Monochrome', description: 'Variations of the same color with different saturation/lightness' },
+  { value: 'mono-tints', label: 'Monochrome Tints', description: 'The same color with different lightness levels' }
 ]
 
 export default function ColorWheel({ value, onChange, onPaletteChange }: ColorWheelProps) {
-  const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('complementary')
+  const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('tetrad')
   const [palette, setPalette] = useState<string[]>([])
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const wheelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     generatePalette(value, selectedHarmony)
+    drawColorWheel()
   }, [value, selectedHarmony])
+
+  // Force re-render of indicator during drag for smooth movement
+  useEffect(() => {
+    if (isDragging) {
+      // This will trigger a re-render to update the indicator position
+      const forceUpdate = () => {}
+      forceUpdate()
+    }
+  }, [value, isDragging])
+
+  const drawColorWheel = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const centerX = canvas.width / 2
+    const centerY = canvas.height / 2
+    const radius = Math.min(centerX, centerY) - 10
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    // Draw color wheel
+    for (let angle = 0; angle < 360; angle += 1) {
+      const hue = angle
+      const saturation = 100
+      const lightness = 50
+
+      ctx.beginPath()
+      ctx.moveTo(centerX, centerY)
+      ctx.arc(centerX, centerY, radius, (angle - 1) * Math.PI / 180, angle * Math.PI / 180)
+      ctx.closePath()
+
+      const color = hslToHex(hue, saturation, lightness)
+      ctx.fillStyle = color
+      ctx.fill()
+    }
+
+    // Draw inner circle for saturation/brightness control
+    const innerRadius = radius * 0.3
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI)
+    
+    // Create gradient for inner circle
+    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, innerRadius)
+    gradient.addColorStop(0, '#ffffff')
+    gradient.addColorStop(0.7, '#f8f8f8')
+    gradient.addColorStop(1, '#e0e0e0')
+    
+    ctx.fillStyle = gradient
+    ctx.fill()
+    ctx.strokeStyle = '#d1d5db'
+    ctx.lineWidth = 2
+    ctx.stroke()
+  }
+
+  // Geometry helpers for stable pointer-based interactions
+  const getGeometry = () => {
+    if (!wheelRef.current) return null
+    const rect = wheelRef.current.getBoundingClientRect()
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const outerRadius = Math.min(centerX, centerY) - 10
+    const innerRadius = outerRadius * 0.3
+    const indicatorRadius = innerRadius + (outerRadius - innerRadius) * 0.65
+    return { rect, centerX, centerY, outerRadius, innerRadius, indicatorRadius }
+  }
+
+  const updateFromPointer = (clientX: number, clientY: number) => {
+    const g = getGeometry()
+    if (!g) return
+    const dx = clientX - g.rect.left - g.centerX
+    const dy = clientY - g.rect.top - g.centerY
+    const angle = Math.atan2(dy, dx)
+    const hue = (angle * 180) / Math.PI
+    const normalizedHue = (hue + 360) % 360
+    const newColor = hslToHex(normalizedHue, 100, 50)
+    // Clamp indicator to ring to avoid random jumps
+    setDragPosition({ x: g.indicatorRadius * Math.cos(angle), y: g.indicatorRadius * Math.sin(angle) })
+    onChange(newColor)
+  }
+
+  const handleWheelClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!wheelRef.current) return
+
+    const rect = wheelRef.current.getBoundingClientRect()
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const clickX = e.clientX - rect.left - centerX
+    const clickY = e.clientY - rect.top - centerY
+    
+    const distance = Math.sqrt(clickX * clickX + clickY * clickY)
+    const maxRadius = Math.min(centerX, centerY) - 10
+    
+    if (distance <= maxRadius && distance > maxRadius * 0.3) {
+      // Calculate hue from angle
+      const angle = (Math.atan2(clickY, clickX) * 180 / Math.PI + 360) % 360
+      const hue = angle
+      const saturation = 100
+      const lightness = 50
+      
+      const newColor = hslToHex(hue, saturation, lightness)
+      onChange(newColor)
+    }
+  }
+
+  const handleWheelDrag = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging) return
+    updateFromPointer(e.clientX, e.clientY)
+  }
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true)
+    updateFromPointer(e.clientX, e.clientY)
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+    setDragPosition(null)
+  }
+
+  const handleMouseLeave = () => {
+    setIsDragging(false)
+    setDragPosition(null)
+  }
 
   const generatePalette = (color: string, harmonyType: HarmonyType) => {
     try {
@@ -63,8 +194,8 @@ export default function ColorWheel({ value, onChange, onPaletteChange }: ColorWh
         colors.unshift(color)
       }
       
-      // Limit to 8 colors max
-      colors = colors.slice(0, 8)
+      // Limit to 4 colors max for tetrad
+      colors = colors.slice(0, 4)
       
       setPalette(colors)
       onPaletteChange(colors)
@@ -202,80 +333,261 @@ export default function ColorWheel({ value, onChange, onPaletteChange }: ColorWh
     }
   }
 
+  const exportPalette = () => {
+    const paletteData = {
+      name: 'Custom Palette',
+      colors: palette,
+      harmony: selectedHarmony,
+      baseColor: value,
+      exportDate: new Date().toISOString()
+    }
+
+    const dataStr = JSON.stringify(paletteData, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(dataBlob)
+    link.download = `color-palette-${Date.now()}.json`
+    link.click()
+  }
+
+  const exportCSSVariables = () => {
+    const cssContent = `/* Color Palette CSS Variables */
+:root {
+${palette.map((color, index) => `  --color-${index + 1}: ${color};`).join('\n')}
+}
+
+/* Usage examples */
+.color-primary { color: var(--color-1); }
+.color-secondary { color: var(--color-2); }
+.color-accent { color: var(--color-3); }
+.color-neutral { color: var(--color-4); }`
+
+    const dataBlob = new Blob([cssContent], { type: 'text/css' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(dataBlob)
+    link.download = `color-palette-${Date.now()}.css`
+    link.click()
+  }
+
+  const exportTailwindConfig = () => {
+    const tailwindContent = `// Tailwind CSS Color Configuration
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '${palette[0] || value}',
+        secondary: '${palette[1] || ''}',
+        accent: '${palette[2] || ''}',
+        neutral: '${palette[3] || ''}',
+      }
+    }
+  }
+}`
+
+    const dataBlob = new Blob([tailwindContent], { type: 'text/javascript' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(dataBlob)
+    link.download = `tailwind-colors-${Date.now()}.js`
+    link.click()
+  }
+
   return (
-    <div className="space-y-6">
-      {/* Color Picker */}
-      <div className="flex flex-col items-center space-y-4">
-        <HexColorPicker
-          color={value}
-          onChange={onChange}
-          className="w-48 h-48"
-        />
-        <div className="text-center">
-          <p className="text-sm text-gray-600 mb-2">Selected Color</p>
-          <div className="flex items-center space-x-2">
-            <div 
-              className="w-8 h-8 rounded border-2 border-gray-300"
-              style={{ backgroundColor: value }}
+    <div className="space-y-8">
+      {/* Pick a color section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Pick a color</h3>
+        
+        {/* Color Wheel */}
+        <div className="flex justify-center">
+          <div 
+            ref={wheelRef}
+            className="relative cursor-pointer select-none group"
+            onClick={handleWheelClick}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleWheelDrag}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+          >
+            <canvas
+              ref={canvasRef}
+              width={200}
+              height={200}
+              className="rounded-full border-2 border-gray-200 shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
             />
-            <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">
-              {value}
-            </code>
-            <button
-              onClick={() => copyToClipboard(value)}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              📋
-            </button>
+            
+            {/* Selected color indicator */}
+            {(() => {
+              const size = wheelRef.current?.clientWidth ?? 200
+              const center = size / 2
+              const outerRadius = center - 10
+              const innerRadius = outerRadius * 0.3
+              const indicatorRadius = innerRadius + (outerRadius - innerRadius) * 0.65
+              const hue = hexToHsl(value)[0]
+              const angle = (hue * Math.PI) / 180
+              const defaultX = indicatorRadius * Math.cos(angle)
+              const defaultY = indicatorRadius * Math.sin(angle)
+              const offsetX = isDragging && dragPosition ? dragPosition.x : defaultX
+              const offsetY = isDragging && dragPosition ? dragPosition.y : defaultY
+              return (
+                <div 
+                  className="absolute w-4 h-4 bg-white rounded-full border-2 border-gray-800 shadow-lg pointer-events-none transition-transform duration-75"
+                  style={{ left: '50%', top: '50%', transform: `translate(${offsetX}px, ${offsetY}px)` }}
+                />
+              )
+            })()}
+            
+            {/* Hover overlay */}
+            <div className="absolute inset-0 rounded-full bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
+          </div>
+        </div>
+
+        {/* Selected color display */}
+        <div className="flex justify-center items-center space-x-3">
+          <div 
+            className="w-8 h-8 rounded-full border-2 border-gray-200 shadow-sm"
+            style={{ backgroundColor: value }}
+          />
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="font-mono text-sm px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent"
+            placeholder="#000000"
+          />
+        </div>
+      </div>
+
+      {/* Choose a color combination section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Choose a color combination</h3>
+        
+        {/* Harmony selector */}
+        <div className="w-full max-w-xs space-y-2">
+          <select
+            value={selectedHarmony}
+            onChange={(e) => setSelectedHarmony(e.target.value as HarmonyType)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+          >
+            {harmonyTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => {
+              const base = value
+              const unique = new Set<string>()
+              const add = (arr: string[]) => arr.forEach(c => unique.add(c))
+              unique.add(base)
+              add(generateComplementary(base))
+              add(generateAnalogous(base))
+              add(generateSplit(base))
+              add(generateTriad(base))
+              add(generateTetrad(base))
+              add(generateMonochrome(base))
+              add(generateMonochromeTints(base))
+              const options = Array.from(unique)
+              const choice = options[Math.floor(Math.random() * options.length)]
+              onChange(choice)
+            }}
+            className="mt-2 px-3 py-1.5 text-sm bg-gray-800 text-white rounded-md hover:bg-gray-900"
+          >
+            Pick random color
+          </button>
+          
+          {/* Harmony description */}
+          <p className="text-sm text-gray-600 italic">
+            {harmonyTypes.find(t => t.value === selectedHarmony)?.description}
+          </p>
+        </div>
+
+        {/* Generated palette */}
+        <div className="space-y-4">
+          <div className="flex space-x-3">
+            {palette.map((color, index) => (
+              <div key={index} className="text-center">
+                <div 
+                  className="w-16 h-16 rounded-lg border-2 border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition-transform"
+                  style={{ backgroundColor: color }}
+                  onClick={() => copyToClipboard(color)}
+                  title={`Click to copy ${color}`}
+                />
+                <p className="text-xs font-mono text-gray-600 mt-2">{color}</p>
+              </div>
+            ))}
+          </div>
+          
+          {/* Color preview */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Preview</h4>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: palette[0] || value }} />
+                <span className="text-sm text-gray-600">Primary text</span>
+                <span className="text-sm font-medium" style={{ color: palette[0] || value }}>
+                  This is how your primary color looks
+                </span>
+              </div>
+              {palette[1] && (
+                <div className="flex items-center space-x-3">
+                  <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: palette[1] }} />
+                  <span className="text-sm text-gray-600">Secondary text</span>
+                  <span className="text-sm font-medium" style={{ color: palette[1] }}>
+                    Secondary color example
+                  </span>
+                </div>
+              )}
+              {palette[2] && (
+                <div className="flex items-center space-x-3">
+                  <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: palette[2] }} />
+                  <span className="text-sm text-gray-600">Accent text</span>
+                  <span className="text-sm font-medium" style={{ color: palette[2] }}>
+                    Accent color example
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Harmony Selector */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-gray-900">Color Harmony</h3>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {harmonyTypes.map((type) => (
-            <button
-              key={type.value}
-              onClick={() => setSelectedHarmony(type.value)}
-              className={`px-3 py-2 text-sm rounded-lg border transition-all ${
-                selectedHarmony === type.value
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-gray-300 hover:border-gray-400'
-              }`}
-            >
-              {type.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Generated Palette */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-gray-900">Generated Palette</h3>
-        <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
-          {palette.map((color, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative"
-            >
-              <div
-                className="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer hover:scale-110 transition-transform"
-                style={{ backgroundColor: color }}
-                onClick={() => copyToClipboard(color)}
-                title={`Click to copy ${color}`}
-              />
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <code className="text-xs font-mono bg-gray-900 text-white px-2 py-1 rounded whitespace-nowrap">
-                  {color}
-                </code>
-              </div>
-            </motion.div>
-          ))}
+      {/* Use this color combination section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Use this color combination</h3>
+        
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={exportPalette}
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium text-sm"
+          >
+            Export JSON
+          </button>
+          <button
+            onClick={exportCSSVariables}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+          >
+            Export CSS
+          </button>
+          <button
+            onClick={exportTailwindConfig}
+            className="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors font-medium text-sm"
+          >
+            Export Tailwind
+          </button>
+          <button
+            onClick={() => {
+              // Export currently selected color to brand input via onChange already handled; this button randomizes within current harmony
+              const options = palette.length ? palette : [value]
+              const choice = options[Math.floor(Math.random() * options.length)]
+              onChange(choice)
+            }}
+            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm"
+          >
+            Random from palette
+          </button>
         </div>
       </div>
     </div>

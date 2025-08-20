@@ -4,9 +4,18 @@ export const intakeSchema = z.object({
   business: z.object({
     name: z.string().min(1, 'Business name is required'),
     industry: z.string().min(1, 'Industry is required'),
-    address: z.string().min(1, 'Address is required'),
-    phone: z.string().min(1, 'Phone is required'),
-    domain: z.string().optional(),
+    address: z.object({
+      country: z.string().min(1, 'Country is required'),
+      state: z.string().optional(), // Only required for US
+                 streetAddress: z.string().min(1, 'Street address is required'),
+      city: z.string().min(1, 'City is required'),
+      zipCode: z.string().min(1, 'ZIP/Postal code is required'),
+    }),
+    phone: z.string()
+      .min(1, 'Phone number is required')
+      .min(10, 'Phone number must be at least 10 digits')
+      .regex(/^[\d\s\(\)\-\+\.\-]+$/, 'Please enter a valid phone number'),
+    domain: z.string().optional(), // Completely optional, no validation
     socials: z.object({
       facebook: z.string().optional(),
       instagram: z.string().optional(),
@@ -15,14 +24,14 @@ export const intakeSchema = z.object({
     }).optional(),
   }),
   goals: z.object({
-    conversions: z.array(z.enum(['calls', 'bookings', 'orders', 'lead_form'])).min(1, 'At least one conversion goal is required'),
-    pages: z.array(z.enum(['Home', 'About', 'Services', 'Contact', 'Blog', 'Menu', 'Products'])).min(1, 'At least one page type is required'),
+    conversions: z.array(z.enum(['calls', 'bookings', 'orders', 'lead_form', 'not_sure'])).min(1, 'Please select at least one conversion goal'),
+    pages: z.array(z.enum(['Home', 'About', 'Services', 'Contact', 'Blog', 'Menu', 'Products', 'not_sure'])).min(1, 'Please select at least one page type'),
   }),
-  referenceUrls: z.array(z.string().url('Must be a valid URL')).max(2, 'Maximum 2 reference URLs allowed').optional(),
+  referenceUrls: z.array(z.string().url('Please enter a valid URL')).max(2, 'Maximum 2 reference URLs allowed').optional(),
   color: z.object({
-    brand: z.string().regex(/^#[0-9A-F]{6}$/i, 'Must be a valid hex color'),
+    brand: z.string().regex(/^#[0-9A-F]{6}$/i, 'Please select a valid color'),
     mode: z.enum(['light', 'dark', 'auto']).default('auto'),
-    palette: z.array(z.string().regex(/^#[0-9A-F]{6}$/i, 'Must be a valid hex color')).min(1, 'At least one palette color is required'),
+    palette: z.array(z.string().regex(/^#[0-9A-F]{6}$/i, 'Please select valid colors')).min(1, 'Please select at least one color'),
   }),
   fonts: z.object({
     headings: z.enum([
@@ -40,13 +49,13 @@ export const intakeSchema = z.object({
       'playfair_display', 'merriweather', 'lora', 'roboto_slab', 'comic_neue'
     ]).default('modern'),
   }),
-  templates: z.array(z.enum(['Template A', 'Template B'])).min(1, 'At least one template must be selected').max(2, 'Maximum 2 templates allowed'),
+  templates: z.array(z.enum(['Style A', 'Style B'])).min(1, 'Please select at least one design style').max(2, 'Maximum 2 design styles allowed'),
   features: z.array(z.enum([
     'booking', 'menu_catalog', 'gift_cards', 'testimonials', 'gallery', 
-    'blog', 'faq', 'map', 'hours', 'contact_form', 'chat', 'analytics'
+    'blog', 'faq', 'map', 'hours', 'contact_form', 'chat', 'analytics', 'not_sure'
   ])).optional(),
   assets: z.object({
-    logoUrl: z.string().url('Must be a valid URL').optional(),
+    logoUrl: z.string().url('Please enter a valid URL').optional(),
   }).optional(),
   content: z.object({
     tagline: z.string().optional(),

@@ -18,7 +18,7 @@ A beautiful, performant marketing site for web design agencies with a sophistica
 - **Frontend**: Next.js 15 (App Router), React 18, TypeScript
 - **Styling**: Tailwind CSS with custom design tokens
 - **Forms**: React Hook Form with Zod validation
-- **Color System**: react-colorful + culori for color harmonies
+- **Color System**: Custom canvas-based color wheel with harmony generation
 - **Animations**: Framer Motion with reduced motion support
 - **Database**: Supabase (PostgreSQL)
 - **Deployment**: Vercel with CI/CD

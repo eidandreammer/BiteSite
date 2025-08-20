@@ -13,18 +13,18 @@ interface TemplatePickerProps {
 
 const templateOptions = [
   {
-    id: 'Template A',
-    name: 'Template A',
+    id: 'Style A',
+    name: 'Style A',
     description: 'Conversion-focused one-pager with clear CTAs and streamlined user flow',
     features: ['Hero with CTA', 'Services grid', 'Testimonials', 'Contact form'],
-    preview: 'https://foliofy.webflow.io/'
+    preview: 'https://example.com/style-a'
   },
   {
-    id: 'Template B',
-    name: 'Template B',
+    id: 'Style B',
+    name: 'Style B',
     description: 'Editorial multi-page layout with rich content sections and storytelling',
     features: ['Multi-page navigation', 'Blog integration', 'Gallery showcase', 'About page'],
-    preview: 'https://newport-template.webflow.io/'
+    preview: 'https://example.com/style-b'
   }
 ]
 
@@ -73,8 +73,8 @@ export default function TemplatePicker({
     <div className="space-y-8">
       {/* Template Selection */}
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-gray-900">Choose Your Template</h3>
-        <p className="text-gray-600">Select up to 2 templates that best fit your vision</p>
+        <h3 className="text-xl font-semibold text-gray-900">Choose Your Design Style</h3>
+        <p className="text-gray-600">Select up to 2 design styles that best fit your vision</p>
         
         <div className="grid gap-4 md:grid-cols-2">
           {templateOptions.map((template) => (
@@ -121,7 +121,7 @@ export default function TemplatePicker({
                   }}
                 >
                   <ExternalLink className="w-4 h-4 mr-1" />
-                  Preview Template
+                  Preview Style
                 </button>
               </div>
             </motion.div>
@@ -130,7 +130,7 @@ export default function TemplatePicker({
         
         {selectedTemplates.length === 0 && (
           <p className="text-sm text-gray-500 text-center py-4">
-            Please select at least one template
+            Please select at least one design style
           </p>
         )}
       </div>
@@ -138,7 +138,7 @@ export default function TemplatePicker({
       {/* Reference URLs */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-gray-900">Inspiration URLs (Optional)</h3>
-        <p className="text-gray-600">Add up to 2 Webflow template URLs for inspiration</p>
+        <p className="text-gray-600">Add up to 2 websites you like for inspiration</p>
         
         <div className="space-y-3">
           {referenceUrls.map((url, index) => (
@@ -174,7 +174,7 @@ export default function TemplatePicker({
                 type="url"
                 value={newUrl}
                 onChange={(e) => setNewUrl(e.target.value)}
-                placeholder="https://example.webflow.io/template"
+                placeholder="https://example.com"
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 onKeyPress={(e) => e.key === 'Enter' && addReferenceUrl()}
               />
@@ -248,34 +248,30 @@ export default function TemplatePicker({
               <div className="flex-1 bg-white">
                 {(() => {
                   try {
-                    const host = new URL(previewTemplate.preview).hostname
-                    const blocksIframe = /(^|\.)webflow\.io$|(^|\.)webflow\.com$/.test(host)
-                    if (!blocksIframe) {
-                      return (
-                        <iframe
-                          src={previewTemplate.preview}
-                          title={previewTemplate.name}
-                          className="w-full h-full border-0"
-                        />
-                      )
-                    }
-                  } catch {}
-
-                  const encodedUrl = encodeURIComponent(previewTemplate.preview)
-                  const screenshotUrl = `https://image.thum.io/get/fullpage/${encodedUrl}`
-                  return (
-                    <div className="w-full h-full overflow-auto bg-white">
-                      <div className="px-4 py-2 text-xs text-gray-500">
-                        Live embedding is blocked by the site. Showing a scrollable snapshot instead.
-                      </div>
-                      <img
-                        src={screenshotUrl}
-                        alt={`${previewTemplate.name} snapshot`}
-                        className="w-full h-auto"
-                        loading="lazy"
+                    return (
+                      <iframe
+                        src={previewTemplate.preview}
+                        title={previewTemplate.name}
+                        className="w-full h-full border-0"
                       />
-                    </div>
-                  )
+                    )
+                  } catch {
+                    const encodedUrl = encodeURIComponent(previewTemplate.preview)
+                    const screenshotUrl = `https://image.thum.io/get/fullpage/${encodedUrl}`
+                    return (
+                      <div className="w-full h-full overflow-auto bg-white">
+                        <div className="px-4 py-2 text-xs text-gray-500">
+                          Live embedding is blocked by the site. Showing a scrollable snapshot instead.
+                        </div>
+                        <img
+                          src={screenshotUrl}
+                          alt={`${previewTemplate.name} snapshot`}
+                          className="w-full h-auto"
+                          loading="lazy"
+                        />
+                      </div>
+                    )
+                  }
                 })()}
               </div>
             </motion.div>

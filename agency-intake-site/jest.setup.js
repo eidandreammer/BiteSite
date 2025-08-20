@@ -54,17 +54,21 @@ jest.mock('framer-motion', () => ({
   AnimatePresence: ({ children }) => children,
 }))
 
-// Mock react-colorful
-jest.mock('react-colorful', () => ({
-  HexColorPicker: ({ value, onChange }) => (
-    <input
-      type="color"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      data-testid="color-picker"
-    />
-  ),
-}))
+// Mock canvas for color wheel tests
+Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+  value: jest.fn(() => ({
+    clearRect: jest.fn(),
+    beginPath: jest.fn(),
+    moveTo: jest.fn(),
+    arc: jest.fn(),
+    closePath: jest.fn(),
+    fillStyle: '',
+    fill: jest.fn(),
+    strokeStyle: '',
+    lineWidth: 0,
+    stroke: jest.fn(),
+  })),
+})
 
 // Mock culori
 jest.mock('culori', () => ({
