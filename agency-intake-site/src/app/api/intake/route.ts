@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = 'edge'
 import { intakeSchema } from '@/lib/schema'
 import { submitIntake } from '@/lib/supabase'
 
