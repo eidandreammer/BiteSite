@@ -1,11 +1,6 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-
-const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx'), { 
-  ssr: false, 
-  loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> 
-})
+import Threads from '@/blocks/Backgrounds/Threads/Threads.jsx'
 
 interface ThreadsBackgroundProps {
   color?: [number, number, number]

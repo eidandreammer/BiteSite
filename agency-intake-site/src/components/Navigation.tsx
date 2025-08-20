@@ -1,110 +1,147 @@
-'use client'
+"use client"
 
+import CardNav from './CardNav/CardNav'
+import PillNav from './PillNav/PillNav'
+import Dock from './Dock/Dock'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 export default function Navigation() {
   const pathname = usePathname()
-  const [isOpen, setIsOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const [mode, setMode] = useState<'card' | 'pill' | 'dock'>('card')
 
   useEffect(() => {
-    if (isOpen) {
-      const original = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
-      return () => { document.body.style.overflow = original }
+    const m = searchParams.get('nav') as 'card' | 'pill' | 'dock' | null
+    if (m === 'pill' || m === 'dock' || m === 'card') {
+      setMode(m)
+      return
     }
-  }, [isOpen])
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('nav-mode') : null
+    if (saved === 'pill' || saved === 'dock' || saved === 'card') setMode(saved)
+  }, [searchParams])
 
-  const navItems = [
+  const paramMode = searchParams.get('nav') as 'card' | 'pill' | 'dock' | null
+  const effectiveMode: 'card' | 'pill' | 'dock' = paramMode === 'pill' || paramMode === 'dock' || paramMode === 'card' ? paramMode : mode
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') localStorage.setItem('nav-mode', mode)
+  }, [mode])
+
+  const items = useMemo(() => [
+    {
+      label: 'Explore',
+      bgColor: '#EEF2FF',
+      textColor: '#111827',
+      links: [
+        { label: 'Home', href: '/', ariaLabel: 'Go to Home' },
+        { label: 'About Us', href: '/about', ariaLabel: 'Learn about us' },
+      ],
+    },
+    {
+      label: 'Services',
+      bgColor: '#ECFEFF',
+      textColor: '#111827',
+      links: [
+        { label: 'Web Design', href: '/#features', ariaLabel: 'View features' },
+        { label: 'Pricing', href: '/#pricing', ariaLabel: 'View pricing' },
+      ],
+    },
+    {
+      label: 'Get Started',
+      bgColor: '#FEF9C3',
+      textColor: '#111827',
+      links: [
+        { label: 'Start a Project', href: '/start', ariaLabel: 'Start a project' },
+        { label: 'Contact', href: '/#contact', ariaLabel: 'Contact us' },
+      ],
+    },
+  ], [])
+
+  const flatNav = useMemo(() => [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About Us' },
-    // Reviews link removed
-  ]
+    { href: '/#features', label: 'Web Design' },
+    { href: '/#pricing', label: 'Pricing' },
+    { href: '/start', label: 'Start a Project' },
+    { href: '/#contact', label: 'Contact' },
+  ], [])
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 will-change-transform">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 relative z-50">
-          {/* Logo/Brand */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold text-sm">A</span>
-            </div>
-            <span className="font-bold text-xl text-gray-900">Agency</span>
-          </Link>
-
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                  pathname === item.href
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              type="button"
-              aria-label="Toggle menu"
-              aria-controls="mobile-menu"
-              aria-expanded={isOpen}
-              onClick={() => setIsOpen(v => !v)}
-              className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        <div
-          id="mobile-menu"
-          className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-        >
-          <div className="relative z-50 px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-md border border-gray-200 rounded-lg mt-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                  pathname === item.href
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-900 hover:text-blue-600 hover:bg-gray-50'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-      {isOpen && (
+    <div className="relative">
+      <div className="fixed right-3 bottom-3 z-[60] rounded-lg shadow-sm border border-gray-200 bg-white/80 backdrop-blur p-2 flex gap-1">
         <button
-          aria-hidden="true"
-          tabIndex={-1}
-          onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-40 bg-black/20 md:hidden"
+          type="button"
+          onClick={() => setMode('pill')}
+          className={`px-3 py-1 rounded-md text-sm ${mode === 'pill' ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'}`}
+          aria-pressed={mode === 'pill'}
+        >
+          Pill Nav
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('card')}
+          className={`px-3 py-1 rounded-md text-sm ${mode === 'card' ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'}`}
+          aria-pressed={mode === 'card'}
+        >
+          Card Nav
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('dock')}
+          className={`px-3 py-1 rounded-md text-sm ${mode === 'dock' ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'}`}
+          aria-pressed={mode === 'dock'}
+        >
+          Dock
+        </button>
+      </div>
+
+      {effectiveMode === 'card' && (
+        <CardNav
+          logo="/favicon.ico"
+          logoAlt="Agency"
+          items={items}
+          baseColor="#ffffff"
+          menuColor="#111827"
+          buttonBgColor="#111827"
+          buttonTextColor="#ffffff"
+          className="mx-auto"
         />
       )}
-    </nav>
+
+      {effectiveMode === 'pill' && (
+        <div className="sticky top-0 z-50" data-nav="pill">
+          <PillNav
+            logo="/favicon.ico"
+            logoAlt="Agency"
+            items={flatNav}
+            activeHref={pathname}
+            baseColor="#ffffff"
+            pillColor="#111827"
+            hoveredPillTextColor="#111827"
+            pillTextColor="#ffffff"
+            onMobileMenuClick={() => {}}
+          />
+        </div>
+      )}
+
+      {effectiveMode === 'dock' && (
+        <div className="sticky top-0 z-50" data-nav="dock">
+          <Dock
+            items={flatNav.map((item) => ({
+              label: item.label,
+              icon: <span className="w-6 h-6 rounded bg-gray-900 text-white flex items-center justify-center text-xs">{item.label[0]}</span>,
+              onClick: () => { window.location.href = item.href },
+            }))}
+          />
+        </div>
+      )}
+
+      <div className="hidden">
+        <Link href="/start">Start a Project</Link>
+      </div>
+    </div>
   )
 }
-
 

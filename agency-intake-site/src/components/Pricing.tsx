@@ -81,6 +81,14 @@ export default function Pricing() {
             Choose the plan that best fits your business needs and budget. 
             All plans include custom design, mobile optimization, and ongoing support.
           </p>
+          <div className="mt-6">
+            <a
+              href="/pricing"
+              className="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 text-gray-800 font-semibold rounded-lg hover:border-gray-400 transition-all duration-200"
+            >
+              Why is this valuable?
+            </a>
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">

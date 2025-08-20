@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
   // Use default output so API routes work
   basePath,
   assetPrefix: basePath ? `${basePath}/` : '',
-  trailingSlash: true,
   images: { unoptimized: true },
   eslint: { ignoreDuringBuilds: true },
 };

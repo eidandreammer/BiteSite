@@ -1,8 +1,6 @@
 import { Metadata } from 'next'
 import ThreadsBackground from '@/components/ThreadsBackground'
 import Image from 'next/image'
-import JensyPhoto from '../../../images/Jensy.JPG'
-import EthanPhoto from '../../../images/Ethan.jpeg'
 
 export const metadata: Metadata = {
   title: 'About Us - Professional Web Design Agency',
@@ -99,7 +97,7 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
                 <Image
-                  src={JensyPhoto}
+                  src="/vercel.svg"
                   alt="Portrait of Jensy Jimenez"
                   width={96}
                   height={96}
@@ -126,7 +124,7 @@ export default function AboutPage() {
 
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
                 <Image
-                  src={EthanPhoto}
+                  src="/next.svg"
                   alt="Portrait of Ethan Kurtz"
                   width={96}
                   height={96}

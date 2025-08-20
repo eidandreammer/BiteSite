@@ -2,15 +2,15 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import dynamic from 'next/dynamic'
+import { useState } from 'react'
 import Orb from '@/blocks/Backgrounds/Orb/Orb.jsx'
 import BackgroundSlider from './BackgroundSlider'
 
-const Aurora = dynamic(() => import('@/blocks/Backgrounds/Aurora/Aurora.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
-const Galaxy = dynamic(() => import('@/blocks/Backgrounds/Galaxy/Galaxy.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
-const LiquidChrome = dynamic(() => import('@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
-const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx'), { ssr: false, loading: () => <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 animate-pulse" /> })
+import Galaxy from '@/blocks/Backgrounds/Galaxy/Galaxy.jsx'
+import LiquidChrome from '@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'
+import Threads from '@/blocks/Backgrounds/Threads/Threads.jsx'
+import Prism from '@/Backgrounds/Prism/Prism.jsx'
+import DarkVeil from '@/Backgrounds/DarkVeil/DarkVeil.jsx'
 
 export default function Hero() {
   type BackgroundTextColors = {
@@ -97,23 +97,43 @@ export default function Hero() {
         accent: 'text-blue-600'
       }
     },
-    { 
-      key: 'aurora', 
-      label: 'Aurora', 
-      word: 'Beautiful', 
-      Component: Aurora, 
+    {
+      key: 'prism',
+      label: 'Prism',
+      word: 'Prismatic',
+      Component: Prism,
       props: {},
       textColors: {
         primary: 'text-white',
-        secondary: 'text-blue-100',
+        secondary: 'text-gray-100',
         accent: 'text-blue-200',
         slider: 'text-gray-800'
+      }
+    },
+    {
+      key: 'darkveil',
+      label: 'Dark Veil',
+      word: 'Elegant',
+      Component: DarkVeil,
+      props: {
+        hueShift: 0,
+        noiseIntensity: 0.1,
+        scanlineIntensity: 0.08,
+        speed: 0.6,
+        scanlineFrequency: 0.0,
+        warpAmount: 0.02,
+      },
+      textColors: {
+        primary: 'text-white',
+        secondary: 'text-gray-200',
+        accent: 'text-indigo-300',
+        slider: 'text-gray-300'
       }
     },
   ]
   const [bgIndex, setBgIndex] = useState(0)
   const SelectedBg = backgrounds[bgIndex].Component
-  const isWhitePricing = ['aurora', 'galaxy', 'liquid'].includes(backgrounds[bgIndex].key)
+  const isWhitePricing = ['galaxy', 'liquid', 'prism', 'darkveil'].includes(backgrounds[bgIndex].key)
 
   return (
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">

@@ -24,14 +24,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://yourdomain.com'),
+  metadataBase: new URL('https://bitesites.org'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://yourdomain.com',
+    url: 'https://bitesites.org',
     siteName: 'Professional Web Design Services',
     title: 'Professional Web Design Services - Transform Your Business',
     description: 'Get a custom website that converts visitors into customers. Professional web design services with modern, responsive designs.',
@@ -79,15 +79,6 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        
-        {/* Preload critical fonts */}
-        <link
-          rel="preload"
-          href="/fonts/inter-var.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         {/* Cloudflare Turnstile script loaded client-side only to avoid hydration mismatch */}
@@ -96,7 +87,7 @@ export default function RootLayout({
             if (typeof window !== 'undefined' && !document.querySelector('script[src*="turnstile/v0/api.js"]')) {
               (function(){
                 var s=document.createElement('script');
-                s.src='https://challenges.cloudflare.com/turnstile/v0/api.js';
+                s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
                 s.async=true; s.defer=true; document.head.appendChild(s);
               })();
             }

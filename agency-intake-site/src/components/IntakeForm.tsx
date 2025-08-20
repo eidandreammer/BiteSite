@@ -124,8 +124,8 @@ export default function IntakeForm() {
     const ts = typeof window !== 'undefined' ? (window as any).turnstile : null
     const container = turnstileContainerRef.current
     if (!container) return
-    // Render as a visible widget; we'll keep it hidden via CSS until needed
-    const size = 'normal'
+    // Use invisible by default so we can programmatically execute on submit
+    const size = (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible') ? 'normal' : 'invisible'
 
     const renderWhenReady = () => {
       // @ts-ignore

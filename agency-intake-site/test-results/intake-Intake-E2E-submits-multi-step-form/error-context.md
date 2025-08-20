@@ -1,13 +1,14 @@
 # Page snapshot
 
 ```yaml
+- button "Pill Nav"
+- button "Card Nav" [pressed]
+- button "Dock"
 - navigation:
-  - link "A Agency":
-    - /url: /
-  - link "Home":
-    - /url: /
-  - link "About Us":
-    - /url: /about/
+  - button "Open menu"
+  - img "Agency"
+  - link "Get Started":
+    - /url: /start/
 - main:
   - heading "Start a Project" [level=1]
   - paragraph: Tell us about your business, goals, and preferences. We’ll follow up with a clear plan and next steps.
@@ -16,7 +17,7 @@
   - paragraph: Basic business details
   - heading "Business Information" [level=2]
   - text: Business Name *
-  - textbox "Please enter your business name (at least 2 characters)"
+  - textbox "Please enter your business name (at least 2 characters)": Acme Co
   - paragraph: Enter your official business name
   - text: Industry *
   - combobox:
@@ -39,80 +40,26 @@
   - text: Country *
   - combobox:
     - option "Select a country"
-    - option "United States" [selected]
-    - option "Canada"
+    - option "United States"
+    - option "Canada" [selected]
     - option "United Kingdom"
     - option "Australia"
     - option "Germany"
     - option "France"
     - option "Japan"
     - option "Other"
-  - text: State *
-  - combobox:
-    - option "Select a state"
-    - option "Alabama"
-    - option "Alaska"
-    - option "Arizona"
-    - option "Arkansas"
-    - option "California" [selected]
-    - option "Colorado"
-    - option "Connecticut"
-    - option "Delaware"
-    - option "Florida"
-    - option "Georgia"
-    - option "Hawaii"
-    - option "Idaho"
-    - option "Illinois"
-    - option "Indiana"
-    - option "Iowa"
-    - option "Kansas"
-    - option "Kentucky"
-    - option "Louisiana"
-    - option "Maine"
-    - option "Maryland"
-    - option "Massachusetts"
-    - option "Michigan"
-    - option "Minnesota"
-    - option "Mississippi"
-    - option "Missouri"
-    - option "Montana"
-    - option "Nebraska"
-    - option "Nevada"
-    - option "New Hampshire"
-    - option "New Jersey"
-    - option "New Mexico"
-    - option "New York"
-    - option "North Carolina"
-    - option "North Dakota"
-    - option "Ohio"
-    - option "Oklahoma"
-    - option "Oregon"
-    - option "Pennsylvania"
-    - option "Rhode Island"
-    - option "South Carolina"
-    - option "South Dakota"
-    - option "Tennessee"
-    - option "Texas"
-    - option "Utah"
-    - option "Vermont"
-    - option "Virginia"
-    - option "Washington"
-    - option "West Virginia"
-    - option "Wisconsin"
-    - option "Wyoming"
   - text: Street Address *
   - textbox "Please enter your street address": 1 Main St
   - text: City *
-  - textbox "Please enter your city": San Francisco
+  - textbox "Please enter your city": Toronto
   - text: ZIP/Postal Code *
-  - textbox "Please enter your ZIP or postal code": "94105"
+  - textbox "Please enter your ZIP or postal code": M5H 2N2
   - text: Phone *
-  - textbox "Please enter a valid phone number with area code (e.g., 555-123-4567)"
+  - textbox "Please enter a valid phone number with area code (e.g., 555-123-4567)": "5551234567"
   - paragraph: "Include area code: (555) 123-4567 or 555-123-4567"
   - text: Domain (Optional)
   - textbox "Enter your website domain if you have one"
   - paragraph: Leave blank if you don't have a website yet
   - button "Previous" [disabled]
   - button "Next" [disabled]
-- alert
 ```
