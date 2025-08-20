@@ -10,6 +10,113 @@ export const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
 
+function normalizeUrlOrUndefined(input?: string): string | undefined {
+  if (!input) return undefined
+  try {
+    // If missing scheme, assume https
+    const withScheme = /^https?:\/\//i.test(input) ? input : `https://${input}`
+    const url = new URL(withScheme)
+    return url.toString()
+  } catch {
+    return undefined
+  }
+}
+
+function composeAddress(intake: IntakeFormData): string {
+  const addr = intake.business.address
+  const parts = [
+    addr?.streetAddress,
+    addr?.city,
+    addr?.state,
+    addr?.zipCode,
+    addr?.country
+  ].filter(Boolean)
+  return parts.join(', ')
+}
+
+export function buildIntakePayload(intake: IntakeFormData, turnstileToken: string): IntakePayload {
+  const goalMapping: Record<string, 'Calls' | 'Bookings' | 'Orders' | 'Lead Form'> = {
+    calls: 'Calls',
+    bookings: 'Bookings',
+    orders: 'Orders',
+    lead_form: 'Lead Form'
+  }
+
+  const featureMapping: Record<string, string> = {
+    booking: 'Booking',
+    menu_catalog: 'Menu Catalog',
+    gift_cards: 'Gift Cards',
+    testimonials: 'Testimonials',
+    gallery: 'Gallery',
+    blog: 'Blog',
+    faq: 'FAQ',
+    map: 'Map',
+    hours: 'Hours',
+    contact_form: 'Contact Form',
+    chat: 'Chat',
+    analytics: 'Analytics'
+  }
+
+  const selectedDomain = normalizeUrlOrUndefined(intake.business.domain)
+  const address = composeAddress(intake)
+
+  const mappedPages = (intake.goals.pages || []).filter((p) => p !== 'not_sure')
+  const pages = mappedPages.length ? (mappedPages as IntakePayload['pages']) : (['Home'] as IntakePayload['pages'])
+
+  // Normalize template labels to match backend variants
+  const normalizeTemplate = (t: string): 'Template A' | 'Template B' | 'Style A' | 'Style B' => {
+    if (t === 'Style A' || t === 'Template A') return (process.env.NEXT_PUBLIC_TEMPLATE_LABEL || 'Template') === 'Template' ? 'Template A' : 'Style A'
+    if (t === 'Style B' || t === 'Template B') return (process.env.NEXT_PUBLIC_TEMPLATE_LABEL || 'Template') === 'Template' ? 'Template B' : 'Style B'
+    return 'Template A'
+  }
+
+  return {
+    business_name: intake.business.name || 'Test Business',
+    industry: intake.business.industry || 'Technology',
+    address: address || '123 Test Street',
+    phone: intake.business.phone || '555-0123',
+    domain: selectedDomain,
+    goals: (intake.goals.conversions || [])
+      .map((g) => goalMapping[g])
+      .filter((g): g is NonNullable<typeof g> => Boolean(g)),
+    pages,
+    color: {
+      selected: intake.color.brand || '#000000',
+      mode:
+        intake.color.mode === 'auto'
+          ? 'Monochrome'
+          : intake.color.mode === 'light'
+          ? 'Complementary'
+          : 'Analogous',
+      palette: intake.color.palette || ['#000000']
+    },
+    typography: {
+      headings: intake.fonts.headings || 'inter',
+      body: intake.fonts.body || 'inter',
+      style: intake.fonts.headings || 'inter',
+      colorMode: intake.color.mode || 'auto'
+    },
+    templates: ((intake.templates?.length ? intake.templates : ['Style A']).map(normalizeTemplate)) as IntakePayload['templates'],
+    inspiration_urls: intake.referenceUrls || [],
+    features: (intake.features || [])
+      .map((f) => featureMapping[f])
+      .filter((f): f is NonNullable<typeof f> => Boolean(f)) as unknown as IntakePayload['features'],
+    timeline:
+      intake.admin?.timeline?.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) || '3-4 weeks',
+    plan: intake.admin?.plan
+      ? intake.admin.plan.charAt(0).toUpperCase() + intake.admin.plan.slice(1)
+      : 'Standard',
+    organization: {
+      name: intake.business.name || 'Test Business',
+      website: selectedDomain,
+      phone: intake.business.phone || '555-0123',
+      address,
+      domain: selectedDomain
+    },
+    turnstileToken
+  }
+}
+
 export async function submitIntake(intake: IntakeFormData, turnstileToken: string): Promise<{ success: boolean; id?: string; error?: string }> {
   if (!supabase) {
     return { 
@@ -19,62 +126,7 @@ export async function submitIntake(intake: IntakeFormData, turnstileToken: strin
   }
 
   try {
-    // Transform the old schema format to the new Edge Function format
-    const goalMapping: Record<string, "Calls" | "Bookings" | "Orders" | "Lead Form"> = {
-      'calls': 'Calls',
-      'bookings': 'Bookings', 
-      'orders': 'Orders',
-      'lead_form': 'Lead Form'
-    };
-
-    const featureMapping: Record<string, string> = {
-      'booking': 'Booking',
-      'menu_catalog': 'Menu Catalog',
-      'gift_cards': 'Gift Cards',
-      'testimonials': 'Testimonials',
-      'gallery': 'Gallery',
-      'blog': 'Blog',
-      'faq': 'FAQ',
-      'map': 'Map',
-      'hours': 'Hours',
-      'contact_form': 'Contact Form',
-      'chat': 'Chat',
-      'analytics': 'Analytics'
-    };
-
-    const edgeFunctionPayload: IntakePayload = {
-      business_name: intake.business.name || 'Test Business',
-      industry: intake.business.industry || 'Technology',
-      address: intake.business.address ? `${intake.business.address.streetAddress}, ${intake.business.address.city}, ${intake.business.address.state || ''} ${intake.business.address.zipCode}, ${intake.business.address.country}`.replace(/,\s*,/g, ',').replace(/^\s*,\s*/, '').replace(/\s*,\s*$/, '') : '123 Test Street',
-      phone: intake.business.phone || '555-0123',
-      domain: intake.business.domain || 'https://example.com',
-      goals: intake.goals.conversions.map(g => goalMapping[g]).filter(Boolean),
-      pages: intake.goals.pages,
-      color: {
-        selected: intake.color.brand || '#000000',
-        mode: intake.color.mode === 'auto' ? 'Monochrome' : intake.color.mode === 'light' ? 'Complementary' : 'Analogous',
-        palette: intake.color.palette || ['#000000']
-      },
-      typography: {
-        headings: intake.fonts.headings || 'inter',
-        body: intake.fonts.body || 'inter',
-        style: intake.fonts.headings || 'inter',
-        colorMode: intake.color.mode || 'auto'
-      },
-      templates: intake.templates as ("Style A" | "Style B")[] || ['Style A'],
-      inspiration_urls: intake.referenceUrls || [],
-      features: intake.features?.map(f => featureMapping[f]).filter(Boolean) as any || [],
-      timeline: intake.admin?.timeline?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || '3-4 weeks',
-      plan: intake.admin?.plan?.charAt(0).toUpperCase() + (intake.admin?.plan?.slice(1) || 'standard'),
-      organization: {
-        name: intake.business.name || 'Test Business',
-        website: intake.business.domain || 'https://example.com',
-        phone: intake.business.phone || '555-0123',
-        address: intake.business.address ? `${intake.business.address.streetAddress}, ${intake.business.address.city}, ${intake.business.address.state || ''} ${intake.business.address.zipCode}, ${intake.business.address.country}`.replace(/,\s*,/g, ',').replace(/^\s*,\s*/, '').replace(/\s*,\s*$/, '') : '123 Test Street',
-        domain: intake.business.domain || 'https://example.com'
-      },
-      turnstileToken
-    };
+    const edgeFunctionPayload: IntakePayload = buildIntakePayload(intake, turnstileToken)
     
     // Submit to Edge Function
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

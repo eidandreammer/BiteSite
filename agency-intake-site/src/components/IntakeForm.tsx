@@ -41,6 +41,7 @@ export default function IntakeForm() {
   const [showValidationWarning, setShowValidationWarning] = useState(false)
   const [customIndustry, setCustomIndustry] = useState('')
   const [customCountry, setCustomCountry] = useState('')
+  const [mounted, setMounted] = useState(false)
 
   const {
     control,
@@ -93,6 +94,10 @@ export default function IntakeForm() {
   })
 
   const watchedValues = watch()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Get fields to validate for current step
   const getCurrentStepFields = useCallback((): string[] => {
@@ -299,8 +304,16 @@ export default function IntakeForm() {
         return;
       }
 
-      // TODO: Replace with actual Turnstile token from captcha widget
-      const turnstileToken = 'placeholder-token'
+      // Obtain Turnstile token if widget present
+      let turnstileToken = 'placeholder-token'
+      try {
+        // @ts-ignore
+        if (typeof window !== 'undefined' && window.turnstile && window.turnstile.getResponse) {
+          // @ts-ignore
+          const existing = window.turnstile.getResponse()
+          if (existing) turnstileToken = existing
+        }
+      } catch {}
       const result = await submitIntake(data, turnstileToken)
       if (result.success) {
         setSubmissionResult({
@@ -1737,6 +1750,15 @@ export default function IntakeForm() {
           </div>
         </div>
       </form>
+      {/* Cloudflare Turnstile invisible widget (renders if site key provided) */}
+      {mounted && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+        <div
+          className="cf-turnstile"
+          data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+          data-size="invisible"
+          suppressHydrationWarning
+        />
+      )}
     </div>
   )
 }

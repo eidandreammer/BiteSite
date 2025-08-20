@@ -2,8 +2,27 @@ import { NextRequest, NextResponse } from 'next/server'
 import { intakeSchema } from '@/lib/schema'
 import { submitIntake } from '@/lib/supabase'
 
+// Simple in-memory rate limiting for API route
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX = 10
+const ipHits: Map<string, number[]> = new Map()
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const windowStart = now - RATE_LIMIT_WINDOW_MS
+  const hits = ipHits.get(ip) || []
+  const recent = hits.filter((t) => t > windowStart)
+  recent.push(now)
+  ipHits.set(ip, recent)
+  return recent.length > RATE_LIMIT_MAX
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'anon'
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ success: false, error: 'rate_limited' }, { status: 429 })
+    }
     const body = await request.json()
     
     // Extract turnstile token from request body

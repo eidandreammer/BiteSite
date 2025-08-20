@@ -67,6 +67,9 @@ Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
     strokeStyle: '',
     lineWidth: 0,
     stroke: jest.fn(),
+    createRadialGradient: jest.fn(() => ({
+      addColorStop: jest.fn(),
+    })),
   })),
 })
 
@@ -93,3 +96,20 @@ global.matchMedia = jest.fn().mockImplementation((query) => ({
   removeEventListener: jest.fn(),
   dispatchEvent: jest.fn(),
 }))
+
+// Polyfill fetch/Request/Response for next/server in tests
+try {
+  const undici = require('undici')
+  if (!global.fetch) {
+    global.fetch = undici.fetch
+  }
+  if (!global.Headers) {
+    global.Headers = undici.Headers
+  }
+  if (!global.Request) {
+    global.Request = undici.Request
+  }
+  if (!global.Response) {
+    global.Response = undici.Response
+  }
+} catch {}

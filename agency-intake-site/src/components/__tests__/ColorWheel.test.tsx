@@ -18,7 +18,7 @@ describe('ColorWheel', () => {
       />
     )
 
-    expect(screen.getByTestId('color-picker')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('#000000')).toBeInTheDocument()
   })
 
   it('displays the selected color value', () => {
@@ -30,8 +30,7 @@ describe('ColorWheel', () => {
       />
     )
 
-    const colorPicker = screen.getByTestId('color-picker') as HTMLInputElement
-    expect(colorPicker.value).toBe('#3B82F6')
+    expect(screen.getByDisplayValue('#3B82F6')).toBeInTheDocument()
   })
 
   it('calls onChange when color is changed', () => {
@@ -43,7 +42,7 @@ describe('ColorWheel', () => {
       />
     )
 
-    const colorPicker = screen.getByTestId('color-picker')
+    const colorPicker = screen.getByPlaceholderText('#000000')
     fireEvent.change(colorPicker, { target: { value: '#EF4444' } })
 
     expect(mockOnChange).toHaveBeenCalledWith('#EF4444')
@@ -72,6 +71,6 @@ describe('ColorWheel', () => {
       />
     )
 
-    expect(screen.getByText('Generated Palette')).toBeInTheDocument()
+    expect(screen.getByText('#3B82F6')).toBeInTheDocument()
   })
 })
