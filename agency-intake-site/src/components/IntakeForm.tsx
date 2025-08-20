@@ -45,6 +45,7 @@ export default function IntakeForm() {
   const [canSubmit, setCanSubmit] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string>('')
   const [turnstileId, setTurnstileId] = useState<string | null>(null)
+  const [captchaVisible, setCaptchaVisible] = useState(false)
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null)
   const tokenRef = useRef<string>('')
   const tokenWaitersRef = useRef<Array<(t: string) => void>>([])
@@ -123,7 +124,8 @@ export default function IntakeForm() {
     const ts = typeof window !== 'undefined' ? (window as any).turnstile : null
     const container = turnstileContainerRef.current
     if (!container) return
-    const size = (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible') ? 'normal' : 'invisible'
+    // Render as a visible widget; we'll keep it hidden via CSS until needed
+    const size = 'normal'
 
     const renderWhenReady = () => {
       // @ts-ignore
@@ -393,12 +395,25 @@ export default function IntakeForm() {
           message: `Thank you! Your project has been submitted successfully. Project ID: ${result.id}`
         })
       }
-      const token = await ensureTurnstileToken()
+      let token = tokenRef.current
+      if (!token) {
+        // Show captcha and wait for user to complete it
+        setCaptchaVisible(true)
+        token = await new Promise<string>((resolve) => {
+          const timeout = setTimeout(() => resolve(''), 120000)
+          tokenWaitersRef.current.push((t) => { clearTimeout(timeout); resolve(t) })
+        })
+      }
       if (!token && process.env.NODE_ENV !== 'production') {
         // Dev fallback: allow submission without captcha
         const result = await submitIntake(data, 'placeholder-token')
         if (result.success) handleResult(result)
         else setSubmissionResult({ success: false, message: `Submission failed: ${result.error}` })
+        return
+      }
+      if (!token) {
+        setSubmissionResult({ success: false, message: 'Please complete the captcha to continue.' })
+        setIsSubmitting(false)
         return
       }
       const result = await submitIntake(data, token)
@@ -1839,7 +1854,7 @@ export default function IntakeForm() {
         <div
           ref={turnstileContainerRef}
           suppressHydrationWarning
-          style={{ width: process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible' ? '100%' : 0, height: process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible' ? 'auto' : 0, overflow: 'hidden' }}
+          style={{ width: (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible' || captchaVisible) ? '100%' : 0, height: (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible' || captchaVisible) ? 'auto' : 0, overflow: 'hidden' }}
         />
       )}
     </div>
