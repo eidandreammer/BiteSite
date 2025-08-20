@@ -6,7 +6,6 @@ import { Palette, Smartphone, Zap, Target, Users, Shield } from 'lucide-react'
 import MagicBento from '@/components/MagicBento/MagicBento.jsx'
 import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack/ScrollStack.jsx'
 import ChromaGrid from '@/components/ChromaGrid/ChromaGrid.jsx'
-import InfiniteScroll from '@/components/InfiniteScroll/InfiniteScroll.jsx'
 import InfiniteMenu from '@/components/InfiniteMenu/InfiniteMenu.jsx'
 import Stack from '@/components/Stack/Stack.jsx'
 
@@ -52,14 +51,14 @@ const features = [
 type StackCard = { id: number; img: string }
 
 export default function Features() {
-  const [layout, setLayout] = useState<'grid' | 'magic-bento' | 'scroll-stack' | 'stack' | 'chroma-grid' | 'infinite-scroll' | 'infinite-menu'>('grid')
+  const [layout, setLayout] = useState<'grid' | 'magic-bento' | 'scroll-stack' | 'stack' | 'chroma-grid' | 'infinite-menu'>('grid')
 
   const palette = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4']
 
   const bentoItems = useMemo(
     () =>
       features.map((f, i) => ({
-        color: '#060010',
+        color: '#ffffff',
         title: f.title,
         description: f.description,
         label: 'Feature'
@@ -98,21 +97,7 @@ export default function Features() {
     []
   )
 
-  const infiniteScrollItems = useMemo(
-    () =>
-      features.map((f, i) => ({
-        content: (
-          <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-200">
-            <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center mb-3">
-              <f.icon className={`w-5 h-5 ${f.color}`} />
-            </div>
-            <div className="font-semibold text-gray-900">{f.title}</div>
-            <div className="text-gray-600 text-sm mt-1">{f.description}</div>
-          </div>
-        )
-      })),
-    []
-  )
+  // removed infinite-scroll variant
 
   return (
     <section className="py-20 bg-white">
@@ -146,7 +131,6 @@ export default function Features() {
             <option value="scroll-stack">Scroll Stack</option>
             <option value="stack">Stack</option>
             <option value="chroma-grid">Chroma Grid</option>
-            <option value="infinite-scroll">Infinite Scroll</option>
             <option value="infinite-menu">Infinite Menu</option>
           </select>
         </div>
@@ -178,7 +162,19 @@ export default function Features() {
 
         {layout === 'magic-bento' && (
           <div className="mt-6">
-            <MagicBento items={bentoItems} enableTilt enableSpotlight enableStars enableMagnetism />
+            {/* Render like grid but with MagicBento spotlight/highlight only */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <MagicBento
+                items={bentoItems}
+                enableStars={false}
+                enableTilt={false}
+                enableMagnetism={false}
+                enableSpotlight
+                enableBorderGlow
+                textAutoHide={false}
+                spotlightRadius={360}
+              />
+            </div>
           </div>
         )}
 
@@ -202,7 +198,24 @@ export default function Features() {
 
         {layout === 'stack' && (
           <div className="mt-6 flex justify-center">
-            <Stack cardsData={stackCards} sendToBackOnClick randomRotation />
+            <Stack
+              cardsData={features.map((_, i) => ({ id: i + 1 }))}
+              cardDimensions={{ width: 360, height: 420 }}
+              sendToBackOnClick
+              renderCardContent={(card) => {
+                const f = features[(card.id - 1) % features.length]
+                return (
+                  <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-200 w-full h-full flex flex-col">
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                      <f.icon className={`w-6 h-6 ${f.color}`} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{f.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{f.description}</p>
+                    <div className="mt-auto" />
+                  </div>
+                )
+              }}
+            />
           </div>
         )}
 
@@ -212,11 +225,7 @@ export default function Features() {
           </div>
         )}
 
-        {layout === 'infinite-scroll' && (
-          <div className="mt-6 flex justify-center">
-            <InfiniteScroll items={infiniteScrollItems} width="100%" maxHeight="28rem" />
-          </div>
-        )}
+        {/* infinite-scroll removed */}
 
         {layout === 'infinite-menu' && (
           <div className="mt-6" style={{ minHeight: 400 }}>

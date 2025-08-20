@@ -56,10 +56,11 @@ function CardRotate({ children, onSendToBack, sensitivity }) {
 export default function Stack({
   randomRotation = false,
   sensitivity = 200,
-  cardDimensions = { width: 208, height: 208 },
+  cardDimensions = { width: 360, height: 420 },
   /** @type {StackCard[]} */ cardsData = [],
   animationConfig = { stiffness: 260, damping: 20 },
   sendToBackOnClick = false,
+  renderCardContent,
 }) {
   const [cards, setCards] = useState(
     cardsData.length
@@ -131,11 +132,15 @@ export default function Stack({
                 height: cardDimensions.height,
               }}
             >
-              <img
-                src={card.img}
-                alt={`card-${card.id}`}
-                className="card-image"
-              />
+              {renderCardContent ? (
+                renderCardContent(card)
+              ) : (
+                <img
+                  src={card.img}
+                  alt={`card-${card.id}`}
+                  className="card-image"
+                />
+              )}
             </motion.div>
           </CardRotate>
         );

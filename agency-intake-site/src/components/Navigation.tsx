@@ -2,7 +2,6 @@
 
 import CardNav from './CardNav/CardNav'
 import PillNav from './PillNav/PillNav'
-import Dock from './Dock/Dock'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -10,20 +9,20 @@ import { usePathname, useSearchParams } from 'next/navigation'
 export default function Navigation() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [mode, setMode] = useState<'card' | 'pill' | 'dock'>('card')
+  const [mode, setMode] = useState<'card' | 'pill'>('card')
 
   useEffect(() => {
-    const m = searchParams.get('nav') as 'card' | 'pill' | 'dock' | null
-    if (m === 'pill' || m === 'dock' || m === 'card') {
+    const m = searchParams.get('nav') as 'card' | 'pill' | null
+    if (m === 'pill' || m === 'card') {
       setMode(m)
       return
     }
     const saved = typeof window !== 'undefined' ? localStorage.getItem('nav-mode') : null
-    if (saved === 'pill' || saved === 'dock' || saved === 'card') setMode(saved)
+    if (saved === 'pill' || saved === 'card') setMode(saved)
   }, [searchParams])
 
-  const paramMode = searchParams.get('nav') as 'card' | 'pill' | 'dock' | null
-  const effectiveMode: 'card' | 'pill' | 'dock' = paramMode === 'pill' || paramMode === 'dock' || paramMode === 'card' ? paramMode : mode
+  const paramMode = searchParams.get('nav') as 'card' | 'pill' | null
+  const effectiveMode: 'card' | 'pill' = paramMode === 'pill' || paramMode === 'card' ? paramMode : mode
 
   useEffect(() => {
     if (typeof window !== 'undefined') localStorage.setItem('nav-mode', mode)
@@ -87,14 +86,6 @@ export default function Navigation() {
         >
           Card Nav
         </button>
-        <button
-          type="button"
-          onClick={() => setMode('dock')}
-          className={`px-3 py-1 rounded-md text-sm ${mode === 'dock' ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'}`}
-          aria-pressed={mode === 'dock'}
-        >
-          Dock
-        </button>
       </div>
 
       {effectiveMode === 'card' && (
@@ -126,17 +117,7 @@ export default function Navigation() {
         </div>
       )}
 
-      {effectiveMode === 'dock' && (
-        <div className="sticky top-0 z-50" data-nav="dock">
-          <Dock
-            items={flatNav.map((item) => ({
-              label: item.label,
-              icon: <span className="w-6 h-6 rounded bg-gray-900 text-white flex items-center justify-center text-xs">{item.label[0]}</span>,
-              onClick: () => { window.location.href = item.href },
-            }))}
-          />
-        </div>
-      )}
+      {/* Dock removed */}
 
       <div className="hidden">
         <Link href="/start">Start a Project</Link>

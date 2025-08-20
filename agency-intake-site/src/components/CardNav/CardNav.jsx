@@ -6,6 +6,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
+import "./CardNav.css";
 // use your own icon import if react-icons is not available
 import { GoArrowUpRight } from "react-icons/go";
 

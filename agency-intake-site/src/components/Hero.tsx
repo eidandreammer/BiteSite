@@ -102,7 +102,17 @@ export default function Hero() {
       label: 'Prism',
       word: 'Prismatic',
       Component: Prism,
-      props: {},
+      props: {
+        animationType: 'rotate',
+        timeScale: 0.4,
+        scale: 3.9,
+        height: 3.5,
+        baseWidth: 5.5,
+        noise: 0,
+        glow: 1,
+        hueShift: 0,
+        colorFrequency: 1,
+      },
       textColors: {
         primary: 'text-white',
         secondary: 'text-gray-100',

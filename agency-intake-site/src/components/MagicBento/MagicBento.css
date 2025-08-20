@@ -9,8 +9,8 @@
   --purple-primary: rgba(132, 0, 255, 1);
   --purple-glow: rgba(132, 0, 255, 0.2);
   --purple-border: rgba(132, 0, 255, 0.8);
-  --border-color: #392e4e;
-  --background-dark: #060010;
+  --border-color: #e5e7eb; /* gray-200 */
+  --background-dark: #ffffff; /* switch to light to match default grid */
   color-scheme: light dark;
 }
 
@@ -27,11 +27,11 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  aspect-ratio: 4/3;
-  min-height: 200px;
+  aspect-ratio: auto;
+  min-height: auto;
   width: 100%;
   max-width: 100%;
-  padding: 1.25em;
+  padding: 1.25em; /* keep spacing similar to grid */
   border-radius: 20px;
   border: 1px solid var(--border-color);
   background: var(--background-dark);
@@ -54,7 +54,7 @@
 .card__content {
   display: flex;
   position: relative;
-  color: var(--white);
+  color: #111827; /* gray-900 */
 }
 
 .card__header {
@@ -77,15 +77,15 @@
 }
 
 .card__title {
-  font-weight: 400;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 18px;
   margin: 0 0 0.25em;
 }
 
 .card__description {
-  font-size: 12px;
-  line-height: 1.2;
-  opacity: 0.9;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563; /* gray-600 */
 }
 
 .card--text-autohide .card__title,
@@ -130,21 +130,7 @@
   .card-grid {
     grid-template-columns: repeat(4, 1fr);
   }
-
-  .card:nth-child(3) {
-    grid-column: span 2;
-    grid-row: span 2;
-  }
-
-  .card:nth-child(4) {
-    grid-column: 1 / span 2;
-    grid-row: 2 / span 2;
-  }
-
-  .card:nth-child(6) {
-    grid-column: 4;
-    grid-row: 3;
-  }
+  /* remove mosaic spans to match regular grid */
 }
 
 /* Border glow effect */

@@ -9,7 +9,7 @@ import "./ChromaGrid.css";
 export const ChromaGrid = ({
   items,
   className = "",
-  radius = 300,
+  radius = 380,
   columns = 3,
   rows = 2,
   damping = 0.45,
