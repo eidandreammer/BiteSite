@@ -28,6 +28,9 @@ export default function ColorWheel({ value, onChange, onPaletteChange }: ColorWh
   const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wheelRef = useRef<HTMLDivElement>(null)
+  const [saturationPercent, setSaturationPercent] = useState<number>(100)
+  const [lightnessPercent, setLightnessPercent] = useState<number>(50)
+  const [snapEnabled, setSnapEnabled] = useState<boolean>(true)
 
   useEffect(() => {
     generatePalette(value, selectedHarmony)
@@ -108,11 +111,15 @@ export default function ColorWheel({ value, onChange, onPaletteChange }: ColorWh
     if (!g) return
     const dx = clientX - g.rect.left - g.centerX
     const dy = clientY - g.rect.top - g.centerY
-    const angle = Math.atan2(dy, dx)
-    const hue = (angle * 180) / Math.PI
-    const normalizedHue = (hue + 360) % 360
-    const newColor = hslToHex(normalizedHue, 100, 50)
-    // Clamp indicator to ring to avoid random jumps
+    let angle = Math.atan2(dy, dx)
+    let hue = (angle * 180) / Math.PI
+    let normalizedHue = (hue + 360) % 360
+    if (snapEnabled) {
+      const step = 15
+      normalizedHue = Math.round(normalizedHue / step) * step
+      angle = (normalizedHue * Math.PI) / 180
+    }
+    const newColor = hslToHex(normalizedHue, saturationPercent, lightnessPercent)
     setDragPosition({ x: g.indicatorRadius * Math.cos(angle), y: g.indicatorRadius * Math.sin(angle) })
     onChange(newColor)
   }
@@ -392,6 +399,25 @@ module.exports = {
     link.click()
   }
 
+  const getHarmonyOffsets = (type: HarmonyType): number[] => {
+    switch (type) {
+      case 'complementary':
+        return [0, 180]
+      case 'analogous':
+        return [0, 30, 330]
+      case 'split':
+        return [0, 150, 210]
+      case 'triad':
+        return [0, 120, 240]
+      case 'tetrad':
+        return [0, 90, 180, 270]
+      case 'mono':
+      case 'mono-tints':
+      default:
+        return [0]
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* Pick a color section */}
@@ -423,17 +449,38 @@ module.exports = {
               const outerRadius = center - 10
               const innerRadius = outerRadius * 0.3
               const indicatorRadius = innerRadius + (outerRadius - innerRadius) * 0.65
-              const hue = hexToHsl(value)[0]
-              const angle = (hue * Math.PI) / 180
-              const defaultX = indicatorRadius * Math.cos(angle)
-              const defaultY = indicatorRadius * Math.sin(angle)
-              const offsetX = isDragging && dragPosition ? dragPosition.x : defaultX
-              const offsetY = isDragging && dragPosition ? dragPosition.y : defaultY
+              const [baseHue] = hexToHsl(value)
+              const offsets = getHarmonyOffsets(selectedHarmony)
               return (
-                <div 
-                  className="absolute w-4 h-4 bg-white rounded-full border-2 border-gray-800 shadow-lg pointer-events-none transition-transform duration-75"
-                  style={{ left: '50%', top: '50%', transform: `translate(${offsetX}px, ${offsetY}px)` }}
-                />
+                <>
+                  {offsets.map((off, idx) => {
+                    const hue = (baseHue + off) % 360
+                    const angle = (hue * Math.PI) / 180
+                    const x = indicatorRadius * Math.cos(angle)
+                    const y = indicatorRadius * Math.sin(angle)
+                    const color = hslToHex(hue, 100, 50)
+                    const isBase = idx === 0
+                    return (
+                      <div
+                        key={idx}
+                        onMouseDown={(e) => {
+                          // Start drag from this handle
+                          setIsDragging(true)
+                          updateFromPointer(e.clientX, e.clientY)
+                          e.stopPropagation()
+                        }}
+                        className={`absolute rounded-full border-2 shadow-lg pointer-events-auto ${isBase ? 'w-4 h-4 border-gray-800 bg-white' : 'w-3 h-3 border-white'}`}
+                        style={{
+                          left: '50%',
+                          top: '50%',
+                          transform: `translate(${x}px, ${y}px)`,
+                          backgroundColor: isBase ? undefined : color,
+                        }}
+                        title={color}
+                      />
+                    )
+                  })}
+                </>
               )
             })()}
             
@@ -456,6 +503,42 @@ module.exports = {
             placeholder="#000000"
           />
         </div>
+        
+        {/* Saturation & Lightness controls */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm text-gray-700">Saturation: {saturationPercent}%</label>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={saturationPercent}
+              onChange={(e) => {
+                const s = Number(e.target.value)
+                setSaturationPercent(s)
+                const [h] = hexToHsl(value)
+                onChange(hslToHex(h, s, lightnessPercent))
+              }}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-gray-700">Lightness: {lightnessPercent}%</label>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={lightnessPercent}
+              onChange={(e) => {
+                const l = Number(e.target.value)
+                setLightnessPercent(l)
+                const [h] = hexToHsl(value)
+                onChange(hslToHex(h, saturationPercent, l))
+              }}
+              className="w-full"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Choose a color combination section */}
@@ -475,28 +558,42 @@ module.exports = {
               </option>
             ))}
           </select>
-          <button
-            type="button"
-            onClick={() => {
-              const base = value
-              const unique = new Set<string>()
-              const add = (arr: string[]) => arr.forEach(c => unique.add(c))
-              unique.add(base)
-              add(generateComplementary(base))
-              add(generateAnalogous(base))
-              add(generateSplit(base))
-              add(generateTriad(base))
-              add(generateTetrad(base))
-              add(generateMonochrome(base))
-              add(generateMonochromeTints(base))
-              const options = Array.from(unique)
-              const choice = options[Math.floor(Math.random() * options.length)]
-              onChange(choice)
-            }}
-            className="mt-2 px-3 py-1.5 text-sm bg-gray-800 text-white rounded-md hover:bg-gray-900"
-          >
-            Pick random color
-          </button>
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={snapEnabled}
+                onChange={(e) => setSnapEnabled(e.target.checked)}
+              />
+              Snap 15°
+            </label>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const [h] = hexToHsl(value)
+                  const step = 15
+                  const nh = (h - step + 360) % 360
+                  onChange(hslToHex(nh, saturationPercent, lightnessPercent))
+                }}
+                className="px-2 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"
+              >
+                ⟲ Rotate
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const [h] = hexToHsl(value)
+                  const step = 15
+                  const nh = (h + step) % 360
+                  onChange(hslToHex(nh, saturationPercent, lightnessPercent))
+                }}
+                className="px-2 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"
+              >
+                Rotate ⟳
+              </button>
+            </div>
+          </div>
           
           {/* Harmony description */}
           <p className="text-sm text-gray-600 italic">

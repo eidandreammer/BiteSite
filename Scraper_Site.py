@@ -74,6 +74,10 @@ class SiteScraper:
             "colors": set(),
             "buttons": [],
             "links": [],
+            "css_variables": {},
+            "canvases": [],
+            "interactive_controls": [],
+            "components": [],
         }
 
     async def run(self):
@@ -171,6 +175,9 @@ class SiteScraper:
                 const colors = new Set();
                 const links = [];
                 const buttons = [];
+                const canvases = [];
+                const controls = [];
+                const components = [];
                 const push = (s) => {
                   const f = s.fontFamily || s.font || "";
                   if (f) fonts.add(f);
@@ -189,9 +196,22 @@ class SiteScraper:
                       buttons.push({text: el.textContent.trim(), w: rect.width, h: rect.height});
                     }
                   }
+                  if (el.tagName === "CANVAS") {
+                    const rect = el.getBoundingClientRect();
+                    canvases.push({w: Math.round(rect.width), h: Math.round(rect.height)});
+                  }
+                  if (el.matches('input, select, textarea') || el.getAttribute('role') === 'slider') {
+                    const type = el.getAttribute('type') || el.tagName.toLowerCase();
+                    const rect = el.getBoundingClientRect();
+                    controls.push({type, w: Math.round(rect.width), h: Math.round(rect.height)});
+                  }
                   push(s);
                 });
-                return {fonts: Array.from(fonts).slice(0,200), colors: Array.from(colors).slice(0,200), links, buttons};
+                const textBody = document.body.innerText.toLowerCase();
+                if (document.querySelector('canvas') && /color wheel|harmony|analogous|triad|tetrad/.test(textBody)) {
+                  components.push({ kind: 'color_wheel', confidence: 0.7 });
+                }
+                return {fonts: Array.from(fonts).slice(0,200), colors: Array.from(colors).slice(0,200), links, buttons, canvases, controls, components};
               };
               return gather();
             }
@@ -202,6 +222,41 @@ class SiteScraper:
             for c in ui.get("colors", []):
                 self.ui_inventory["colors"].add(c)
             self.ui_inventory["buttons"].extend(ui.get("buttons", [])[:100])
+            self.ui_inventory["canvases"].extend(ui.get("canvases", []))
+            self.ui_inventory["interactive_controls"].extend(ui.get("controls", []))
+            self.ui_inventory["components"].extend(ui.get("components", []))
+        except Exception:
+            pass
+
+        # CSS variables (best-effort)
+        try:
+            css_vars = await page.evaluate("""
+            () => {
+              const vars = {};
+              const collectVars = (style) => {
+                if (!style) return;
+                for (let i = 0; i < style.length; i++) {
+                  const prop = style[i];
+                  if (prop.startsWith('--')) {
+                    vars[prop] = style.getPropertyValue(prop).trim();
+                  }
+                }
+              };
+              collectVars(document.documentElement.style);
+              for (const sheet of Array.from(document.styleSheets)) {
+                try {
+                  const rules = sheet.cssRules || [];
+                  for (const rule of Array.from(rules)) {
+                    if (rule.style) collectVars(rule.style);
+                  }
+                } catch (e) {}
+              }
+              return vars;
+            }
+            """)
+            for k, v in (css_vars or {}).items():
+                if isinstance(v, str) and v:
+                    self.ui_inventory["css_variables"][k] = v
         except Exception:
             pass
 
