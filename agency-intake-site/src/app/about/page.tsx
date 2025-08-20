@@ -1,5 +1,8 @@
 import { Metadata } from 'next'
 import ThreadsBackground from '@/components/ThreadsBackground'
+import Image from 'next/image'
+import JensyPhoto from '../../../images/Jensy.JPG'
+import EthanPhoto from '../../../images/Ethan.jpeg'
 
 export const metadata: Metadata = {
   title: 'About Us - Professional Web Design Agency',
@@ -95,12 +98,26 @@ export default function AboutPage() {
 
             <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">JJ</span>
-                </div>
+                <Image
+                  src={JensyPhoto}
+                  alt="Portrait of Jensy Jimenez"
+                  width={96}
+                  height={96}
+                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   <a href="https://www.linkedin.com/in/jensy-jimenez/" target="_blank" rel="noopener noreferrer" className="hover:underline">Jensy Jimenez</a>
                 </h3>
+                <div className="mb-3">
+                  <a
+                    href="https://www.linkedin.com/in/jensy-jimenez/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+                  >
+                    LinkedIn
+                  </a>
+                </div>
                 <p className="text-blue-600 mb-3">Creative Director</p>
                 <p className="text-gray-600 text-sm">
                   With over 10 years of experience in web design, Jensy leads our creative vision and ensures every project exceeds expectations.
@@ -108,12 +125,26 @@ export default function AboutPage() {
               </div>
 
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <div className="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">EK</span>
-                </div>
+                <Image
+                  src={EthanPhoto}
+                  alt="Portrait of Ethan Kurtz"
+                  width={96}
+                  height={96}
+                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   <a href="https://www.linkedin.com/in/ethan-kurtz/" target="_blank" rel="noopener noreferrer" className="hover:underline">Ethan Kurtz</a>
                 </h3>
+                <div className="mb-3">
+                  <a
+                    href="https://www.linkedin.com/in/ethan-kurtz/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+                  >
+                    LinkedIn
+                  </a>
+                </div>
                 <p className="text-blue-600 mb-3">Lead Developer</p>
                 <p className="text-gray-600 text-sm">
                   Ethan brings technical expertise and innovative solutions to every project, ensuring flawless functionality and performance.

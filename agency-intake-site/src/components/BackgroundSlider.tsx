@@ -30,11 +30,13 @@ export default function BackgroundSlider({
   const opacity = useTransform(scale, [1, 1.1], [0.8, 1])
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (isDragging && sliderRef.current) {
-      const { left, width } = sliderRef.current.getBoundingClientRect()
-      const percentage = Math.max(0, Math.min(1, (e.clientX - left) / width))
-      const newValue = Math.round(percentage * max)
-      onChange(newValue)
+    if (!sliderRef.current) return
+    const { left, width } = sliderRef.current.getBoundingClientRect()
+    const percentage = Math.max(0, Math.min(1, (e.clientX - left) / width))
+    // Map hover position to discrete segments across the bar (equal widths)
+    const hoveredIndex = Math.min(max, Math.max(0, Math.floor(percentage * (max + 1))))
+    if (hoveredIndex !== value) {
+      onChange(hoveredIndex)
     }
   }
 
@@ -118,6 +120,10 @@ export default function BackgroundSlider({
             onPointerMove={handlePointerMove}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
+            onMouseLeave={() => {
+              if (isDragging) return
+              // snap back to current value's position visually via springs; no state change needed
+            }}
           >
             <div className="relative h-3.5 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full overflow-hidden ring-1 ring-black/5">
               {/* Gooey fill and blob */}
