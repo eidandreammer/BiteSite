@@ -26,14 +26,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     
     // Extract turnstile token from request body
-    const { turnstileToken, ...intakeData } = body
-    
-    if (!turnstileToken) {
+    let { turnstileToken, ...intakeData } = body
+    // Dev fallback: allow missing token in non-production
+    if (!turnstileToken && process.env.NODE_ENV !== 'production') {
+      turnstileToken = 'placeholder-token'
+    } else if (!turnstileToken) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Turnstile token is required' 
-        },
+        { success: false, error: 'Turnstile token is required' },
         { status: 400 }
       )
     }

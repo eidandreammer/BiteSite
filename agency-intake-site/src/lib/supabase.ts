@@ -35,11 +35,12 @@ function composeAddress(intake: IntakeFormData): string {
 }
 
 export function buildIntakePayload(intake: IntakeFormData, turnstileToken: string): IntakePayload {
-  const goalMapping: Record<string, 'Calls' | 'Bookings' | 'Orders' | 'Lead Form'> = {
+  const goalMapping: Record<string, 'Calls' | 'Bookings' | 'Orders' | 'Lead Form' | 'Not Sure'> = {
     calls: 'Calls',
     bookings: 'Bookings',
     orders: 'Orders',
-    lead_form: 'Lead Form'
+    lead_form: 'Lead Form',
+    not_sure: 'Not Sure'
   }
 
   const featureMapping: Record<string, string> = {
@@ -54,7 +55,8 @@ export function buildIntakePayload(intake: IntakeFormData, turnstileToken: strin
     hours: 'Hours',
     contact_form: 'Contact Form',
     chat: 'Chat',
-    analytics: 'Analytics'
+    analytics: 'Analytics',
+    not_sure: 'Not Sure'
   }
 
   const selectedDomain = normalizeUrlOrUndefined(intake.business.domain)
@@ -76,9 +78,12 @@ export function buildIntakePayload(intake: IntakeFormData, turnstileToken: strin
     address: address || '123 Test Street',
     phone: intake.business.phone || '555-0123',
     domain: selectedDomain,
-    goals: (intake.goals.conversions || [])
-      .map((g) => goalMapping[g])
-      .filter((g): g is NonNullable<typeof g> => Boolean(g)),
+    goals: (() => {
+      const mapped = (intake.goals.conversions || [])
+        .map((g) => goalMapping[g])
+        .filter((g): g is NonNullable<typeof g> => Boolean(g))
+      return mapped.length ? mapped : (['Not Sure'] as any)
+    })(),
     pages,
     color: {
       selected: intake.color.brand || '#000000',

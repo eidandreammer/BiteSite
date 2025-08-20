@@ -42,9 +42,12 @@ export default function IntakeForm() {
   const [customIndustry, setCustomIndustry] = useState('')
   const [customCountry, setCustomCountry] = useState('')
   const [mounted, setMounted] = useState(false)
+  const [canSubmit, setCanSubmit] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string>('')
   const [turnstileId, setTurnstileId] = useState<string | null>(null)
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null)
+  const tokenRef = useRef<string>('')
+  const tokenWaitersRef = useRef<Array<(t: string) => void>>([])
 
   const {
     control,
@@ -102,25 +105,60 @@ export default function IntakeForm() {
     setMounted(true)
   }, [])
 
-  // Initialize Cloudflare Turnstile (invisible) when available on client
+  // Prevent accidental auto-submit when transitioning to step 6
+  useEffect(() => {
+    if (currentStep === steps.length) {
+      setCanSubmit(false)
+      const t = setTimeout(() => setCanSubmit(true), 600)
+      return () => clearTimeout(t)
+    }
+    setCanSubmit(false)
+  }, [currentStep])
+
+  // Initialize Cloudflare Turnstile when available on client
   useEffect(() => {
     if (!mounted) return
     if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) return
     // @ts-ignore
     const ts = typeof window !== 'undefined' ? (window as any).turnstile : null
-    if (!ts || !turnstileContainerRef.current) return
-    try {
-      const id = ts.render(turnstileContainerRef.current, {
-        sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-        size: 'invisible',
-        callback: (token: string) => setTurnstileToken(token),
-        'expired-callback': () => setTurnstileToken(''),
-        'error-callback': () => setTurnstileToken('')
-      })
-      setTurnstileId(id)
-    } catch {
-      // ignore
+    const container = turnstileContainerRef.current
+    if (!container) return
+    const size = (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible') ? 'normal' : 'invisible'
+
+    const renderWhenReady = () => {
+      // @ts-ignore
+      const api = (window as any).turnstile
+      if (!api) {
+        setTimeout(renderWhenReady, 200)
+        return
+      }
+      try {
+        const id = api.render(container, {
+          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+          size,
+          callback: (token: string) => {
+            tokenRef.current = token
+            setTurnstileToken(token)
+            const waiters = tokenWaitersRef.current
+            if (waiters.length) {
+              waiters.splice(0).forEach((resolve) => resolve(token))
+            }
+          },
+          'expired-callback': () => {
+            tokenRef.current = ''
+            setTurnstileToken('')
+          },
+          'error-callback': () => {
+            tokenRef.current = ''
+            setTurnstileToken('')
+          }
+        })
+        setTurnstileId(id)
+      } catch {
+        // ignore
+      }
     }
+    renderWhenReady()
   }, [mounted])
 
   const ensureTurnstileToken = async (): Promise<string> => {
@@ -129,21 +167,15 @@ export default function IntakeForm() {
     // @ts-ignore
     const ts = typeof window !== 'undefined' ? (window as any).turnstile : null
     if (!ts || !turnstileId) return ''
-    if (turnstileToken) return turnstileToken
+    if (tokenRef.current) return tokenRef.current
     try {
       ts.execute(turnstileId)
-      // wait up to 8s for callback to set token
-      const start = Date.now()
       return await new Promise<string>((resolve) => {
-        const iv = setInterval(() => {
-          if (turnstileToken) {
-            clearInterval(iv)
-            resolve(turnstileToken)
-          } else if (Date.now() - start > 8000) {
-            clearInterval(iv)
-            resolve('')
-          }
-        }, 100)
+        const timeout = setTimeout(() => resolve(''), 8000)
+        tokenWaitersRef.current.push((t) => {
+          clearTimeout(timeout)
+          resolve(t)
+        })
       })
     } catch {
       return ''
@@ -355,13 +387,23 @@ export default function IntakeForm() {
         return;
       }
 
-      const token = await ensureTurnstileToken()
-      const result = await submitIntake(data, token)
-      if (result.success) {
+      const handleResult = (result: { success: boolean; id?: string; error?: string }) => {
         setSubmissionResult({
           success: true,
           message: `Thank you! Your project has been submitted successfully. Project ID: ${result.id}`
         })
+      }
+      const token = await ensureTurnstileToken()
+      if (!token && process.env.NODE_ENV !== 'production') {
+        // Dev fallback: allow submission without captcha
+        const result = await submitIntake(data, 'placeholder-token')
+        if (result.success) handleResult(result)
+        else setSubmissionResult({ success: false, message: `Submission failed: ${result.error}` })
+        return
+      }
+      const result = await submitIntake(data, token)
+      if (result.success) {
+        handleResult(result)
       } else {
         setSubmissionResult({
           success: false,
@@ -1783,7 +1825,7 @@ export default function IntakeForm() {
             ) : (
               <button
                 type="submit"
-                disabled={!isValid || isSubmitting}
+                disabled={!isValid || isSubmitting || !canSubmit}
                 className="flex items-center px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Project'}
@@ -1796,11 +1838,8 @@ export default function IntakeForm() {
       {mounted && (
         <div
           ref={turnstileContainerRef}
-          className="cf-turnstile"
-          data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-          data-size="invisible"
           suppressHydrationWarning
-          style={{ width: 0, height: 0, overflow: 'hidden' }}
+          style={{ width: process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible' ? '100%' : 0, height: process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible' ? 'auto' : 0, overflow: 'hidden' }}
         />
       )}
     </div>
