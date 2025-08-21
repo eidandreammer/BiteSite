@@ -51,11 +51,11 @@ const Navigation = ({ className = '' }: NavigationProps) => {
               key={item.href}
               href={item.href}
               className={`nav-link ${pathname === item.href ? 'active' : ''}`}
-              style={pathname === item.href ? { 
+              style={pathname === item.href ? ({ 
                 borderBottomColor: getButtonColor(),
                 color: getButtonColor(),
-                '--active-underline-color': getButtonColor()
-              } : {}}
+                ['--active-underline-color' as any]: getButtonColor()
+              } as React.CSSProperties) : {}}
             >
               {item.label}
             </Link>

@@ -144,12 +144,12 @@ export default function Pricing() {
                       ? 'text-white'
                       : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                   }`}
-                  style={plan.popular ? { 
+                  style={plan.popular ? ({ 
                     backgroundColor: getButtonColor(),
                     color: getButtonTextColor(),
-                    '--tw-shadow-color': getButtonColor(),
-                    '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
-                  } as React.CSSProperties : {}}
+                    ['--tw-shadow-color' as any]: getButtonColor(),
+                    ['--tw-shadow' as any]: `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+                  } as React.CSSProperties) : {}}
                 >
                   Start Project
                 </a>
@@ -176,12 +176,12 @@ export default function Pricing() {
             <a
               href="#start-project"
               className="inline-flex items-center px-8 py-3 text-white font-semibold rounded-lg transition-colors"
-              style={{ 
+              style={({ 
                 backgroundColor: getButtonColor(),
                 color: getButtonTextColor(),
-                '--tw-shadow-color': getButtonColor(),
-                '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
-              } as React.CSSProperties}
+                ['--tw-shadow-color' as any]: getButtonColor(),
+                ['--tw-shadow' as any]: `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+              } as React.CSSProperties)}
             >
               Discuss Custom Project
             </a>

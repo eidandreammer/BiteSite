@@ -181,12 +181,12 @@ export default function Hero() {
             <a
               href="#start-project"
               className="inline-flex items-center justify-center px-8 py-4 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-              style={{ 
+              style={({ 
                 backgroundColor: getButtonColor(),
                 color: getButtonTextColor(),
-                '--tw-shadow-color': getButtonColor(),
-                '--tw-shadow': `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
-              } as React.CSSProperties}
+                ['--tw-shadow-color' as any]: getButtonColor(),
+                ['--tw-shadow' as any]: `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
+              } as React.CSSProperties)}
             >
               Start Your Project
               <ArrowRight className="ml-2 w-5 h-5" />

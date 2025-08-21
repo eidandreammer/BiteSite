@@ -1683,12 +1683,12 @@ export default function IntakeForm() {
                   type="submit"
                   disabled={!isValid || isSubmitting}
                   className="w-full px-8 py-4 text-white text-lg font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl"
-                  style={{ 
+                  style={({ 
                     backgroundColor: getButtonColor(),
                     color: getButtonTextColor(),
-                    '--tw-shadow-color': getButtonColor(),
-                    '--tw-shadow': `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
-                  } as React.CSSProperties}
+                    ['--tw-shadow-color' as any]: getButtonColor(),
+                    ['--tw-shadow' as any]: `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
+                  } as React.CSSProperties)}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center justify-center">
@@ -1848,12 +1848,12 @@ export default function IntakeForm() {
                    ? 'text-white' 
                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                }`}
-               style={isStepValid ? { 
+               style={isStepValid ? ({ 
                  backgroundColor: getButtonColor(),
                  color: getButtonTextColor(),
-                 '--tw-shadow-color': getButtonColor(),
-                 '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
-               } as React.CSSProperties : {}}
+                 ['--tw-shadow-color' as any]: getButtonColor(),
+                 ['--tw-shadow' as any]: `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+               } as React.CSSProperties) : {}}
              >
                Next
                <ChevronRight className="w-4 h-4 ml-2" />
@@ -1863,12 +1863,12 @@ export default function IntakeForm() {
                 type="submit"
                 disabled={!isValid || isSubmitting || !canSubmit}
                 className="flex items-center px-6 py-2 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                style={{ 
+                style={({ 
                   backgroundColor: getButtonColor(),
                   color: getButtonTextColor(),
-                  '--tw-shadow-color': getButtonColor(),
-                  '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
-                } as React.CSSProperties}
+                  ['--tw-shadow-color' as any]: getButtonColor(),
+                  ['--tw-shadow' as any]: `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+                } as React.CSSProperties)}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Project'}
               </button>
