@@ -2,9 +2,10 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Orb from '@/blocks/Backgrounds/Orb/Orb.jsx'
 import BackgroundSlider from './BackgroundSlider'
+import { useBackground } from '@/contexts/BackgroundContext'
 
 import Galaxy from '@/blocks/Backgrounds/Galaxy/Galaxy.jsx'
 import LiquidChrome from '@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'
@@ -13,6 +14,8 @@ import Prism from '@/Backgrounds/Prism/Prism.jsx'
 import DarkVeil from '@/Backgrounds/DarkVeil/DarkVeil.jsx'
 
 export default function Hero() {
+  const { setCurrentBackground, getButtonColor } = useBackground()
+  
   type BackgroundTextColors = {
     primary: string
     secondary: string
@@ -145,6 +148,11 @@ export default function Hero() {
   const SelectedBg = backgrounds[bgIndex].Component
   const isWhitePricing = ['galaxy', 'liquid', 'prism', 'darkveil'].includes(backgrounds[bgIndex].key)
 
+  // Update background context when bgIndex changes
+  useEffect(() => {
+    setCurrentBackground(backgrounds[bgIndex].key)
+  }, [bgIndex, setCurrentBackground])
+
   return (
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
       {/* Dynamic Background */}
@@ -167,7 +175,12 @@ export default function Hero() {
           <motion.div initial={false} className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <a
               href="#start-project"
-              className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center px-8 py-4 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              style={{ 
+                backgroundColor: getButtonColor(),
+                '--tw-shadow-color': getButtonColor(),
+                '--tw-shadow': `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
+              } as React.CSSProperties}
             >
               Start Your Project
               <ArrowRight className="ml-2 w-5 h-5" />

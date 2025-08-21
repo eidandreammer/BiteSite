@@ -11,6 +11,7 @@ import { submitIntake } from '@/lib/supabase'
 import ColorWheel from './ColorWheel'
 import TemplatePicker from './TemplatePicker'
 import dynamic from 'next/dynamic'
+import { useBackground } from '@/contexts/BackgroundContext'
 
 // Load font variables only when this step is visible to reduce global font cost
 const FontVariablesProvider = dynamic(() => import('./FontVariablesProvider'), { ssr: false, loading: () => <></> })
@@ -33,6 +34,7 @@ const GOAL_LABELS: Record<string, string> = {
 }
 
 export default function IntakeForm() {
+  const { getButtonColor } = useBackground()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<{ success: boolean; message: string } | null>(null)
@@ -80,7 +82,6 @@ export default function IntakeForm() {
       },
       color: {
         brand: '#3B82F6',
-        mode: 'auto',
         palette: ['#3B82F6']
       },
       fonts: {
@@ -989,25 +990,7 @@ export default function IntakeForm() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Color Mode
-                </label>
-                <Controller
-                  name="color.mode"
-                  control={control}
-                  render={({ field }) => (
-                    <select
-                      {...field}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                    >
-                      <option value="auto">Auto (follows system)</option>
-                      <option value="light">Light</option>
-                      <option value="dark">Dark</option>
-                    </select>
-                  )}
-                />
-              </div>
+
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -1464,10 +1447,7 @@ export default function IntakeForm() {
                       <span className="text-gray-900 font-mono">{watchedValues.color?.brand}</span>
                     </div>
                   </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">Color Mode</span>
-                    <p className="text-gray-900 capitalize">{watchedValues.color?.mode || 'auto'}</p>
-                  </div>
+
                   <div>
                     <span className="text-sm font-medium text-gray-500">Heading Font</span>
                     <p className="text-gray-900 capitalize">{watchedValues.fonts?.headings?.replace('_', ' ') || 'Not specified'}</p>
@@ -1654,8 +1634,7 @@ export default function IntakeForm() {
                     {watchedValues.goals?.conversions?.includes('not_sure') ? ' (Need help deciding)' : ''}.
                   </p>
                   <p className="mb-2">
-                    The design will feature a primary color of <strong>{watchedValues.color?.brand}</strong>{' '}
-                    ({watchedValues.color?.mode ? `${watchedValues.color.mode} mode` : 'auto mode'}), using {' '}
+                    The design will feature a primary color of <strong>{watchedValues.color?.brand}</strong>, using {' '}
                     <strong>{watchedValues.fonts?.headings?.replace('_', ' ')}</strong> headings and {' '}
                     <strong>{watchedValues.fonts?.body?.replace('_', ' ')}</strong> body text.
                     {watchedValues.color?.palette && watchedValues.color.palette.length > 1 ? ' Supporting palette: ' : ''}
@@ -1680,7 +1659,12 @@ export default function IntakeForm() {
                 <button
                   type="submit"
                   disabled={!isValid || isSubmitting}
-                  className="w-full px-8 py-4 bg-primary text-white text-lg font-semibold rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl"
+                  className="w-full px-8 py-4 text-white text-lg font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl"
+                  style={{ 
+                    backgroundColor: getButtonColor(),
+                    '--tw-shadow-color': getButtonColor(),
+                    '--tw-shadow': `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
+                  } as React.CSSProperties}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center justify-center">
@@ -1717,7 +1701,7 @@ export default function IntakeForm() {
   return (
     <div className="max-w-4xl mx-auto">
              {/* Progress Bar - Carousel */}
-       <div className="mb-8 sticky top-20 z-10 bg-white/95 backdrop-blur-sm py-4 rounded-lg shadow-sm border border-gray-100">
+       <div className="mb-8 bg-white/95 backdrop-blur-sm py-4 rounded-lg shadow-sm border border-gray-100">
         <div className="relative mb-4">
           {/* Edge indicators (lines going off-screen) */}
           {currentStep > 3 && (
@@ -1757,12 +1741,18 @@ export default function IntakeForm() {
                     const isCompleted = currentStep > step.id
 
                     const circleClass = circleActive
-                      ? 'border-primary bg-primary text-white'
+                      ? 'text-white'
                       : 'border-gray-300 bg-white text-gray-500'
 
                     return (
                       <div key={step.id} className="flex items-center">
-                        <div className={`flex items-center justify-center rounded-full border-2 ${sizeClass} ${circleClass}`}>
+                        <div 
+                          className={`flex items-center justify-center rounded-full border-2 ${sizeClass} ${circleClass}`}
+                          style={circleActive ? { 
+                            backgroundColor: getButtonColor(),
+                            borderColor: getButtonColor()
+                          } : {}}
+                        >
                           {isCompleted ? (
                             <Check className={distance === 0 ? 'w-6 h-6' : distance === 1 ? 'w-4 h-4' : 'w-3 h-3'} />
                           ) : (
@@ -1774,8 +1764,9 @@ export default function IntakeForm() {
                           <div
                             className={`h-0.5 mx-1 sm:mx-2 ${distance === 0 ? 'w-12 sm:w-16' : distance === 1 ? 'w-10 sm:w-12' : 'w-8 sm:w-10'} ${
                               // Connector is active if the next step is <= current step
-                              visible[idx + 1].id <= currentStep ? 'bg-primary' : 'bg-gray-300'
+                              visible[idx + 1].id <= currentStep ? '' : 'bg-gray-300'
                             }`}
+                            style={visible[idx + 1].id <= currentStep ? { backgroundColor: getButtonColor() } : {}}
                           />
                         )}
                       </div>
@@ -1830,9 +1821,14 @@ export default function IntakeForm() {
                disabled={!isStepValid}
                className={`flex items-center px-6 py-2 rounded-lg transition-colors ${
                  isStepValid 
-                   ? 'bg-primary text-white hover:bg-primary/90' 
+                   ? 'text-white' 
                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                }`}
+               style={isStepValid ? { 
+                 backgroundColor: getButtonColor(),
+                 '--tw-shadow-color': getButtonColor(),
+                 '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+               } as React.CSSProperties : {}}
              >
                Next
                <ChevronRight className="w-4 h-4 ml-2" />
@@ -1841,7 +1837,12 @@ export default function IntakeForm() {
               <button
                 type="submit"
                 disabled={!isValid || isSubmitting || !canSubmit}
-                className="flex items-center px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center px-6 py-2 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                style={{ 
+                  backgroundColor: getButtonColor(),
+                  '--tw-shadow-color': getButtonColor(),
+                  '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+                } as React.CSSProperties}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Project'}
               </button>

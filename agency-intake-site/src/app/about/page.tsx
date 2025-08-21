@@ -21,7 +21,7 @@ export default function AboutPage() {
       <section className="relative py-20 text-black overflow-hidden">
         {/* Threads Background */}
         <ThreadsBackground 
-          color={[0.2, 0.45, 1]} 
+          color={[0.6, 0.75, 1]} 
           amplitude={2} 
           distance={0.5}
         />
@@ -221,7 +221,7 @@ export default function AboutPage() {
       <section className="relative py-20 text-black overflow-hidden">
         {/* Threads Background */}
         <ThreadsBackground 
-          color={[0.2, 0.45, 1]} 
+          color={[0.6, 0.75, 1]} 
           amplitude={2} 
           distance={0.5}
         />

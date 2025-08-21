@@ -7,7 +7,6 @@ import MagicBento from '@/components/MagicBento/MagicBento.jsx'
 import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack/ScrollStack.jsx'
 import ChromaGrid from '@/components/ChromaGrid/ChromaGrid.jsx'
 import InfiniteMenu from '@/components/InfiniteMenu/InfiniteMenu.jsx'
-import Stack from '@/components/Stack/Stack.jsx'
 
 const features = [
   {
@@ -48,10 +47,10 @@ const features = [
   }
 ]
 
-type StackCard = { id: number; img: string }
+
 
 export default function Features() {
-  const [layout, setLayout] = useState<'grid' | 'magic-bento' | 'scroll-stack' | 'stack' | 'chroma-grid' | 'infinite-menu'>('grid')
+  const [layout, setLayout] = useState<'grid' | 'magic-bento' | 'scroll-stack' | 'chroma-grid' | 'infinite-menu'>('grid')
 
   const palette = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4']
 
@@ -80,11 +79,7 @@ export default function Features() {
     []
   )
 
-  const stackCards = useMemo<StackCard[]>(
-    () =>
-      features.map((_, i) => ({ id: i + 1, img: `https://picsum.photos/seed/stack${i}/500/500` })),
-    []
-  )
+
 
   const infiniteMenuItems = useMemo(
     () =>
@@ -129,7 +124,6 @@ export default function Features() {
             <option value="grid">Grid</option>
             <option value="magic-bento">Magic Bento</option>
             <option value="scroll-stack">Scroll Stack</option>
-            <option value="stack">Stack</option>
             <option value="chroma-grid">Chroma Grid</option>
             <option value="infinite-menu">Infinite Menu</option>
           </select>
@@ -162,19 +156,16 @@ export default function Features() {
 
         {layout === 'magic-bento' && (
           <div className="mt-6">
-            {/* Render like grid but with MagicBento spotlight/highlight only */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <MagicBento
-                items={bentoItems}
-                enableStars={false}
-                enableTilt={false}
-                enableMagnetism={false}
-                enableSpotlight
-                enableBorderGlow
-                textAutoHide={false}
-                spotlightRadius={360}
-              />
-            </div>
+            <MagicBento
+              items={bentoItems}
+              enableStars={false}
+              enableTilt={false}
+              enableMagnetism={false}
+              enableSpotlight
+              enableBorderGlow
+              textAutoHide={false}
+              spotlightRadius={360}
+            />
           </div>
         )}
 
@@ -196,28 +187,7 @@ export default function Features() {
           </div>
         )}
 
-        {layout === 'stack' && (
-          <div className="mt-6 flex justify-center">
-            <Stack
-              cardsData={features.map((_, i) => ({ id: i + 1 }))}
-              cardDimensions={{ width: 360, height: 420 }}
-              sendToBackOnClick
-              renderCardContent={(card) => {
-                const f = features[(card.id - 1) % features.length]
-                return (
-                  <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-200 w-full h-full flex flex-col">
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                      <f.icon className={`w-6 h-6 ${f.color}`} />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{f.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{f.description}</p>
-                    <div className="mt-auto" />
-                  </div>
-                )
-              }}
-            />
-          </div>
-        )}
+
 
         {layout === 'chroma-grid' && (
           <div className="mt-6">

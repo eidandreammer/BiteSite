@@ -87,19 +87,12 @@ export function buildIntakePayload(intake: IntakeFormData, turnstileToken: strin
     pages,
     color: {
       selected: intake.color.brand || '#000000',
-      mode:
-        intake.color.mode === 'auto'
-          ? 'Monochrome'
-          : intake.color.mode === 'light'
-          ? 'Complementary'
-          : 'Analogous',
       palette: intake.color.palette || ['#000000']
     },
     typography: {
       headings: intake.fonts.headings || 'inter',
       body: intake.fonts.body || 'inter',
-      style: intake.fonts.headings || 'inter',
-      colorMode: intake.color.mode || 'auto'
+      style: intake.fonts.headings || 'inter'
     },
     templates: ((intake.templates?.length ? intake.templates : ['Style A']).map(normalizeTemplate)) as IntakePayload['templates'],
     inspiration_urls: intake.referenceUrls || [],

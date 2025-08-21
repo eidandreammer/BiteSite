@@ -1,9 +1,10 @@
 /*
-	Installed from https://reactbits.dev/default/
+	Modified from https://reactbits.dev/default/ for Next.js compatibility
 */
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import Link from "next/link";
 // use your own icon import if react-icons is not available
 import { GoArrowUpRight } from "react-icons/go";
 import "./CardNav.css";
@@ -99,22 +100,13 @@ const CardNav = ({
     const handleResize = () => {
       if (!tlRef.current) return;
 
-      if (isExpanded) {
-        const newHeight = calculateHeight();
-        gsap.set(navRef.current, { height: newHeight });
+      const navEl = navRef.current;
+      if (!navEl) return;
 
-        tlRef.current.kill();
-        const newTl = createTimeline();
-        if (newTl) {
-          newTl.progress(1);
-          tlRef.current = newTl;
-        }
+      if (isExpanded) {
+        gsap.set(navEl, { height: calculateHeight });
       } else {
-        tlRef.current.kill();
-        const newTl = createTimeline();
-        if (newTl) {
-          tlRef.current = newTl;
-        }
+        gsap.set(navEl, { height: 60 });
       }
     };
 
@@ -162,20 +154,20 @@ const CardNav = ({
           </div>
 
           <div className="logo-container">
-            <img src={logo} alt={logoAlt} className="logo" />
+            <span className="logo-text">{logo}</span>
           </div>
 
-          <button
-            type="button"
+          <Link
+            href="/start"
             className="card-nav-cta-button"
             style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
           >
             Get Started
-          </button>
+          </Link>
         </div>
 
         <div className="card-nav-content" aria-hidden={!isExpanded}>
-          {(items || []).slice(0, 3).map((item, idx) => (
+          {items.map((item, idx) => (
             <div
               key={`${item.label}-${idx}`}
               className="nav-card"
@@ -185,7 +177,7 @@ const CardNav = ({
               <div className="nav-card-label">{item.label}</div>
               <div className="nav-card-links">
                 {item.links?.map((lnk, i) => (
-                  <a
+                  <Link
                     key={`${lnk.label}-${i}`}
                     className="nav-card-link"
                     href={lnk.href}
@@ -196,7 +188,7 @@ const CardNav = ({
                       aria-hidden="true"
                     />
                     {lnk.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

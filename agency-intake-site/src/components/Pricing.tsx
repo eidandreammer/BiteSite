@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Check, Star } from 'lucide-react'
+import { useBackground } from '@/contexts/BackgroundContext'
 
 const plans = [
   {
@@ -64,6 +65,8 @@ const plans = [
 ]
 
 export default function Pricing() {
+  const { getButtonColor } = useBackground()
+  
   return (
     <section id="pricing" className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -107,7 +110,8 @@ export default function Pricing() {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center">
+                  <div className="text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center"
+                       style={{ backgroundColor: getButtonColor() }}>
                     <Star className="w-4 h-4 mr-1" />
                     Most Popular
                   </div>
@@ -137,9 +141,14 @@ export default function Pricing() {
                   href="#start-project"
                   className={`inline-block w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
                     plan.popular
-                      ? 'bg-primary text-white hover:bg-primary/90'
+                      ? 'text-white'
                       : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                   }`}
+                  style={plan.popular ? { 
+                    backgroundColor: getButtonColor(),
+                    '--tw-shadow-color': getButtonColor(),
+                    '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+                  } as React.CSSProperties : {}}
                 >
                   Start Project
                 </a>
@@ -165,7 +174,12 @@ export default function Pricing() {
             </p>
             <a
               href="#start-project"
-              className="inline-flex items-center px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center px-8 py-3 text-white font-semibold rounded-lg transition-colors"
+              style={{ 
+                backgroundColor: getButtonColor(),
+                '--tw-shadow-color': getButtonColor(),
+                '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+              } as React.CSSProperties}
             >
               Discuss Custom Project
             </a>

@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useBackground } from '@/contexts/BackgroundContext'
 
 interface BackgroundSliderProps {
   value: number
@@ -24,6 +25,7 @@ export default function BackgroundSlider({
   labels, 
   textColors 
 }: BackgroundSliderProps) {
+  const { getButtonColor, getSliderThumbColor } = useBackground()
   const sliderRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const scale = useMotionValue(1)
@@ -71,10 +73,12 @@ export default function BackgroundSlider({
     tailPercent.set(p)
   }, [value, max, headPercent, tailPercent])
 
-  // Standardized colors within the slider card
+  // Dynamic colors based on current background
+  const buttonColor = getButtonColor()
+  const sliderThumbColor = getSliderThumbColor()
   const ACCENT_COLOR_CLASS = 'text-blue-600'
   const INACTIVE_TEXT_CLASS = 'text-gray-700'
-  const ACTIVE_LABEL_CLASS = 'px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow'
+  const ACTIVE_LABEL_CLASS = 'px-2.5 py-1 rounded-full text-white shadow'
 
   return (
     <motion.div
@@ -95,24 +99,24 @@ export default function BackgroundSlider({
           </defs>
         </svg>
         <div className="flex items-center justify-center gap-4 mb-3">
-          <motion.button
-            whileHover={{ scale: 1.15, rotate: -8, boxShadow: '0 10px 20px rgba(59,130,246,0.25), 0 2px 6px rgba(0,0,0,0.08)' }}
-            whileTap={{ scale: 0.92 }}
-            animate={{ y: [0, -1.5, 0] }}
-            transition={{ duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-            className="relative p-2 rounded-full bg-white/80 ring-1 ring-black/5 shadow-sm hover:shadow-md transition-all overflow-visible"
-            onClick={() => step(-1)}
-            aria-label="Previous background"
-          >
-            <motion.span
-              className="pointer-events-none absolute inset-0 rounded-full"
-              initial={{ opacity: 0, scale: 0.85 }}
-              whileHover={{ opacity: 0.25, scale: 1.1 }}
-              transition={{ duration: 0.25 }}
-              style={{ background: 'radial-gradient(closest-side, rgba(59,130,246,0.25), transparent)' }}
-            />
-            <ChevronLeft className={`w-5 h-5 ${ACCENT_COLOR_CLASS}`} />
-          </motion.button>
+                      <motion.button
+              whileHover={{ scale: 1.15, rotate: -8, boxShadow: `0 10px 20px ${buttonColor}40, 0 2px 6px rgba(0,0,0,0.08)` }}
+              whileTap={{ scale: 0.92 }}
+              animate={{ y: [0, -1.5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+              className="relative p-2 rounded-full bg-white/80 ring-1 ring-black/5 shadow-sm hover:shadow-md transition-all overflow-visible"
+              onClick={() => step(-1)}
+              aria-label="Previous background"
+            >
+              <motion.span
+                className="pointer-events-none absolute inset-0 rounded-full"
+                initial={{ opacity: 0, scale: 0.85 }}
+                whileHover={{ opacity: 0.25, scale: 1.1 }}
+                transition={{ duration: 0.25 }}
+                style={{ background: `radial-gradient(closest-side, ${buttonColor}40, transparent)` }}
+              />
+              <ChevronLeft className="w-5 h-5" style={{ color: buttonColor }} />
+            </motion.button>
 
           <div
             ref={sliderRef}
@@ -129,12 +133,18 @@ export default function BackgroundSlider({
               {/* Gooey fill and blob */}
               <div className="absolute inset-0" style={{ filter: 'url(#gooey-bg)' }}>
                 <motion.div
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
-                  style={{ width: tailWidth }}
+                  className="absolute top-0 left-0 h-full rounded-full"
+                  style={{ 
+                    width: tailWidth,
+                    background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`
+                  }}
                 />
                 <motion.div
-                  className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
-                  style={{ left: headLeft }}
+                  className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full"
+                  style={{ 
+                    left: headLeft,
+                    backgroundColor: buttonColor
+                  }}
                 />
               </div>
 
@@ -144,7 +154,11 @@ export default function BackgroundSlider({
                 style={{ left: headLeft, transform: 'translate(-50%, -50%)' }}
               >
                 <motion.div
-                  className="z-10 w-6 h-6 bg-white rounded-full ring-2 ring-blue-500 shadow-lg shadow-blue-500/20"
+                  className="z-10 w-6 h-6 bg-white rounded-full shadow-lg"
+                  style={{ 
+                    ringColor: sliderThumbColor,
+                    boxShadow: `0 4px 6px -1px ${sliderThumbColor}40, 0 2px 4px -1px ${sliderThumbColor}40`
+                  }}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.92 }}
                   transition={{ duration: 0.1 }}
@@ -154,7 +168,7 @@ export default function BackgroundSlider({
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.15, rotate: 8, boxShadow: '0 10px 20px rgba(59,130,246,0.25), 0 2px 6px rgba(0,0,0,0.08)' }}
+            whileHover={{ scale: 1.15, rotate: 8, boxShadow: `0 10px 20px ${buttonColor}40, 0 2px 6px rgba(0,0,0,0.08)` }}
             whileTap={{ scale: 0.92 }}
             animate={{ y: [0, -1.5, 0] }}
             transition={{ duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
@@ -167,9 +181,9 @@ export default function BackgroundSlider({
               initial={{ opacity: 0, scale: 0.85 }}
               whileHover={{ opacity: 0.25, scale: 1.1 }}
               transition={{ duration: 0.25 }}
-              style={{ background: 'radial-gradient(closest-side, rgba(59,130,246,0.25), transparent)' }}
+              style={{ background: `radial-gradient(closest-side, ${buttonColor}40, transparent)` }}
             />
-            <ChevronRight className={`w-5 h-5 ${ACCENT_COLOR_CLASS}`} />
+            <ChevronRight className="w-5 h-5" style={{ color: buttonColor }} />
           </motion.button>
         </div>
 
@@ -182,6 +196,7 @@ export default function BackgroundSlider({
               className={`${
                 index === value ? ACTIVE_LABEL_CLASS : `${INACTIVE_TEXT_CLASS} hover:text-gray-900`
               } cursor-pointer select-none transition-all duration-200 text-center`}
+              style={index === value ? { backgroundColor: buttonColor } : {}}
               whileHover={{ scale: 1.08, y: -1 }}
               whileTap={{ scale: 0.96 }}
             >

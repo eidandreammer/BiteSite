@@ -1,10 +1,11 @@
 /*
-	Installed from https://reactbits.dev/default/
+	Modified from https://reactbits.dev/default/ for Next.js compatibility
 */
 
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { gsap } from "gsap";
+import { useBackground } from '@/contexts/BackgroundContext';
 import "./PillNav.css";
 
 const PillNav = ({
@@ -21,6 +22,7 @@ const PillNav = ({
   onMobileMenuClick,
   initialLoadAnimation = true,
 }) => {
+  const { getButtonColor } = useBackground();
   const resolvedPillTextColor = pillTextColor ?? baseColor;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const circleRefs = useRef([]);
@@ -249,7 +251,7 @@ const PillNav = ({
         {isRouterLink(items?.[0]?.href) ? (
           <Link
             className="pill-logo"
-            to={items[0].href}
+            href={items[0].href}
             aria-label="Home"
             onMouseEnter={handleLogoEnter}
             role="menuitem"
@@ -257,7 +259,7 @@ const PillNav = ({
               logoRef.current = el;
             }}
           >
-            <img src={logo} alt={logoAlt} ref={logoImgRef} />
+            <span className="logo-text">{logo}</span>
           </Link>
         ) : (
           <a
@@ -269,7 +271,7 @@ const PillNav = ({
               logoRef.current = el;
             }}
           >
-            <img src={logo} alt={logoAlt} ref={logoImgRef} />
+            <span className="logo-text">{logo}</span>
           </a>
         )}
 
@@ -280,11 +282,15 @@ const PillNav = ({
                 {isRouterLink(item.href) ? (
                   <Link
                     role="menuitem"
-                    to={item.href}
+                    href={item.href}
                     className={`pill${activeHref === item.href ? " is-active" : ""}`}
                     aria-label={item.ariaLabel || item.label}
                     onMouseEnter={() => handleEnter(i)}
                     onMouseLeave={() => handleLeave(i)}
+                    style={activeHref === item.href ? { 
+                      backgroundColor: getButtonColor(),
+                      color: '#ffffff'
+                    } : {}}
                   >
                     <span
                       className="hover-circle"
@@ -308,6 +314,10 @@ const PillNav = ({
                     aria-label={item.ariaLabel || item.label}
                     onMouseEnter={() => handleEnter(i)}
                     onMouseLeave={() => handleLeave(i)}
+                    style={activeHref === item.href ? { 
+                      backgroundColor: getButtonColor(),
+                      color: '#ffffff'
+                    } : {}}
                   >
                     <span
                       className="hover-circle"
@@ -329,46 +339,60 @@ const PillNav = ({
           </ul>
         </div>
 
-        <button
-          className="mobile-menu-button mobile-only"
-          onClick={toggleMobileMenu}
-          aria-label="Toggle menu"
-          ref={hamburgerRef}
-        >
-          <span className="hamburger-line" />
-          <span className="hamburger-line" />
-        </button>
-      </nav>
+        <div className="pill-nav-mobile">
+          <button
+            className="pill-hamburger"
+            onClick={toggleMobileMenu}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            ref={hamburgerRef}
+          >
+            <div className="hamburger-line" />
+            <div className="hamburger-line" />
+          </button>
 
-      <div
-        className="mobile-menu-popover mobile-only"
-        ref={mobileMenuRef}
-        style={cssVars}
-      >
-        <ul className="mobile-menu-list">
-          {items.map((item, i) => (
-            <li key={item.href || `mobile-item-${i}`}>
-              {isRouterLink(item.href) ? (
-                <Link
-                  to={item.href}
-                  className={`mobile-menu-link${activeHref === item.href ? " is-active" : ""}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <a
-                  href={item.href}
-                  className={`mobile-menu-link${activeHref === item.href ? " is-active" : ""}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+          <div
+            className="pill-mobile-menu"
+            ref={mobileMenuRef}
+            aria-hidden={!isMobileMenuOpen}
+          >
+            <ul className="pill-mobile-list">
+              {items.map((item, i) => (
+                <li key={item.href || `mobile-item-${i}`}>
+                  {isRouterLink(item.href) ? (
+                    <Link
+                      href={item.href}
+                      className={`pill-mobile-link${
+                        activeHref === item.href ? " is-active" : ""
+                      }`}
+                      aria-label={item.ariaLabel || item.label}
+                      style={activeHref === item.href ? { 
+                        backgroundColor: getButtonColor(),
+                        color: '#ffffff'
+                      } : {}}
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.href}
+                      className={`pill-mobile-link${
+                        activeHref === item.href ? " is-active" : ""
+                      }`}
+                      aria-label={item.ariaLabel || item.label}
+                      style={activeHref === item.href ? { 
+                        backgroundColor: getButtonColor(),
+                        color: '#ffffff'
+                      } : {}}
+                    >
+                      {item.label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </nav>
     </div>
   );
 };
