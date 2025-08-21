@@ -3,15 +3,17 @@
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import Orb from '@/blocks/Backgrounds/Orb/Orb.jsx'
+import dynamic from 'next/dynamic'
 import BackgroundSlider from './BackgroundSlider'
 import { useBackground } from '@/contexts/BackgroundContext'
 
-import Galaxy from '@/blocks/Backgrounds/Galaxy/Galaxy.jsx'
-import LiquidChrome from '@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'
-import Threads from '@/blocks/Backgrounds/Threads/Threads.jsx'
-import Prism from '@/Backgrounds/Prism/Prism.jsx'
-import DarkVeil from '@/Backgrounds/DarkVeil/DarkVeil.jsx'
+// Lazy-load heavy animated backgrounds to reduce initial JS and improve LCP
+const Orb = dynamic(() => import('@/blocks/Backgrounds/Orb/Orb.jsx'), { ssr: false })
+const Galaxy = dynamic(() => import('@/blocks/Backgrounds/Galaxy/Galaxy.jsx'), { ssr: false })
+const LiquidChrome = dynamic(() => import('@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'), { ssr: false })
+const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx'), { ssr: false })
+const Prism = dynamic(() => import('@/Backgrounds/Prism/Prism.jsx'), { ssr: false })
+const DarkVeil = dynamic(() => import('@/Backgrounds/DarkVeil/DarkVeil.jsx'), { ssr: false })
 
 export default function Hero() {
   const { setCurrentBackground, getButtonColor } = useBackground()
@@ -157,7 +159,8 @@ export default function Hero() {
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-        <SelectedBg {...(backgrounds[bgIndex].props as any)} />
+        {/* Defer mounting animated background until idle to improve LCP */}
+        <IdleBackground component={SelectedBg} props={backgrounds[bgIndex].props as any} />
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
@@ -227,4 +230,19 @@ export default function Hero() {
       </div>
     </section>
   )
+}
+
+// Small helper to mount heavy animated backgrounds after idle time
+function IdleBackground({ component: Component, props }: { component: any; props: any }) {
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    if ('requestIdleCallback' in window) {
+      ;(window as any).requestIdleCallback(() => setReady(true), { timeout: 1200 })
+    } else {
+      const t = setTimeout(() => setReady(true), 600)
+      return () => clearTimeout(t)
+    }
+  }, [])
+  if (!ready) return null
+  return <Component {...props} />
 }

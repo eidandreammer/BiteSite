@@ -117,6 +117,19 @@ export default function IntakeForm() {
     setCanSubmit(false)
   }, [currentStep])
 
+  // Prefetch Turnstile script on the step before submission to hide first-load cost
+  useEffect(() => {
+    if (!mounted) return
+    if (currentStep !== steps.length - 1) return
+    if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) return
+    if (document.querySelector('script[src*="turnstile/v0/api.js"]')) return
+    const s = document.createElement('script')
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+    s.async = true
+    s.defer = true
+    document.head.appendChild(s)
+  }, [mounted, currentStep])
+
   // Initialize Cloudflare Turnstile only on the final step to avoid unnecessary traffic
   useEffect(() => {
     if (!mounted) return
