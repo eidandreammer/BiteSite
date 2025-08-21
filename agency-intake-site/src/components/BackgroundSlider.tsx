@@ -156,7 +156,7 @@ export default function BackgroundSlider({
                 <motion.div
                   className="z-10 w-6 h-6 bg-white rounded-full shadow-lg"
                   style={{ 
-                    ringColor: sliderThumbColor,
+                    border: `2px solid ${sliderThumbColor}`,
                     boxShadow: `0 4px 6px -1px ${sliderThumbColor}40, 0 2px 4px -1px ${sliderThumbColor}40`
                   }}
                   whileHover={{ scale: 1.15 }}
