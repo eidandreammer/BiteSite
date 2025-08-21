@@ -8,13 +8,13 @@ import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { intakeSchema, IntakeFormData } from '@/lib/schema'
 import { z } from 'zod'
 import { submitIntake } from '@/lib/supabase'
-import ColorWheel from './ColorWheel'
-import TemplatePicker from './TemplatePicker'
 import dynamic from 'next/dynamic'
 import { useBackground } from '@/contexts/BackgroundContext'
 
-// Load font variables only when this step is visible to reduce global font cost
+// Lazy-load heavier client components to reduce initial JS
 const FontVariablesProvider = dynamic(() => import('./FontVariablesProvider'), { ssr: false, loading: () => <></> })
+const ColorWheel = dynamic(() => import('./ColorWheel'), { ssr: false })
+const TemplatePicker = dynamic(() => import('./TemplatePicker'), { ssr: false })
 
 const steps = [
   { id: 1, title: 'Business Info', description: 'Basic business details' },
@@ -117,28 +117,38 @@ export default function IntakeForm() {
     setCanSubmit(false)
   }, [currentStep])
 
-  // Initialize Cloudflare Turnstile when available on client
+  // Initialize Cloudflare Turnstile only on the final step to avoid unnecessary traffic
   useEffect(() => {
     if (!mounted) return
+    if (currentStep !== steps.length) return
     if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) return
     // @ts-ignore
     const ts = typeof window !== 'undefined' ? (window as any).turnstile : null
     const container = turnstileContainerRef.current
-    if (!container) return
-    // Use invisible by default so we can programmatically execute on submit
-    const size = (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible') ? 'normal' : 'invisible'
+    if (!container || turnstileId) return
+    // Use a valid size; rely on appearance=execute for programmatic execution
+    const size = (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible') ? 'normal' : 'normal'
 
     const renderWhenReady = () => {
       // @ts-ignore
       const api = (window as any).turnstile
       if (!api) {
-        setTimeout(renderWhenReady, 200)
+        // Lazy-load the Turnstile script only when needed
+        if (!document.querySelector('script[src*="turnstile/v0/api.js"]')) {
+          const s = document.createElement('script')
+          s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+          s.async = true
+          s.defer = true
+          document.head.appendChild(s)
+        }
+        setTimeout(renderWhenReady, 250)
         return
       }
       try {
         const id = api.render(container, {
           sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
           size,
+          appearance: (process.env.NEXT_PUBLIC_TURNSTILE_MODE === 'visible') ? 'always' : 'execute',
           callback: (token: string) => {
             tokenRef.current = token
             setTurnstileToken(token)
@@ -162,7 +172,7 @@ export default function IntakeForm() {
       }
     }
     renderWhenReady()
-  }, [mounted])
+  }, [mounted, currentStep, turnstileId])
 
   const ensureTurnstileToken = async (): Promise<string> => {
     // If no site key configured, allow placeholder for local/dev

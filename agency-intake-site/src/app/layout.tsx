@@ -82,18 +82,6 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        {/* Cloudflare Turnstile script loaded client-side only to avoid hydration mismatch */}
-        <script
-          dangerouslySetInnerHTML={{ __html: `
-            if (typeof window !== 'undefined' && !document.querySelector('script[src*="turnstile/v0/api.js"]')) {
-              (function(){
-                var s=document.createElement('script');
-                s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-                s.async=true; s.defer=true; document.head.appendChild(s);
-              })();
-            }
-          ` }}
-        />
         <BackgroundProvider>
           <Navigation />
           {children}

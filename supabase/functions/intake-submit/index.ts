@@ -13,7 +13,7 @@ const Intake = z.object({
   domain: z.string().url().optional(),
 
   // Goals & Pages
-  goals: z.array(z.enum(["Calls","Bookings","Orders","Lead Form"])).min(1),
+  goals: z.array(z.enum(["Calls","Bookings","Orders","Lead Form","Not Sure"])).min(1),
   pages: z.array(z.enum(["Home","Services","Blog","Products","About","Contact","Menu"])).min(1),
 
   // Color & Typography
@@ -30,13 +30,16 @@ const Intake = z.object({
   }),
 
   // Templates & Inspiration
-  templates: z.array(z.enum(["Style A","Style B"])).min(1),
+  templates: z.array(z.union([
+    z.enum(["Style A","Style B"]),
+    z.enum(["Template A","Template B"])
+  ])).min(1),
   inspiration_urls: z.array(z.string().url()).max(2).optional().default([]),
 
   // Features
   features: z.array(z.enum([
     "Booking","Gift Cards","Gallery","FAQ","Hours","Chat",
-    "Menu Catalog","Testimonials","Blog","Map","Contact Form","Analytics"
+    "Menu Catalog","Testimonials","Blog","Map","Contact Form","Analytics","Not Sure"
   ])).optional().default([]),
 
   // Admin
@@ -88,7 +91,8 @@ serve(async (req) => {
     const json = await req.json();
     const parsed = Intake.parse(json);
 
-    const ok = await verifyTurnstile(parsed.turnstileToken, req.headers.get("CF-Connecting-IP") ?? undefined);
+    const isDevBypass = Deno.env.get("NODE_ENV") !== "production" && parsed.turnstileToken === 'placeholder-token'
+    const ok = isDevBypass ? true : await verifyTurnstile(parsed.turnstileToken, req.headers.get("CF-Connecting-IP") ?? undefined);
     if (!ok) return new Response(JSON.stringify({ error: "captcha_failed" }), { status: 400 });
 
     const supabase = createClient(
