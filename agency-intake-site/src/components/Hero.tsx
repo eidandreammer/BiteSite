@@ -14,7 +14,7 @@ import Prism from '@/Backgrounds/Prism/Prism.jsx'
 import DarkVeil from '@/Backgrounds/DarkVeil/DarkVeil.jsx'
 
 export default function Hero() {
-  const { setCurrentBackground, getButtonColor } = useBackground()
+  const { setCurrentBackground, getButtonColor, getButtonTextColor } = useBackground()
   
   type BackgroundTextColors = {
     primary: string
@@ -177,9 +177,10 @@ export default function Hero() {
           <motion.div initial={false} className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <a
               href="#start-project"
-              className="inline-flex items-center justify-center px-8 py-4 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center px-8 py-4 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
               style={{ 
                 backgroundColor: getButtonColor(),
+                color: getButtonTextColor(),
                 '--tw-shadow-color': getButtonColor(),
                 '--tw-shadow': `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
               } as React.CSSProperties}

@@ -6,6 +6,7 @@ interface BackgroundContextType {
   currentBackground: string
   setCurrentBackground: (background: string) => void
   getButtonColor: () => string
+  getButtonTextColor: () => string
   getSliderThumbColor: () => string
 }
 
@@ -21,7 +22,7 @@ export function BackgroundProvider({ children }: { children: ReactNode }) {
       case 'galaxy':
         return 'rgb(0, 0, 0)' // Black
       case 'liquid':
-        return 'rgb(192, 192, 192)' // Silver
+        return 'rgb(229, 231, 235)' // Light gray
       case 'threads':
         return 'rgb(59, 130, 246)' // Blue (original)
       case 'prism':
@@ -30,6 +31,15 @@ export function BackgroundProvider({ children }: { children: ReactNode }) {
         return 'rgb(147, 51, 234)' // Purple
       default:
         return 'rgb(59, 130, 246)' // Default blue
+    }
+  }
+
+  const getButtonTextColor = () => {
+    switch (currentBackground) {
+      case 'liquid':
+        return 'rgb(0, 0, 0)' // Black text for liquid chrome
+      default:
+        return 'rgb(255, 255, 255)' // White text for all other backgrounds
     }
   }
 
@@ -42,6 +52,7 @@ export function BackgroundProvider({ children }: { children: ReactNode }) {
       currentBackground,
       setCurrentBackground,
       getButtonColor,
+      getButtonTextColor,
       getSliderThumbColor
     }}>
       {children}

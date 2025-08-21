@@ -65,7 +65,7 @@ const plans = [
 ]
 
 export default function Pricing() {
-  const { getButtonColor } = useBackground()
+  const { getButtonColor, getButtonTextColor } = useBackground()
   
   return (
     <section id="pricing" className="py-20 bg-white">
@@ -146,6 +146,7 @@ export default function Pricing() {
                   }`}
                   style={plan.popular ? { 
                     backgroundColor: getButtonColor(),
+                    color: getButtonTextColor(),
                     '--tw-shadow-color': getButtonColor(),
                     '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
                   } as React.CSSProperties : {}}
@@ -177,6 +178,7 @@ export default function Pricing() {
               className="inline-flex items-center px-8 py-3 text-white font-semibold rounded-lg transition-colors"
               style={{ 
                 backgroundColor: getButtonColor(),
+                color: getButtonTextColor(),
                 '--tw-shadow-color': getButtonColor(),
                 '--tw-shadow': `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
               } as React.CSSProperties}
