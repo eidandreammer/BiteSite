@@ -16,7 +16,7 @@ const Prism = dynamic(() => import('@/Backgrounds/Prism/Prism.jsx'), { ssr: fals
 const DarkVeil = dynamic(() => import('@/Backgrounds/DarkVeil/DarkVeil.jsx'), { ssr: false })
 
 export default function Hero() {
-  const { setCurrentBackground, getButtonColor } = useBackground()
+  const { setCurrentBackground, getButtonColor, getButtonTextColor } = useBackground()
   
   type BackgroundTextColors = {
     primary: string
@@ -68,9 +68,9 @@ export default function Hero() {
         transparent: false,
       },
       textColors: {
-        primary: 'text-gray-900',
-        secondary: 'text-gray-700',
-        accent: 'text-blue-600'
+        primary: 'text-white',
+        secondary: 'text-gray-300',
+        accent: 'text-gray-300'
       }
     },
     { 
@@ -119,9 +119,9 @@ export default function Hero() {
         colorFrequency: 1,
       },
       textColors: {
-        primary: 'text-white',
-        secondary: 'text-gray-100',
-        accent: 'text-blue-200',
+        primary: 'text-black',
+        secondary: 'text-gray-800',
+        accent: 'text-cyan-700',
         slider: 'text-gray-800'
       }
     },
@@ -167,7 +167,9 @@ export default function Hero() {
           <motion.div initial={false} className="mb-8">
             <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${backgrounds[bgIndex].textColors.primary} mb-6 leading-tight`}>
               Transform Your Business with
-              <span className={`${backgrounds[bgIndex].textColors.accent} block`}>{backgrounds[bgIndex].word} Web Design</span>
+              <span className={`${backgrounds[bgIndex].textColors.accent} block`}>
+                <span className="underline font-extrabold">{backgrounds[bgIndex].word}</span> Web Design
+              </span>
             </h1>
             <p className={`text-xl lg:text-2xl ${backgrounds[bgIndex].textColors.secondary} max-w-3xl mx-auto leading-relaxed`}>
               Get a custom website that converts visitors into customers. Modern, responsive designs 
@@ -178,9 +180,10 @@ export default function Hero() {
           <motion.div initial={false} className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <a
               href="#start-project"
-              className="inline-flex items-center justify-center px-8 py-4 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center px-8 py-4 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
               style={{ 
                 backgroundColor: getButtonColor(),
+                color: getButtonTextColor(),
                 '--tw-shadow-color': getButtonColor(),
                 '--tw-shadow': `0 10px 15px -3px ${getButtonColor()}40, 0 4px 6px -4px ${getButtonColor()}40`
               } as React.CSSProperties}

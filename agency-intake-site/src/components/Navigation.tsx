@@ -15,7 +15,7 @@ interface NavigationProps {
 }
 
 const Navigation = ({ className = '' }: NavigationProps) => {
-  const { getButtonColor } = useBackground()
+  const { getButtonColor, getButtonTextColor } = useBackground()
   const [navStyle, setNavStyle] = useState<NavStyle>('traditional')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isStyleSelectorMinimized, setIsStyleSelectorMinimized] = useState(true)
@@ -200,7 +200,7 @@ const Navigation = ({ className = '' }: NavigationProps) => {
             baseColor="#ffffff"
             menuColor="#1f2937"
             buttonBgColor={getButtonColor()}
-            buttonTextColor="#ffffff"
+            buttonTextColor={getButtonTextColor()}
             className={className}
           />
         )
