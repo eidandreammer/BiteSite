@@ -216,16 +216,13 @@ export default function Hero() {
             </a>
           </motion.div>
 
-          {/* Background Slider */}
+          {/* Background Selector */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
             className="mb-12"
           >
-            <div className={`text-center text-sm font-medium ${backgrounds[bgIndex].textColors.slider || backgrounds[bgIndex].textColors.secondary} mb-4`}>
-              Background: <span className="font-semibold">{backgrounds[bgIndex].label}</span>
-            </div>
             <BackgroundSlider
               value={bgIndex}
               onChange={setBgIndex}

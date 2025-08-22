@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
+import pay from '../../../images/pay.png'
 import { ExternalLink, ArrowRight, Sparkles, Gauge, Search, BarChart3, Accessibility, ShieldCheck, Layers } from 'lucide-react'
 import Pricing from '@/components/Pricing'
 
@@ -101,17 +103,22 @@ export default function PricingPage() {
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl" aria-hidden="true"></div>
         <div className="absolute -bottom-24 -left-24 w-[28rem] h-[28rem] bg-accent/10 rounded-full blur-3xl" aria-hidden="true"></div>
         <div className="container">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">Pricing that Pays for Itself</h1>
-            <p className="text-lg md:text-xl text-gray-700 text-balance">
-              We invest where it moves the needle: performance, UX, SEO, and analytics. The result is a website that looks incredible, ranks better, and converts more — backed by credible research.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <a href="#plans" className="btn-primary">
-                View Plans
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </a>
-              <a href="#value" className="btn-secondary">See the Value</a>
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
+            <div className="max-w-3xl">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">Pricing that Pays for Itself</h1>
+              <p className="text-lg md:text-xl text-gray-700 text-balance">
+                We invest where it moves the needle: performance, UX, SEO, and analytics. The result is a website that looks incredible, ranks better, and converts more — backed by credible research.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <a href="#plans" className="btn-primary">
+                  View Plans
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </a>
+                <a href="#value" className="btn-secondary">See the Value</a>
+              </div>
+            </div>
+            <div className="mt-10 lg:mt-0 flex justify-end">
+              <Image src={pay} alt="Payment value illustration" className="w-full max-w-md h-auto" priority />
             </div>
           </div>
         </div>
