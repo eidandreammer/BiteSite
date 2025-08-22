@@ -6,12 +6,13 @@ import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import BackgroundSlider from './BackgroundSlider'
 import { useBackground } from '@/contexts/BackgroundContext'
+import TextType from '@/TextAnimations/TextType/TextType.jsx'
 
 // Lazy-load heavy animated backgrounds to reduce initial JS and improve LCP
-const Orb = dynamic(() => import('@/blocks/Backgrounds/Orb/Orb.jsx'), { ssr: false })
-const Galaxy = dynamic(() => import('@/blocks/Backgrounds/Galaxy/Galaxy.jsx'), { ssr: false })
-const LiquidChrome = dynamic(() => import('@/blocks/Backgrounds/LiquidChrome/LiquidChrome.jsx'), { ssr: false })
-const Threads = dynamic(() => import('@/blocks/Backgrounds/Threads/Threads.jsx'), { ssr: false })
+const Orb = dynamic(() => import('@/Backgrounds/Orb/Orb.jsx'), { ssr: false })
+const Galaxy = dynamic(() => import('@/Backgrounds/Galaxy/Galaxy.jsx'), { ssr: false })
+const LiquidChrome = dynamic(() => import('@/Backgrounds/LiquidChrome/LiquidChrome.jsx'), { ssr: false })
+const Threads = dynamic(() => import('@/Backgrounds/Threads/Threads.jsx'), { ssr: false })
 const Prism = dynamic(() => import('@/Backgrounds/Prism/Prism.jsx'), { ssr: false })
 const DarkVeil = dynamic(() => import('@/Backgrounds/DarkVeil/DarkVeil.jsx'), { ssr: false })
 
@@ -168,7 +169,19 @@ export default function Hero() {
             <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${backgrounds[bgIndex].textColors.primary} mb-6 leading-tight`}>
               Transform Your Business with
               <span className={`${backgrounds[bgIndex].textColors.accent} block`}>
-                <span className="underline font-extrabold">{backgrounds[bgIndex].word}</span> Web Design
+                <TextType
+                  key={backgrounds[bgIndex].key}
+                  as="span"
+                  className="underline font-extrabold"
+                  text={backgrounds[bgIndex].word}
+                  typingSpeed={60}
+                  deletingSpeed={30}
+                  pauseDuration={1000}
+                  loop={false}
+                  showCursor={true}
+                  cursorBlinkDuration={0.5}
+                  textColors={["currentColor"]}
+                />{' '}Web Design
               </span>
             </h1>
             <p className={`text-xl lg:text-2xl ${backgrounds[bgIndex].textColors.secondary} max-w-3xl mx-auto leading-relaxed`}>

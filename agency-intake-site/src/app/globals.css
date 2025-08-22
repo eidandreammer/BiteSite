@@ -28,6 +28,48 @@
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
     --spacing-2xl: 4rem;
+
+    /* Theme tokens */
+    --bg: #ffffff;
+    --bg-elev: #fafafa;
+    --txt: #111111;
+    --txt-muted: #555555;
+    --line: #e7e7e7;
+    --focus: #005fcc;
+    --brand: #4f46e5;
+    --brand-contrast: #ffffff;
+    --ok: #16a34a;
+    --warn: #d97706;
+    --err: #dc2626;
+    --shadow: 0 1px 2px rgba(0,0,0,.06), 0 6px 24px rgba(0,0,0,.1);
+    color-scheme: light dark;
+  }
+
+
+  :root[data-theme="dark"] {
+    --bg: #0b0b0c;
+    --bg-elev: #121214;
+    --txt: #e9e9ee;
+    --txt-muted: #b3b3bd;
+    --line: #2a2a2f;
+    --focus: #7ab7ff;
+    --brand: #6e6af8;
+    --brand-contrast: #0b0b0c;
+    --shadow: 0 1px 2px rgba(0,0,0,.5), 0 6px 24px rgba(0,0,0,.35);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --bg: #0b0b0c;
+      --bg-elev: #121214;
+      --txt: #e9e9ee;
+      --txt-muted: #b3b3bd;
+      --line: #2a2a2f;
+      --focus: #7ab7ff;
+      --brand: #6e6af8;
+      --brand-contrast: #0b0b0c;
+      --shadow: 0 1px 2px rgba(0,0,0,.5), 0 6px 24px rgba(0,0,0,.35);
+    }
   }
 
 
@@ -80,9 +122,19 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Base themed surfaces */
+html, body {
+  background: var(--bg);
+  color: var(--txt);
+}
+
+a { color: var(--brand); }
+
+hr { border-color: var(--line); }
+
 /* Focus styles for accessibility */
 *:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -91,15 +143,39 @@ html {
   width: 8px;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+::-webkit-scrollbar-track { background: var(--bg-elev); }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary);
+  background: var(--brand);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary/80);
+  background: #423ad6;
+}
+
+/* Token-based component defaults */
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  color: var(--txt);
+}
+
+.input-field {
+  background: var(--bg);
+  color: var(--txt);
+  border-color: var(--line);
+}
+.input-field::placeholder { color: var(--txt-muted); }
+
+.btn-primary { background: var(--brand); color: var(--brand-contrast); border-color: transparent; }
+.btn-secondary { background: var(--bg-elev); color: var(--txt); border-color: var(--line); }
+
+/* Prevent transition flash when switching theme */
+html.theme-switching * { transition: none !important; }
+
+@media print {
+  :root { --bg:#ffffff; --txt:#000000; }
+  body { background:#ffffff !important; color:#000000 !important; }
 }

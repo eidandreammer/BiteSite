@@ -3,13 +3,13 @@
 */
 
 .card-nav-container {
-  position: absolute;
-  top: 2em;
+  position: fixed;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
   max-width: 800px;
-  z-index: 99;
+  z-index: 1001;
   box-sizing: border-box;
 }
 
@@ -22,7 +22,7 @@
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* allow inline popover to overflow */
   will-change: height;
 }
 
@@ -37,6 +37,10 @@
   justify-content: space-between;
   padding: 0.5rem 0.45rem 0.55rem 1.1rem;
   z-index: 2;
+}
+
+.card-nav .logo-container {
+  transition: transform 0.25s ease, left 0.25s ease;
 }
 
 .hamburger-menu {
@@ -85,6 +89,37 @@
   height: 28px;
 }
 
+.card-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  overflow: visible;
+}
+
+.card-nav .inline-style-selector {
+  position: relative;
+  z-index: 3000;
+}
+.card-nav .inline-style-selector .style-selector {
+  position: static;
+}
+.card-nav .inline-style-selector .style-label { color: #1f2937; }
+.card-nav .inline-style-selector .style-btn { color: #374151; }
+
+.card-nav .card-nav-actions .inline-style-selector .style-selector.expanded {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-radius: 9999px;
+  padding: 0 10px; /* same horizontal padding as CTA */
+  width: auto; /* match CTA height, allow width to fit content */
+  white-space: nowrap;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
 .card-nav-cta-button {
   background-color: #111;
   color: white;
@@ -92,6 +127,10 @@
   border-radius: calc(0.75rem - 0.35rem);
   padding: 0 1rem;
   height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s ease;

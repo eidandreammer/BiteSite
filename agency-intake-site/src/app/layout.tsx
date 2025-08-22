@@ -75,11 +75,31 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var theme = saved || (prefersDark ? 'dark' : 'light');
+                  var root = document.documentElement;
+                  root.dataset.theme = theme;
+                  root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+                  if (theme === 'dark') root.classList.add('dark');
+                  else root.classList.remove('dark');
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <BackgroundProvider>

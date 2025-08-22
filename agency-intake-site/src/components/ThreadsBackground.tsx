@@ -1,6 +1,6 @@
 'use client'
 
-import Threads from '@/blocks/Backgrounds/Threads/Threads.jsx'
+import Threads from '@/Backgrounds/Threads/Threads.jsx'
 
 interface ThreadsBackgroundProps {
   color?: [number, number, number]

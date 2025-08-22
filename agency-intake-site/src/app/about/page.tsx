@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import ThreadsBackground from '@/components/ThreadsBackground'
 import Image from 'next/image'
+import JensyPic from '../../../images/Jensy.JPG'
+import EthanPic from '../../../images/Ethan.jpeg'
 
 export const metadata: Metadata = {
   title: 'About Us - Professional Web Design Agency',
@@ -97,7 +99,7 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
                 <Image
-                  src="/vercel.svg"
+                  src={JensyPic}
                   alt="Portrait of Jensy Jimenez"
                   width={96}
                   height={96}
@@ -105,6 +107,7 @@ export default function AboutPage() {
                 />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   <a href="https://www.linkedin.com/in/jensy-jimenez/" target="_blank" rel="noopener noreferrer" className="hover:underline">Jensy Jimenez</a>
+                  <span className="ml-2 inline-block px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-700 align-middle">Founder</span>
                 </h3>
                 <div className="mb-3">
                   <a
@@ -116,15 +119,15 @@ export default function AboutPage() {
                     LinkedIn
                   </a>
                 </div>
-                <p className="text-blue-600 mb-3">Creative Director</p>
+                <p className="text-blue-600 mb-3">Lead Full Stack Developer, Data Scientist, and Operations Manager.</p>
                 <p className="text-gray-600 text-sm">
-                  With over 10 years of experience in web design, Jensy leads our creative vision and ensures every project exceeds expectations.
+                  Seeing a need in his community and with a desire to help, Jensy Jimenez founded Bite Sites to bring value, mobile presence, and customizability to small and large businesses alike.
                 </p>
               </div>
 
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
                 <Image
-                  src="/next.svg"
+                  src={EthanPic}
                   alt="Portrait of Ethan Kurtz"
                   width={96}
                   height={96}
@@ -143,9 +146,9 @@ export default function AboutPage() {
                     LinkedIn
                   </a>
                 </div>
-                <p className="text-blue-600 mb-3">Lead Developer</p>
+                <p className="text-blue-600 mb-3">Lead Risk Management Officer, Front End Developer</p>
                 <p className="text-gray-600 text-sm">
-                  Ethan brings technical expertise and innovative solutions to every project, ensuring flawless functionality and performance.
+                  With years of experience in Risk Management and Expertise in Psychology and Business Management, Ethan Kurtz brings to the table a breadth of knowledge to propel Bite Sites into competitive spaces in the web development ecosystem.
                 </p>
               </div>
             </div>

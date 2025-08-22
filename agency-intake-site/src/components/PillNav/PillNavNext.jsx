@@ -21,6 +21,11 @@ const PillNav = ({
   pillTextColor,
   onMobileMenuClick,
   initialLoadAnimation = true,
+  rightListItem = null,
+  slotItem,
+  slotIndex,
+  slotAfterNode = null,
+  rightSlot,
 }) => {
   const { getButtonColor } = useBackground();
   const resolvedPillTextColor = pillTextColor ?? baseColor;
@@ -279,6 +284,18 @@ const PillNav = ({
           <ul className="pill-list" role="menubar">
             {items.map((item, i) => (
               <li key={item.href || `item-${i}`} role="none">
+                {typeof slotIndex === 'number' && i === slotIndex && slotItem ? (
+                  <>
+                    <div role="none" style={{ display: 'inline-block' }}>
+                      {slotItem}
+                    </div>
+                    {slotAfterNode ? (
+                      <div role="none" className="pill-selector-inline" style={{ display: 'inline-block' }}>
+                        {slotAfterNode}
+                      </div>
+                    ) : null}
+                  </>
+                ) : null}
                 {isRouterLink(item.href) ? (
                   <Link
                     role="menuitem"
@@ -336,8 +353,15 @@ const PillNav = ({
                 )}
               </li>
             ))}
+            {rightListItem ? (
+              <li role="none">
+                {rightListItem}
+              </li>
+            ) : null}
           </ul>
         </div>
+
+        {rightSlot}
 
         <div className="pill-nav-mobile">
           <button

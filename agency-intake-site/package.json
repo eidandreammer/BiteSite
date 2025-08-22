@@ -43,6 +43,7 @@
     "react-dom": "^19",
     "react-hook-form": "^7.50.1",
     "react-icons": "^5.5.0",
+    "react-morph": "^0.4.0",
     "react-router-dom": "^6.30.1",
     "three": "^0.167.1",
     "undici": "^7.14.0",

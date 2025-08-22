@@ -18,6 +18,7 @@ const CardNav = ({
   menuColor,
   buttonBgColor,
   buttonTextColor,
+  leftOfCta,
 }) => {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -165,13 +166,17 @@ const CardNav = ({
             <img src={logo} alt={logoAlt} className="logo" />
           </div>
 
-          <button
-            type="button"
-            className="card-nav-cta-button"
-            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-          >
-            Get Started
-          </button>
+          <div className="card-nav-actions">
+            {leftOfCta}
+
+            <button
+              type="button"
+              className="card-nav-cta-button"
+              style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+            >
+              Get Started
+            </button>
+          </div>
         </div>
 
         <div className="card-nav-content" aria-hidden={!isExpanded}>

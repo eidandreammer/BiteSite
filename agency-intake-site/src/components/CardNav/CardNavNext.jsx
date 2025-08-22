@@ -9,6 +9,21 @@ import Link from "next/link";
 import { GoArrowUpRight } from "react-icons/go";
 import "./CardNav.css";
 
+/**
+ * @param {{
+ *  logo: any,
+ *  logoAlt?: string,
+ *  items: any,
+ *  className?: string,
+ *  ease?: string,
+ *  baseColor?: string,
+ *  menuColor: any,
+ *  buttonBgColor: any,
+ *  buttonTextColor: any,
+ *  leftOfCta?: import('react').ReactNode,
+ *  inlineSelectorOpen?: boolean,
+ * }} props
+ */
 const CardNav = ({
   logo,
   logoAlt = "Logo",
@@ -19,6 +34,8 @@ const CardNav = ({
   menuColor,
   buttonBgColor,
   buttonTextColor,
+  leftOfCta,
+  inlineSelectorOpen = false,
 }) => {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -137,7 +154,7 @@ const CardNav = ({
     <div className={`card-nav-container ${className}`}>
       <nav
         ref={navRef}
-        className={`card-nav ${isExpanded ? "open" : ""}`}
+        className={`card-nav ${isExpanded ? "open" : ""} ${inlineSelectorOpen ? "inline-open" : ""}`}
         style={{ backgroundColor: baseColor }}
       >
         <div className="card-nav-top">
@@ -157,13 +174,17 @@ const CardNav = ({
             <span className="logo-text">{logo}</span>
           </div>
 
-          <Link
-            href="/start"
-            className="card-nav-cta-button"
-            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-          >
-            Get Started
-          </Link>
+          <div className="card-nav-actions">
+            {leftOfCta}
+
+            <Link
+              href="/start"
+              className="card-nav-cta-button"
+              style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+            >
+              Get Started
+            </Link>
+          </div>
         </div>
 
         <div className="card-nav-content" aria-hidden={!isExpanded}>

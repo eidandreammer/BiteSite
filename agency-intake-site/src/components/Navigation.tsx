@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -7,6 +7,9 @@ import PillNav from './PillNav/PillNavNext'
 import CardNav from './CardNav/CardNavNext'
 import { useBackground } from '@/contexts/BackgroundContext'
 import './Navigation.css'
+import '@/TextAnimations/GradientText/GradientText.css'
+import GradientText from '@/TextAnimations/GradientText/GradientText'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
 type NavStyle = 'traditional' | 'pill' | 'card'
 
@@ -20,6 +23,7 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isStyleSelectorMinimized, setIsStyleSelectorMinimized] = useState(true)
   const pathname = usePathname()
+  const [isDark, setIsDark] = useState(false)
 
   // Navigation items
   const navItems = [
@@ -32,7 +36,98 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false)
+    setIsStyleSelectorMinimized(true)
   }, [pathname])
+
+  // Always close style selector when nav style changes
+  useEffect(() => {
+    setIsStyleSelectorMinimized(true)
+  }, [navStyle])
+
+  // Initialize theme from document
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement
+      const datasetTheme = root.dataset.theme
+      setIsDark(datasetTheme ? datasetTheme === 'dark' : root.classList.contains('dark'))
+    }
+  }, [])
+
+  // Follow system preference when no stored choice exists
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const handler = (e: MediaQueryListEvent) => {
+      const stored = localStorage.getItem('theme')
+      if (!stored) {
+        const root = document.documentElement
+        const next = e.matches ? 'dark' : 'light'
+        root.dataset.theme = next
+        root.style.colorScheme = next === 'dark' ? 'dark' : 'light'
+        if (next === 'dark') root.classList.add('dark')
+        else root.classList.remove('dark')
+        setIsDark(next === 'dark')
+      }
+    }
+    media.addEventListener?.('change', handler)
+    return () => media.removeEventListener?.('change', handler)
+  }, [])
+
+  const setTheme = (dark: boolean) => {
+    const root = document.documentElement
+    root.classList.add('theme-switching')
+    const next = dark ? 'dark' : 'light'
+    root.dataset.theme = next
+    root.style.colorScheme = dark ? 'dark' : 'light'
+    if (dark) root.classList.add('dark')
+    else root.classList.remove('dark')
+    setIsDark(dark)
+    try { localStorage.setItem('theme', next) } catch {}
+    requestAnimationFrame(() => root.classList.remove('theme-switching'))
+  }
+
+  const ThemeToggle = () => (
+    <div className="theme-toggle" role="group" aria-label="Theme toggle">
+      <button
+        type="button"
+        className={`theme-btn ${!isDark ? 'active' : ''}`}
+        aria-pressed={!isDark}
+        onClick={() => setTheme(false)}
+        title="Activate light theme"
+        aria-label="Activate light theme"
+      >
+        {/* Sun icon */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+        </svg>
+      </button>
+      <span className="theme-separator" aria-hidden="true">/</span>
+      <button
+        type="button"
+        className={`theme-btn ${isDark ? 'active' : ''}`}
+        aria-pressed={isDark}
+        onClick={() => setTheme(true)}
+        title="Activate dark theme"
+        aria-label="Activate dark theme"
+      >
+        {/* Moon icon */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  )
+
+  // Ensure content spacing for fixed nav across all styles
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('has-fixed-nav')
+      return () => {
+        document.body.classList.remove('has-fixed-nav')
+      }
+    }
+  }, [])
 
   // Traditional Navigation Component
   const TraditionalNav = () => (
@@ -60,6 +155,15 @@ const Navigation = ({ className = '' }: NavigationProps) => {
               {item.label}
             </Link>
           ))}
+          {/* Inline Style Selector that morphs from the button */}
+          <div className="inline-style-selector">
+            <StyleSelector />
+          </div>
+        </div>
+
+        {/* Right side actions */}
+        <div className="nav-actions">
+          <ThemeToggle />
         </div>
 
         {/* Mobile Menu Button */}
@@ -92,64 +196,126 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   )
 
   // Style Selector Component
-  const StyleSelector = () => (
-    <div className={`style-selector ${isStyleSelectorMinimized ? 'minimized' : 'expanded'}`}>
+  const StyleSelector = () => {
+    if (navStyle === 'card') return null;
+    return (
+      <div className={`style-selector ${isStyleSelectorMinimized ? 'minimized' : 'expanded'} ${navStyle}`}>
+        {isStyleSelectorMinimized ? (
+          <button 
+            className="style-selector-toggle customize-button"
+            onClick={() => setIsStyleSelectorMinimized(false)}
+            aria-label="Open navigation style selector"
+          >
+            <GradientText animationSpeed={6}>
+              Customize
+            </GradientText>
+          </button>
+        ) : (
+          <div className="style-selector-container">
+            <div className="style-selector-header">
+              <span className="style-label">Navigation Style</span>
+              <button 
+                className="style-selector-close"
+                onClick={() => setIsStyleSelectorMinimized(true)}
+                aria-label="Close navigation style selector"
+              >
+                ×
+              </button>
+            </div>
+            <div className="style-buttons">
+              <button
+                className={`style-btn ${navStyle === 'traditional' ? 'active' : ''}`}
+                onClick={() => setNavStyle('traditional')}
+                style={navStyle === 'traditional' ? { backgroundColor: getButtonColor() } : {}}
+              >
+                Traditional
+              </button>
+              <button
+                className={`style-btn ${navStyle === 'pill' ? 'active' : ''}`}
+                onClick={() => setNavStyle('pill')}
+                style={navStyle === 'pill' ? { backgroundColor: getButtonColor() } : {}}
+              >
+                Pill
+              </button>
+              {/* Card option hidden here to avoid conflicting with Card layout */}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Morphing inline customize control for Pill nav
+  const CustomizeMorphPill = () => (
+    <AnimatePresence initial={false} mode="wait">
       {isStyleSelectorMinimized ? (
-        <button 
-          className="style-selector-toggle"
+        <motion.button
+          key="pill-customize-btn"
+          layoutId="customize-pill"
+          className="pill"
           onClick={() => setIsStyleSelectorMinimized(false)}
           aria-label="Open navigation style selector"
+          initial={{ opacity: 0.9 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
         >
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2"
-          >
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
+          <span className="hover-circle" aria-hidden="true" />
+          <span className="label-stack">
+            <span className="pill-label">
+              <span
+                className="text-content"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #40ffaa, #4079ff, #40ffaa, #4079ff, #40ffaa)',
+                  animationDuration: '6s'
+                }}
+              >
+                Customize
+              </span>
+            </span>
+            <span className="pill-label-hover" aria-hidden="true">
+              <span
+                className="text-content"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #40ffaa, #4079ff, #40ffaa, #4079ff, #40ffaa)',
+                  animationDuration: '6s'
+                }}
+              >
+                Customize
+              </span>
+            </span>
+          </span>
+        </motion.button>
       ) : (
-        <div className="style-selector-container">
-          <div className="style-selector-header">
-            <span className="style-label">Navigation Style</span>
-            <button 
-              className="style-selector-close"
-              onClick={() => setIsStyleSelectorMinimized(true)}
-              aria-label="Close navigation style selector"
-            >
-              ×
-            </button>
-          </div>
-          <div className="style-buttons">
-            <button
-              className={`style-btn ${navStyle === 'traditional' ? 'active' : ''}`}
-              onClick={() => setNavStyle('traditional')}
-              style={navStyle === 'traditional' ? { backgroundColor: getButtonColor() } : {}}
-            >
-              Traditional
-            </button>
-            <button
-              className={`style-btn ${navStyle === 'pill' ? 'active' : ''}`}
-              onClick={() => setNavStyle('pill')}
-              style={navStyle === 'pill' ? { backgroundColor: getButtonColor() } : {}}
-            >
-              Pill
-            </button>
-            <button
-              className={`style-btn ${navStyle === 'card' ? 'active' : ''}`}
-              onClick={() => setNavStyle('card')}
-              style={navStyle === 'card' ? { backgroundColor: getButtonColor() } : {}}
-            >
-              Card
-            </button>
-          </div>
-        </div>
+        <motion.div
+          key="pill-style-selector"
+          layoutId="customize-pill"
+          className="inline-style-selector"
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.2 }}
+        >
+          <StyleSelector />
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
+  )
+
+  // Morphing inline customize control for Card nav
+  const CustomizeMorphCard = () => (
+    <motion.button
+      key="card-customize-btn"
+      layoutId="customize-card"
+      className="card-nav-cta-button"
+      aria-label="Customize"
+      style={{ backgroundColor: getButtonColor(), color: getButtonTextColor() }}
+      initial={{ opacity: 0.95 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.18 }}
+    >
+      Customize
+    </motion.button>
   )
 
   // Render the appropriate navigation style
@@ -170,6 +336,13 @@ const Navigation = ({ className = '' }: NavigationProps) => {
             hoveredPillTextColor="#1f2937"
             className={className}
             onMobileMenuClick={() => {}}
+            slotIndex={navItems.length - 1}
+            slotItem={<CustomizeMorphPill />}
+            rightSlot={(
+              <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ThemeToggle />
+              </div>
+            )}
           />
         )
       case 'card':
@@ -202,6 +375,12 @@ const Navigation = ({ className = '' }: NavigationProps) => {
             buttonBgColor={getButtonColor()}
             buttonTextColor={getButtonTextColor()}
             className={className}
+            leftOfCta={(
+              <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '100%' }}>
+                <ThemeToggle />
+                <CustomizeMorphCard />
+              </div>
+            )}
           />
         )
       default:
@@ -210,10 +389,9 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   }
 
   return (
-    <>
-      <StyleSelector />
+    <LayoutGroup id="nav-customize">
       {renderNavigation()}
-    </>
+    </LayoutGroup>
   )
 }
 

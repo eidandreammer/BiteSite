@@ -1,130 +1,178 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { ExternalLink, ArrowRight, Sparkles, Gauge, Search, BarChart3, Accessibility, ShieldCheck, Layers } from 'lucide-react'
+import Pricing from '@/components/Pricing'
 
 export const metadata: Metadata = {
   title: 'Pricing | Your Agency Name',
-  description: 'Detailed explanation of our pricing and why each service is valuable, with citations to credible sources.'
+  description: 'How our pricing maps to business value — with evidence-backed rationale and sources.'
 }
+
+const sections = [
+  {
+    title: 'Custom Design & Brand Fit',
+    icon: Sparkles,
+    copy:
+      'Tailored interfaces clarify your value proposition and reduce decision friction, increasing conversion versus generic templates.',
+    sources: [
+      { label: 'Nielsen Norman Group', href: 'https://www.nngroup.com/articles/' }
+    ]
+  },
+  {
+    title: 'Mobile‑First, Responsive Implementation',
+    icon: Gauge,
+    copy:
+      'Mobile usability directly impacts revenue. Even a 0.1s speed gain can lift conversions, and mobile friendliness affects rankings.',
+    sources: [
+      { label: 'Think with Google', href: 'https://www.thinkwithgoogle.com/intl/en-154/marketing-strategies/app-and-mobile/milliseconds-earn-millions/' },
+      { label: 'Google Mobile‑Friendly', href: 'https://developers.google.com/search/mobile-sites/' }
+    ]
+  },
+  {
+    title: 'Performance Optimization',
+    icon: Gauge,
+    copy:
+      'Faster sites reduce bounce and boost engagement. Small latency improvements can yield outsized conversion gains.',
+    sources: [
+      { label: 'SOASTA/Google Study', href: 'https://services.google.com/fh/files/misc/2017_online_retail_performance_whitepaper.pdf' },
+      { label: 'Page Experience', href: 'https://developers.google.com/search/docs/appearance/page-experience' }
+    ]
+  },
+  {
+    title: 'Conversion‑Focused UX',
+    icon: Layers,
+    copy:
+      'Clear IA, strong CTAs, and reduced cognitive load drive task success and sales when aligned to user goals.',
+    sources: [
+      { label: 'NN/g Articles', href: 'https://www.nngroup.com/articles/' },
+      { label: 'Baymard Research', href: 'https://baymard.com/research' }
+    ]
+  },
+  {
+    title: 'Technical SEO & Structured Data',
+    icon: Search,
+    copy:
+      'Clean markup, structured data, and Core Web Vitals support discoverability and click‑through from search.',
+    sources: [
+      { label: 'Page Experience', href: 'https://developers.google.com/search/docs/appearance/page-experience' }
+    ]
+  },
+  {
+    title: 'Analytics & Measurement',
+    icon: BarChart3,
+    copy:
+      'Reliable analytics and conversion tracking enable evidence‑based iteration, improving ROAS over time.',
+    sources: [
+      { label: 'Think with Google', href: 'https://www.thinkwithgoogle.com/intl/en-154/marketing-strategies/app-and-mobile/milliseconds-earn-millions/' }
+    ]
+  },
+  {
+    title: 'Accessibility & Compliance',
+    icon: Accessibility,
+    copy:
+      'Accessible experiences expand your audience, reduce legal risk, and improve usability for everyone.',
+    sources: [
+      { label: 'WCAG (W3C/WAI)', href: 'https://www.w3.org/WAI/standards-guidelines/wcag/' }
+    ]
+  },
+  {
+    title: 'Security, Reliability, & Maintenance',
+    icon: ShieldCheck,
+    copy:
+      'Up‑to‑date dependencies, secure headers, and monitoring protect your brand and minimize downtime costs.',
+    sources: []
+  },
+  {
+    title: 'Paid Media Readiness (Google Ads)',
+    icon: Search,
+    copy:
+      'Aligned landing pages, Quality Score factors, and full conversion tracking lower CPA and improve ROAS.',
+    sources: [
+      { label: 'Quality Score Factors', href: 'https://support.google.com/google-ads/answer/6167118' }
+    ]
+  }
+]
 
 export default function PricingPage() {
   return (
     <main className="min-h-screen">
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Pricing</h1>
-          <p className="text-lg text-gray-700 max-w-3xl">
-            We price transparently because the value should be clear. Below is how each part of our service contributes to measurable outcomes, with sources from research firms and platform documentation.
-          </p>
-        </div>
-      </section>
-
-      <section className="py-8 bg-gray-50">
-        <div className="container mx-auto px-4 grid grid-cols-1 gap-10">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Custom Design & Brand Fit</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Tailored interfaces improve clarity of value propositions and reduce decision friction, contributing to higher conversion rates compared to generic templates.
+      {/* Hero */}
+      <section className="relative py-16 md:py-24 bg-gradient-to-br from-neutral to-white overflow-hidden">
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl" aria-hidden="true"></div>
+        <div className="absolute -bottom-24 -left-24 w-[28rem] h-[28rem] bg-accent/10 rounded-full blur-3xl" aria-hidden="true"></div>
+        <div className="container">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">Pricing that Pays for Itself</h1>
+            <p className="text-lg md:text-xl text-gray-700 text-balance">
+              We invest where it moves the needle: performance, UX, SEO, and analytics. The result is a website that looks incredible, ranks better, and converts more — backed by credible research.
             </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Mobile‑First, Responsive Implementation</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Mobile usability directly affects revenue; a 0.1s improvement in mobile site speed can increase conversion rates, and Google uses mobile friendliness for search rankings.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Performance Optimization</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Faster websites reduce bounce and increase engagement. Even small latency improvements can have outsized effects on conversion and user satisfaction.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Conversion‑Focused UX</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Clear information architecture, strong calls‑to‑action, and reduced cognitive load are tied to higher task success and sales. UX investments produce substantial ROI when aligned to user goals.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Technical SEO & Structured Data</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Clean markup, structured data, proper indexing, and performance best practices support discoverability and click‑through from search.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Analytics & Measurement</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Reliable analytics and conversion tracking enable evidence‑based iteration, improving marketing efficiency and ROI over time.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Accessibility & Compliance</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Accessible experiences expand your addressable audience and reduce legal risk while improving usability for all users.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Security, Reliability, and Maintenance</h2>
-            <p className="text-gray-700 max-w-3xl">
-              Up‑to‑date dependencies, secure headers, and backup/monitoring practices protect reputation and minimize downtime costs.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">Paid Media Readiness (Google Ads)</h2>
-            <p className="text-gray-700 max-w-3xl">
-              High‑intent traffic only converts with aligned landing pages, high Quality Score factors, and complete conversion tracking — lowering CPA and improving ROAS.
-            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <a href="#plans" className="btn-primary">
+                View Plans
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </a>
+              <a href="#value" className="btn-secondary">See the Value</a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Sources</h2>
-          <ul className="list-disc pl-6 space-y-2 text-gray-700">
-            <li>
-              Google: Page Experience, Core Web Vitals, and rankings —
-              <a className="text-primary underline" href="https://developers.google.com/search/docs/appearance/page-experience" target="_blank" rel="noopener noreferrer">developers.google.com/search/docs/appearance/page-experience</a>
-            </li>
-            <li>
-              Deloitte Digital (for Google): Milliseconds Make Millions —
-              <a className="text-primary underline" href="https://www.thinkwithgoogle.com/intl/en-154/marketing-strategies/app-and-mobile/milliseconds-earn-millions/" target="_blank" rel="noopener noreferrer">thinkwithgoogle.com ... milliseconds‑earn‑millions</a>
-            </li>
-            <li>
-              Google/SOASTA: The State of Online Retail Performance —
-              <a className="text-primary underline" href="https://services.google.com/fh/files/misc/2017_online_retail_performance_whitepaper.pdf" target="_blank" rel="noopener noreferrer">google.com ... online_retail_performance_whitepaper.pdf</a>
-            </li>
-            <li>
-              Nielsen Norman Group: UX research on conversion and usability —
-              <a className="text-primary underline" href="https://www.nngroup.com/articles/" target="_blank" rel="noopener noreferrer">nngroup.com/articles</a>
-            </li>
-            <li>
-              Baymard Institute: Checkout UX and e‑commerce guidelines —
-              <a className="text-primary underline" href="https://baymard.com/research" target="_blank" rel="noopener noreferrer">baymard.com/research</a>
-            </li>
-            <li>
-              Google: Quality Score factors and relevance —
-              <a className="text-primary underline" href="https://support.google.com/google-ads/answer/6167118" target="_blank" rel="noopener noreferrer">support.google.com/google‑ads/answer/6167118</a>
-            </li>
-            <li>
-              Google: Mobile‑friendly websites and Search —
-              <a className="text-primary underline" href="https://developers.google.com/search/mobile-sites/" target="_blank" rel="noopener noreferrer">developers.google.com/search/mobile-sites</a>
-            </li>
-            <li>
-              W3C/WAI: Web Content Accessibility Guidelines (WCAG) —
-              <a className="text-primary underline" href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank" rel="noopener noreferrer">w3.org/WAI/standards-guidelines/wcag</a>
-            </li>
-          </ul>
+      {/* Value pillars with inline sources */}
+      <section id="value" className="py-12 md:py-16 bg-gray-50">
+        <div className="container">
+          <div className="mb-10 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Where Your Investment Delivers Returns</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Each pillar below maps to measurable outcomes. Explore the source material right beside the claim.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sections.map((item, idx) => {
+              const Icon = item.icon
+              return (
+                <div key={idx} className="card p-6 h-full flex flex-col">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900">{item.title}</h3>
+                  </div>
+                  <p className="text-gray-700 mb-4 flex-1">{item.copy}</p>
+                  {item.sources && item.sources.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {item.sources.map((s, i) => (
+                        <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-3 py-2 rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          {s.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
 
-          <div className="mt-10 flex flex-col sm:flex-row gap-3">
-            <a href="/start" className="inline-flex items-center px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors">Start a Project</a>
-            <a href="/" className="inline-flex items-center px-6 py-3 border-2 border-gray-300 text-gray-800 font-semibold rounded-lg hover:border-gray-400 transition-colors">Back to Home</a>
+      {/* Plans */}
+      <section id="plans" className="py-16 bg-white">
+        <div className="container">
+          <Pricing />
+        </div>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="py-16 bg-gray-50">
+        <div className="container">
+          <div className="max-w-4xl mx-auto text-center bg-white rounded-2xl shadow-sm p-8 md:p-12">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">Ready to turn traffic into revenue?</h3>
+            <p className="text-lg text-gray-600 mb-6">Let’s build a site that looks world‑class and performs like it. We’ll align scope to outcomes and make the value obvious.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/start" className="btn-primary">
+                Start a Project
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+              <Link href="/" className="btn-secondary">Back to Home</Link>
+            </div>
           </div>
         </div>
       </section>
