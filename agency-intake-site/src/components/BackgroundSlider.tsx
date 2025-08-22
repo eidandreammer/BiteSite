@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import { useBackground } from '@/contexts/BackgroundContext'
 import GradientText from '@/TextAnimations/GradientText/GradientText'
 import '@/TextAnimations/GradientText/GradientText.css'
@@ -40,6 +40,23 @@ export default function BackgroundSlider({
   const buttonTextColor = getButtonTextColor()
   const inactiveClass = 'text-gray-700'
 
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof document === 'undefined') return false
+    const root = document.documentElement
+    return (root.dataset.theme === 'dark') || root.classList.contains('dark')
+  })
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const root = document.documentElement
+    const update = () => setIsDark((root.dataset.theme === 'dark') || root.classList.contains('dark'))
+
+    update()
+    const observer = new MutationObserver(() => update())
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme', 'class'] })
+    return () => observer.disconnect()
+  }, [])
+
   const clampedValue = useMemo(() => {
     const upper = Math.max(0, Math.min(max, value))
     return upper
@@ -63,7 +80,10 @@ export default function BackgroundSlider({
                 type="button"
                 onClick={() => onChange(index)}
                 className={`px-3.5 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${isActive ? 'shadow-lg' : 'hover:shadow'} ${isActive ? '' : 'border-gray-300'}`}
-                style={isActive ? { backgroundColor: buttonColor, color: buttonTextColor, borderColor: buttonColor } : {}}
+                style={isActive ? (isDark 
+                  ? { backgroundColor: '#000', color: '#fff', borderColor: '#000' } 
+                  : { backgroundColor: buttonColor, color: buttonTextColor, borderColor: buttonColor }
+                ) : {}}
                 aria-pressed={isActive}
                 whileHover={isActive ? { scale: 1.03 } : { scale: 1.05, y: -1 }}
                 whileTap={{ scale: 0.97 }}

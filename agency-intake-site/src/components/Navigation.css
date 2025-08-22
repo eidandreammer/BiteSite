@@ -45,6 +45,17 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
+/* Dark mode: make Customize button black */
+:root[data-theme="dark"] .style-selector-toggle.customize-button {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+:root[data-theme="dark"] .style-selector-toggle.customize-button:hover {
+  background: #000;
+}
+
 .style-selector-toggle:hover {
   color: #374151;
 }
@@ -696,4 +707,11 @@ body.has-fixed-nav {
   padding: 0 var(--pill-pad-x);
   border-radius: 9999px;
   border: none;
+}
+
+/* Dark mode for inline pill/minimized Customize button */
+:root[data-theme="dark"] .pill-selector-inline .style-selector.minimized .customize-button,
+:root[data-theme="dark"] .inline-style-selector .style-selector.minimized .customize-button {
+  background: #000;
+  color: #fff;
 }

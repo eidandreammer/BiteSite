@@ -159,6 +159,10 @@
   /* Gradient stop overrides */
   :root[data-theme="dark"] .from-gray-50 { --tw-gradient-from: var(--bg) !important; --tw-gradient-to: color-mix(in srgb, var(--bg) 0%, transparent) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
   :root[data-theme="dark"] .to-white { --tw-gradient-to: var(--bg-elev) !important; }
+
+  /* Pricing page dark purple overrides */
+  :root[data-theme="dark"] .pricing-hero-title,
+  :root[data-theme="dark"] .pricing-hero-subtext { color: #6d6af8 !important; }
 }
 
 /* Smooth scrolling */

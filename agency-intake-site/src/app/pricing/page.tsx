@@ -105,8 +105,8 @@ export default function PricingPage() {
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
             <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">Pricing that Pays for Itself</h1>
-              <p className="text-lg md:text-xl text-gray-700 text-balance">
+              <h1 className="pricing-hero-title text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">Pricing that Pays for Itself</h1>
+              <p className="pricing-hero-subtext text-lg md:text-xl text-gray-700 text-balance">
                 We invest where it moves the needle: performance, UX, SEO, and analytics. The result is a website that looks incredible, ranks better, and converts more — backed by credible research.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
