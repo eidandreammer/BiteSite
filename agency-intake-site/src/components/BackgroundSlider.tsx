@@ -40,11 +40,8 @@ export default function BackgroundSlider({
   const buttonTextColor = getButtonTextColor()
   const inactiveClass = 'text-gray-700'
 
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof document === 'undefined') return false
-    const root = document.documentElement
-    return (root.dataset.theme === 'dark') || root.classList.contains('dark')
-  })
+  // Important: don't read from document during initial render to avoid SSR/CSR mismatch
+  const [isDark, setIsDark] = useState<boolean>(false)
 
   useEffect(() => {
     if (typeof document === 'undefined') return

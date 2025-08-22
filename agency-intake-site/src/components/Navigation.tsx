@@ -1,6 +1,7 @@
  'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import PillNav from './PillNav/PillNavNext'
@@ -10,6 +11,10 @@ import './Navigation.css'
 import '@/TextAnimations/GradientText/GradientText.css'
 import GradientText from '@/TextAnimations/GradientText/GradientText'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import TradDarkLogo from '../../images/3.jpg'
+import TradLightLogo from '../../images/4.jpg'
+import PillDarkLogo from '../../images/7.jpg'
+import PillLightLogo from '../../images/8.jpg'
 
 type NavStyle = 'traditional' | 'pill' | 'card'
 
@@ -128,7 +133,12 @@ const Navigation = ({ className = '' }: NavigationProps) => {
       <div className="nav-container">
         <div className="nav-brand">
           <Link href="/" className="nav-logo">
-            Agency Name
+            <Image
+              src={isDark ? TradDarkLogo : TradLightLogo}
+              alt="Agency logo"
+              priority
+              style={{ height: 28, width: 'auto' }}
+            />
           </Link>
         </div>
 
@@ -317,7 +327,14 @@ const Navigation = ({ className = '' }: NavigationProps) => {
       case 'pill':
         return (
           <PillNav
-            logo="Agency Name"
+            logo={(
+              <Image
+                src={isDark ? PillDarkLogo : PillLightLogo}
+                alt="Agency logo"
+                priority
+                style={{ height: 28, width: 'auto' }}
+              />
+            ) as unknown as string}
             items={navItems.map(item => ({
               href: item.href,
               label: item.label

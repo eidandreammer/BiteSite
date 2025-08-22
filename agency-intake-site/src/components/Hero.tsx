@@ -173,7 +173,7 @@ export default function Hero() {
                   key={backgrounds[bgIndex].key}
                   as="span"
                   className="underline font-extrabold"
-                  text={backgrounds[bgIndex].word}
+                  text={backgrounds[bgIndex].word.replace(/\.$/, '')}
                   typingSpeed={60}
                   deletingSpeed={30}
                   pauseDuration={1000}
