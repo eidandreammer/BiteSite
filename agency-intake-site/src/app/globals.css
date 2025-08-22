@@ -42,6 +42,11 @@
     --warn: #d97706;
     --err: #dc2626;
     --shadow: 0 1px 2px rgba(0,0,0,.06), 0 6px 24px rgba(0,0,0,.1);
+    /* Animation tokens */
+    --t-fast: 120ms;
+    --t-med: 220ms;
+    --t-slow: 420ms;
+    --ease: cubic-bezier(.2,.6,.2,1);
     color-scheme: light dark;
   }
 
@@ -115,6 +120,45 @@
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+
+  /* Dark-mode remap for legacy black text classes */
+  :root[data-theme="dark"] .text-black,
+  :root[data-theme="dark"] .text-gray-900,
+  :root[data-theme="dark"] .text-gray-800,
+  :root[data-theme="dark"] .text-gray-700,
+  :root[data-theme="dark"] .text-neutral-900,
+  :root[data-theme="dark"] .text-zinc-900,
+  :root[data-theme="dark"] .text-slate-900,
+  :root[data-theme="dark"] .text-stone-900 { color: var(--txt) !important; }
+  :root[data-theme="dark"] .hover\:text-black:hover,
+  :root[data-theme="dark"] .hover\:text-gray-900:hover { color: var(--txt) !important; }
+  :root[data-theme="dark"] .text-gray-600 { color: var(--txt-muted) !important; }
+  :root[data-theme="dark"] .text-gray-500 { color: var(--txt-muted) !important; }
+  :root[data-theme="dark"] .text-blue-600 { color: var(--brand) !important; }
+  :root[data-theme="dark"] .text-blue-600\/10 { color: color-mix(in srgb, var(--brand) 10%, transparent) !important; }
+
+  /* Background remaps for light defaults */
+  :root[data-theme="dark"] .bg-white { background-color: var(--bg-elev) !important; }
+  :root[data-theme="dark"] .bg-gray-50 { background-color: var(--bg) !important; }
+  :root[data-theme="dark"] .bg-gray-100 { background-color: var(--bg-elev) !important; }
+  :root[data-theme="dark"] .bg-gray-300 { background-color: var(--line) !important; }
+  :root[data-theme="dark"] .bg-blue-600 { background-color: var(--brand) !important; }
+  :root[data-theme="dark"] .hover\:bg-blue-700:hover { background-color: var(--brand) !important; }
+  :root[data-theme="dark"] .bg-white\/95 { background-color: var(--bg-raise) !important; }
+  :root[data-theme="dark"] .hover\:bg-gray-50:hover { background-color: var(--bg-elev) !important; }
+
+  /* Borders */
+  :root[data-theme="dark"] .border-gray-200,
+  :root[data-theme="dark"] .border-gray-300,
+  :root[data-theme="dark"] .border-gray-100,
+  :root[data-theme="dark"] .hover\:border-gray-400:hover { border-color: var(--line) !important; }
+
+  /* Ring color overrides */
+  :root[data-theme="dark"] .ring-black\/5 { --tw-ring-color: color-mix(in srgb, var(--txt) 8%, transparent) !important; }
+
+  /* Gradient stop overrides */
+  :root[data-theme="dark"] .from-gray-50 { --tw-gradient-from: var(--bg) !important; --tw-gradient-to: color-mix(in srgb, var(--bg) 0%, transparent) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+  :root[data-theme="dark"] .to-white { --tw-gradient-to: var(--bg-elev) !important; }
 }
 
 /* Smooth scrolling */
@@ -174,6 +218,34 @@ hr { border-color: var(--line); }
 
 /* Prevent transition flash when switching theme */
 html.theme-switching * { transition: none !important; }
+
+/* Smooth variable transitions */
+:root, body, .card, .btn-primary, .btn-secondary, a, hr, .rule {
+  transition:
+    background-color var(--t-slow) var(--ease),
+    color var(--t-slow) var(--ease),
+    border-color var(--t-slow) var(--ease),
+    box-shadow var(--t-slow) var(--ease);
+}
+
+/* Backdrop veil during theme switch */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, transparent);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease);
+  z-index: 0;
+}
+
+html.theme-switching body::before {
+  opacity: .08;
+  background: radial-gradient(1200px 800px at 50% -20%, var(--bg-elev), transparent 70%);
+}
+
+/* Ensure app content stays above veil */
+main, header, footer { position: relative; z-index: 1; }
 
 @media print {
   :root { --bg:#ffffff; --txt:#000000; }

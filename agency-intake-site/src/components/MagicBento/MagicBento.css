@@ -55,7 +55,7 @@
 .card__content {
   display: flex;
   position: relative;
-  color: #111827; /* gray-900 */
+  color: var(--txt);
 }
 
 .card__header {
@@ -86,7 +86,7 @@
 .card__description {
   font-size: 14px;
   line-height: 1.5;
-  color: #4b5563; /* gray-600 */
+  color: var(--txt-muted);
 }
 
 .card--text-autohide .card__title,

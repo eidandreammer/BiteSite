@@ -20,7 +20,7 @@ export function BackgroundProvider({ children }: { children: ReactNode }) {
       case 'orb':
         return 'rgb(99, 102, 241)' // Blue-purple mix
       case 'galaxy':
-        return 'rgb(0, 0, 0)' // Black
+        return 'rgb(17, 24, 39)' // Gray-900 like, less harsh than pure black
       case 'liquid':
         return 'rgb(229, 231, 235)' // Light gray
       case 'threads':
@@ -37,7 +37,7 @@ export function BackgroundProvider({ children }: { children: ReactNode }) {
   const getButtonTextColor = () => {
     switch (currentBackground) {
       case 'liquid':
-        return 'rgb(0, 0, 0)' // Black text for liquid chrome
+        return 'rgb(17, 24, 39)' // Dark text for liquid chrome
       default:
         return 'rgb(255, 255, 255)' // White text for all other backgrounds
     }

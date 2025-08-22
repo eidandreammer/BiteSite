@@ -87,36 +87,29 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   }
 
   const ThemeToggle = () => (
-    <div className="theme-toggle" role="group" aria-label="Theme toggle">
-      <button
-        type="button"
-        className={`theme-btn ${!isDark ? 'active' : ''}`}
-        aria-pressed={!isDark}
-        onClick={() => setTheme(false)}
-        title="Activate light theme"
-        aria-label="Activate light theme"
-      >
-        {/* Sun icon */}
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="4"></circle>
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
-        </svg>
-      </button>
-      <span className="theme-separator" aria-hidden="true">/</span>
-      <button
-        type="button"
-        className={`theme-btn ${isDark ? 'active' : ''}`}
-        aria-pressed={isDark}
-        onClick={() => setTheme(true)}
-        title="Activate dark theme"
-        aria-label="Activate dark theme"
-      >
-        {/* Moon icon */}
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-      </button>
-    </div>
+    <button
+      id="theme-toggle"
+      className="theme-toggle-icon"
+      aria-label="Toggle dark mode"
+      aria-pressed={isDark}
+      title="Toggle theme"
+      onClick={() => setTheme(!isDark)}
+    >
+      <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle className="sun-core" cx="12" cy="12" r="5"></circle>
+        <g className="sun-rays">
+          <line x1="12" y1="1"  x2="12" y2="4"/>
+          <line x1="12" y1="20" x2="12" y2="23"/>
+          <line x1="1"  y1="12" x2="4"  y2="12"/>
+          <line x1="20" y1="12" x2="23" y2="12"/>
+          <line x1="4.2" y1="4.2" x2="6.6" y2="6.6"/>
+          <line x1="17.4" y1="17.4" x2="19.8" y2="19.8"/>
+          <line x1="4.2" y1="19.8" x2="6.6" y2="17.4"/>
+          <line x1="17.4" y1="6.6"  x2="19.8" y2="4.2"/>
+        </g>
+        <circle className="moon-bite" cx="15" cy="9" r="5"></circle>
+      </svg>
+    </button>
   )
 
   // Ensure content spacing for fixed nav across all styles
