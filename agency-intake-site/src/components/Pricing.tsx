@@ -174,7 +174,7 @@ export default function Pricing() {
               let's discuss your specific requirements and create a tailored proposal.
             </p>
             <a
-              href="#start-project"
+              href="/start"
               className="inline-flex items-center px-8 py-3 text-white font-semibold rounded-lg transition-colors"
               style={({ 
                 backgroundColor: getButtonColor(),

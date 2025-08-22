@@ -155,15 +155,14 @@ const Navigation = ({ className = '' }: NavigationProps) => {
               {item.label}
             </Link>
           ))}
-          {/* Inline Style Selector that morphs from the button */}
-          <div className="inline-style-selector">
-            <StyleSelector />
-          </div>
         </div>
 
         {/* Right side actions */}
-        <div className="nav-actions">
+        <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <ThemeToggle />
+          <div className="inline-style-selector">
+            <StyleSelector />
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -259,6 +258,7 @@ const Navigation = ({ className = '' }: NavigationProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
+          style={{ height: 'calc(var(--nav-h, 46px) - 4px)', padding: '0 14px' }}
         >
           <span className="hover-circle" aria-hidden="true" />
           <span className="label-stack">
@@ -336,13 +336,10 @@ const Navigation = ({ className = '' }: NavigationProps) => {
             hoveredPillTextColor="#1f2937"
             className={className}
             onMobileMenuClick={() => {}}
-            slotIndex={navItems.length - 1}
-            slotItem={<CustomizeMorphPill />}
-            rightSlot={(
-              <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ThemeToggle />
-              </div>
-            )}
+            slotItem={null}
+            slotIndex={undefined}
+            leftSlot={<div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><ThemeToggle /></div>}
+            rightSlot={<div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><CustomizeMorphPill /></div>}
           />
         )
       case 'card':

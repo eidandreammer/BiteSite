@@ -19,7 +19,7 @@
 }
 
 .pill-nav {
-  --nav-h: 42px;
+  --nav-h: 46px;
   --logo: 36px;
   --pill-pad-x: 18px;
   --pill-gap: 3px;
@@ -31,8 +31,8 @@
 
 @media (max-width: 768px) {
   .pill-nav {
-    left: 50%;
-    transform: translateX(-50%);
+    left: auto;
+    transform: none;
     width: 100%;
     justify-content: center;
     padding: 0 1rem;
@@ -48,6 +48,12 @@
   background: var(--base, #000);
   border-radius: 9999px;
   overflow: visible; /* allow inline selector to overflow */
+}
+
+/* Slight vertical nudge for right actions (Customize) to align with hamburger */
+.pill-nav .nav-actions {
+  position: relative;
+  top: 4px;
 }
 
 .pill-logo {
@@ -78,6 +84,16 @@
   padding: 3px;
   height: 100%;
   overflow: visible; /* allow inline selector to overflow */
+}
+
+/* Left slot container for theme toggle */
+.pill-left-slot {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  margin-right: 8px;
+  position: relative;
+  top: 4px; /* nudge down to align with hamburger */
 }
 
 .pill-list > li {
@@ -245,4 +261,66 @@
   cursor: pointer;
   background-color: var(--base);
   color: var(--hover-text, #fff);
+}
+
+/* PillNavNext mobile aliases (ensure mobile menu appears on small screens) */
+.pill-nav-mobile { display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1002; }
+.pill-hamburger {
+  width: var(--nav-h);
+  height: var(--nav-h);
+  border-radius: 50%;
+  background: var(--base, #000);
+  border: none;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 0;
+}
+.pill-mobile-menu {
+  position: absolute;
+  top: calc(var(--nav-h, 42px) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--base, #f0f0f0);
+  border-radius: 9999px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 1002;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.pill-mobile-list {
+  list-style: none;
+  margin: 0;
+  padding: 3px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3px;
+}
+.pill-mobile-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  color: var(--pill-text, #fff);
+  background-color: var(--pill-bg, #fff);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+.pill-mobile-link:hover {
+  cursor: pointer;
+  background-color: var(--base);
+  color: var(--hover-text, #fff);
+}
+@media (max-width: 768px) {
+  .pill-nav-mobile { display: flex; align-items: center; }
+  .pill-hamburger { display: flex; }
 }

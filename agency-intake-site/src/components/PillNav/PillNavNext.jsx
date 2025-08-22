@@ -8,6 +8,36 @@ import { gsap } from "gsap";
 import { useBackground } from '@/contexts/BackgroundContext';
 import "./PillNav.css";
 
+/**
+ * @typedef {Object} PillNavItem
+ * @property {string} href
+ * @property {string} label
+ * @property {string} [ariaLabel]
+ */
+
+/**
+ * @typedef {Object} PillNavProps
+ * @property {string} logo
+ * @property {string} [logoAlt]
+ * @property {PillNavItem[]} items
+ * @property {string} activeHref
+ * @property {string} [className]
+ * @property {string} [ease]
+ * @property {string} [baseColor]
+ * @property {string} [pillColor]
+ * @property {string} [hoveredPillTextColor]
+ * @property {string} [pillTextColor]
+ * @property {() => void} [onMobileMenuClick]
+ * @property {boolean} [initialLoadAnimation]
+ * @property {import('react').ReactNode} [rightListItem]
+ * @property {import('react').ReactNode} [slotItem]
+ * @property {number|null} [slotIndex]
+ * @property {import('react').ReactNode} [slotAfterNode]
+ * @property {import('react').ReactNode} [rightSlot]
+ * @property {import('react').ReactNode} [leftSlot]
+ */
+
+/** @param {PillNavProps} props */
 const PillNav = ({
   logo,
   logoAlt = "Logo",
@@ -26,6 +56,7 @@ const PillNav = ({
   slotIndex,
   slotAfterNode = null,
   rightSlot,
+  leftSlot,
 }) => {
   const { getButtonColor } = useBackground();
   const resolvedPillTextColor = pillTextColor ?? baseColor;
@@ -37,6 +68,7 @@ const PillNav = ({
   const logoTweenRef = useRef(null);
   const hamburgerRef = useRef(null);
   const mobileMenuRef = useRef(null);
+  const mobileListRef = useRef(null);
   const navItemsRef = useRef(null);
   const logoRef = useRef(null);
 
@@ -184,6 +216,7 @@ const PillNav = ({
 
     const hamburger = hamburgerRef.current;
     const menu = mobileMenuRef.current;
+    const list = mobileListRef.current;
 
     if (hamburger) {
       const lines = hamburger.querySelectorAll(".hamburger-line");
@@ -198,27 +231,53 @@ const PillNav = ({
 
     if (menu) {
       if (newState) {
-        gsap.set(menu, { visibility: "visible" });
-        gsap.fromTo(
-          menu,
-          { opacity: 0, y: 10, scaleY: 1 },
-          {
-            opacity: 1,
-            y: 0,
-            scaleY: 1,
-            duration: 0.3,
-            ease,
-            transformOrigin: "top center",
-          },
-        );
+        gsap.set(menu, { visibility: "visible", scale: 0.9, opacity: 0, transformOrigin: "center center" });
+        gsap.to(menu, { opacity: 1, scale: 1, duration: 0.22, ease, overwrite: "auto" });
+
+        // Animate links from center out
+        if (list) {
+          const links = list.querySelectorAll(".pill-mobile-link");
+          if (links && links.length) {
+            gsap.set(links, { opacity: 0, y: 8, scale: 0.96 });
+            const centerIndex = Math.floor(links.length / 2);
+            links.forEach((el, i) => {
+              gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.24,
+                ease,
+                delay: Math.abs(i - centerIndex) * 0.045,
+                overwrite: "auto",
+              });
+            });
+          }
+        }
       } else {
+        // Animate links center-out on close, then fade the menu
+        if (list) {
+          const links = list.querySelectorAll(".pill-mobile-link");
+          if (links && links.length) {
+            const centerIndex = Math.floor(links.length / 2);
+            links.forEach((el, i) => {
+              gsap.to(el, {
+                opacity: 0,
+                y: 8,
+                scale: 0.96,
+                duration: 0.16,
+                ease,
+                delay: Math.abs(i - centerIndex) * 0.03,
+                overwrite: "auto",
+              });
+            });
+          }
+        }
         gsap.to(menu, {
           opacity: 0,
-          y: 10,
-          scaleY: 1,
-          duration: 0.2,
+          scale: 0.96,
+          duration: 0.18,
           ease,
-          transformOrigin: "top center",
+          transformOrigin: "center center",
           onComplete: () => {
             gsap.set(menu, { visibility: "hidden" });
           },
@@ -279,6 +338,12 @@ const PillNav = ({
             <span className="logo-text">{logo}</span>
           </a>
         )}
+
+        {leftSlot ? (
+          <div className="pill-left-slot">
+            {leftSlot}
+          </div>
+        ) : null}
 
         <div className="pill-nav-items desktop-only" ref={navItemsRef}>
           <ul className="pill-list" role="menubar">
@@ -379,7 +444,7 @@ const PillNav = ({
             ref={mobileMenuRef}
             aria-hidden={!isMobileMenuOpen}
           >
-            <ul className="pill-mobile-list">
+            <ul className="pill-mobile-list" ref={mobileListRef}>
               {items.map((item, i) => (
                 <li key={item.href || `mobile-item-${i}`}>
                   {isRouterLink(item.href) ? (

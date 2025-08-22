@@ -68,6 +68,9 @@
   width: 200px;
 }
 
+/* Make traditional selector less wide by default */
+.style-selector.expanded.traditional { width: 140px; }
+
 /* Center Customize button on Traditional nav */
 .style-selector.traditional {
   left: 50%;
@@ -153,6 +156,47 @@
   color: #ffffff;
 }
 
+/* Mobile: ensure Customize is inline and selector stacks vertically */
+@media (max-width: 768px) {
+  /* Keep inline position for the style selector when rendered inside nav actions */
+  .inline-style-selector .style-selector {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    transform: none;
+  }
+
+  /* Stack options vertically to save space */
+  .style-selector.expanded {
+    width: 180px;
+    padding: 10px 12px;
+  }
+  /* Tighter traditional selector on mobile */
+  .style-selector.expanded.traditional { width: 140px; }
+
+  .style-buttons {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .style-btn {
+    width: 100%;
+  }
+
+  /* Align actions inline with logo and leave room for hamburger */
+  .traditional-nav .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .traditional-nav .nav-container {
+    padding-right: 3rem; /* reserve space for absolute-positioned hamburger */
+  }
+}
+
 /* Traditional Navigation */
 .traditional-nav {
   position: fixed;
@@ -178,6 +222,11 @@
   position: relative;
 }
 
+/* Leave space for the hamburger at far right */
+.traditional-nav .nav-container {
+  padding-right: 1rem;
+}
+
 .nav-brand {
   display: flex;
   align-items: center;
@@ -199,6 +248,11 @@
   display: flex;
   align-items: center;
   gap: 2rem;
+}
+
+/* Push actions to the right; align items horizontally */
+.traditional-nav .nav-actions {
+  margin-left: auto;
 }
 
 .nav-link {
@@ -362,6 +416,8 @@
   position: relative;
   top: auto;
   right: auto;
+  left: auto;
+  transform: none;
 }
 
 /* Card Nav: dedicated popover wrapper for inline customize */
@@ -522,11 +578,26 @@
     padding: 8px 10px;
     width: 200px;
   }
+  /* Tighter traditional selector on mobile */
+  .style-selector.expanded.traditional {
+    width: 136px;
+  }
+
+  /* Push actions left to avoid overlapping the hamburger */
+  .traditional-nav .nav-container {
+    padding-right: 3.75rem;
+  }
 
   .style-btn {
     font-size: 9px;
     padding: 3px 6px;
   }
+}
+
+/* Hide logo and nav-actions in pill mode on mobile to center hamburger */
+@media (max-width: 768px) {
+  .pill-nav .pill-logo { display: none; }
+  .pill-nav .nav-actions { display: none; }
 }
 
 @media (max-width: 480px) {
@@ -560,6 +631,35 @@
   .style-btn {
     font-size: 8px;
     padding: 2px 4px;
+  }
+}
+
+/* Strong mobile overrides to keep Customize inline in traditional nav */
+@media (max-width: 768px) {
+  /* Ensure inline selector ignores fixed/centering rules */
+  .traditional-nav .inline-style-selector .style-selector.traditional {
+    position: relative;
+    top: 0;
+    right: auto;
+    left: auto;
+    transform: none;
+  }
+
+  /* Align the inline selector container vertically with nav height */
+  .traditional-nav .inline-style-selector {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* Normalize Customize pill size to align with hamburger/theme pill */
+  .traditional-nav .inline-style-selector .style-selector-toggle.customize-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 12px;
+    line-height: 1;
   }
 }
 
