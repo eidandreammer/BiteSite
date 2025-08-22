@@ -87,6 +87,19 @@ export function buildIntakePayload(intake: IntakeFormData, turnstileToken: strin
     pages,
     color: {
       selected: intake.color.brand || '#000000',
+      mode: (() => {
+        const map: Record<string, IntakePayload['color']['mode']> = {
+          'complementary': 'Complementary',
+          'analogous': 'Analogous',
+          'split': 'Split',
+          'triad': 'Triad',
+          'tetrad': 'Tetrad',
+          'mono': 'Monochrome',
+          'mono-tints': 'Monochrome Tints'
+        }
+        const h = (intake as any)?.color?.harmony as keyof typeof map | undefined
+        return (h && map[h]) || 'Monochrome'
+      })(),
       palette: intake.color.palette || ['#000000']
     },
     typography: {

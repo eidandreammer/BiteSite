@@ -1008,6 +1008,8 @@ export default function IntakeForm() {
                         }
                       }}
                       onPaletteChange={(palette) => setValue('color.palette', palette)}
+                      harmony={(watchedValues as any)?.color?.harmony || 'tetrad'}
+                      onHarmonyChange={(h) => setValue('color.harmony', h, { shouldValidate: true })}
                     />
                   )}
                 />

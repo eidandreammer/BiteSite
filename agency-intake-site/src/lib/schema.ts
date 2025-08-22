@@ -30,7 +30,8 @@ export const intakeSchema = z.object({
   referenceUrls: z.array(z.string().url('Please enter a valid URL')).max(2, 'Maximum 2 reference URLs allowed').optional(),
   color: z.object({
     brand: z.string().regex(/^#[0-9A-F]{6}$/i, 'Please select a valid color'),
-    mode: z.enum(['light', 'dark', 'auto']).default('auto'),
+    // Harmony used by ColorWheel; separate from UI color mode
+    harmony: z.enum(['complementary','analogous','split','triad','tetrad','mono','mono-tints']).default('tetrad'),
     palette: z.array(z.string().regex(/^#[0-9A-F]{6}$/i, 'Please select valid colors')).min(1, 'Please select at least one color'),
   }),
   fonts: z.object({

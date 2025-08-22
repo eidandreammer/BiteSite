@@ -12,6 +12,7 @@ export const IntakeSchema = z.object({
 
   color: z.object({
     selected: z.string(),
+    mode: z.enum(["Complementary","Analogous","Split","Triad","Tetrad","Monochrome","Monochrome Tints"]),
     palette: z.array(z.string())
   }),
   typography: z.object({

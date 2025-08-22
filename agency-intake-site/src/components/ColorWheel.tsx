@@ -7,6 +7,8 @@ interface ColorWheelProps {
   value: string
   onChange: (color: string) => void
   onPaletteChange: (palette: string[]) => void
+  harmony?: HarmonyType
+  onHarmonyChange?: (harmony: HarmonyType) => void
 }
 
 type HarmonyType = 'complementary' | 'analogous' | 'split' | 'triad' | 'tetrad' | 'mono' | 'mono-tints'
@@ -21,8 +23,8 @@ const harmonyTypes: { value: HarmonyType; label: string; description: string }[]
   { value: 'mono-tints', label: 'Monochrome Tints', description: 'The same color with different lightness levels' }
 ]
 
-export default function ColorWheel({ value, onChange, onPaletteChange }: ColorWheelProps) {
-  const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('tetrad')
+export default function ColorWheel({ value, onChange, onPaletteChange, harmony, onHarmonyChange }: ColorWheelProps) {
+  const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>(harmony || 'tetrad')
   const [palette, setPalette] = useState<string[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null)
@@ -36,6 +38,13 @@ export default function ColorWheel({ value, onChange, onPaletteChange }: ColorWh
     generatePalette(value, selectedHarmony)
     drawColorWheel()
   }, [value, selectedHarmony])
+
+  // Sync internal state when parent-controlled harmony changes
+  useEffect(() => {
+    if (harmony && harmony !== selectedHarmony) {
+      setSelectedHarmony(harmony)
+    }
+  }, [harmony])
 
   // Force re-render of indicator during drag for smooth movement
   useEffect(() => {
@@ -549,7 +558,11 @@ module.exports = {
         <div className="w-full max-w-xs space-y-2">
           <select
             value={selectedHarmony}
-            onChange={(e) => setSelectedHarmony(e.target.value as HarmonyType)}
+            onChange={(e) => {
+              const next = e.target.value as HarmonyType
+              setSelectedHarmony(next)
+              onHarmonyChange?.(next)
+            }}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
           >
             {harmonyTypes.map((type) => (
