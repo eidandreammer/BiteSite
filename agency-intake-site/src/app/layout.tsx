@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navigation from '@/components/Navigation'
+import SkipLink from '@/components/SkipLink'
+import Footer from '@/components/Footer'
 import { BackgroundProvider } from '@/contexts/BackgroundContext'
 
 const inter = Inter({ 
@@ -82,6 +84,74 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        {/* Preconnects for font delivery to improve CLS */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        {/* Organization JSON-LD for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: 'Your Agency Name',
+              url: 'https://bitesites.org',
+              logo: '/favicon.ico'
+            })
+          }}
+        />
+        {/* WebSite & BreadcrumbList & FAQ JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: 'Your Agency Name',
+              url: 'https://bitesites.org',
+              potentialAction: {
+                "@type": "SearchAction",
+                target: 'https://bitesites.org/?q={search_term_string}',
+                "query-input": 'required name=search_term_string'
+              }
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: 'Home', item: 'https://bitesites.org/' },
+                { "@type": "ListItem", position: 2, name: 'Pricing', item: 'https://bitesites.org/pricing' },
+                { "@type": "ListItem", position: 3, name: 'Start', item: 'https://bitesites.org/start' }
+              ]
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: 'How long does a project take?',
+                  acceptedAnswer: { "@type": "Answer", text: 'Most sites launch in 3–6 weeks depending on scope.' }
+                },
+                {
+                  "@type": "Question",
+                  name: 'Do you offer ongoing support?',
+                  acceptedAnswer: { "@type": "Answer", text: 'Yes, we offer maintenance plans and support SLAs.' }
+                }
+              ]
+            })
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -103,8 +173,16 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <BackgroundProvider>
-          <Navigation />
-          {children}
+          <SkipLink />
+          <header role="banner">
+            <Navigation />
+          </header>
+          <main id="content" role="main">
+            {children}
+          </main>
+          <footer role="contentinfo">
+            <Footer />
+          </footer>
         </BackgroundProvider>
       </body>
     </html>

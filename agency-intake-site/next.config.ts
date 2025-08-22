@@ -8,7 +8,14 @@ const nextConfig: NextConfig = {
   // Use default output so API routes work
   basePath,
   assetPrefix: basePath ? `${basePath}/` : '',
-  images: { unoptimized: true },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'plus.unsplash.com' },
+      { protocol: 'https', hostname: 'picsum.photos' },
+    ],
+  },
   eslint: { ignoreDuringBuilds: true },
 };
 

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <Hero />
       <LazyVisible>
         <Features />
@@ -51,6 +51,6 @@ export default function Home() {
           <IntakeForm />
         </div>
       </section>
-    </main>
+    </div>
   )
 }

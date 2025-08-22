@@ -97,7 +97,7 @@ const sections = [
 
 export default function PricingPage() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       {/* Hero */}
       <section className="relative py-16 md:py-24 bg-gradient-to-br from-neutral to-white overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl" aria-hidden="true"></div>
@@ -118,7 +118,13 @@ export default function PricingPage() {
               </div>
             </div>
             <div className="mt-10 lg:mt-0 flex justify-end">
-              <Image src={pay} alt="Payment value illustration" className="w-full max-w-md h-auto" priority />
+              <Image
+                src={pay}
+                alt="Payment value illustration"
+                className="h-auto"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                priority
+              />
             </div>
           </div>
         </div>
@@ -183,7 +189,7 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }
 

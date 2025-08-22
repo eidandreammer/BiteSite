@@ -2,7 +2,7 @@
 	Installed from https://reactbits.dev/default/
 */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
   motion,
   useMotionValue,
@@ -10,6 +10,7 @@ import {
   useTransform,
 } from "motion/react";
 import "./RollingGallery.css";
+import { dedupeUrls } from "@/lib/imageUtils";
 
 const IMGS = [
   "https://images.unsplash.com/photo-1528181304800-259b08848526?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -28,8 +29,13 @@ const RollingGallery = ({
   autoplay = false,
   pauseOnHover = false,
   images = [],
+  dedupe = false,
+  maxFaces,
 }) => {
-  images = IMGS;
+  const inputImages = images && images.length ? images : IMGS;
+  const deduped = useMemo(() => (dedupe ? dedupeUrls(inputImages) : inputImages), [inputImages, dedupe]);
+  const limited = useMemo(() => (typeof maxFaces === 'number' ? deduped.slice(0, Math.max(1, maxFaces)) : deduped), [deduped, maxFaces]);
+  images = limited;
   const [isScreenSizeSm, setIsScreenSizeSm] = useState(
     window.innerWidth <= 640,
   );
@@ -142,7 +148,7 @@ const RollingGallery = ({
                 transform: `rotateY(${i * (360 / faceCount)}deg) translateZ(${radius}px)`,
               }}
             >
-              <img src={url} alt="gallery" className="gallery-img" />
+              <img src={url} alt="gallery" className="gallery-img" loading="lazy" decoding="async" />
             </div>
           ))}
         </motion.div>

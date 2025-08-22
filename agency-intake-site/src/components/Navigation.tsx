@@ -11,10 +11,9 @@ import './Navigation.css'
 import '@/TextAnimations/GradientText/GradientText.css'
 import GradientText from '@/TextAnimations/GradientText/GradientText'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import TradDarkLogo from '../../images/3.jpg'
-import TradLightLogo from '../../images/4.jpg'
-import PillDarkLogo from '../../images/7.jpg'
-import PillLightLogo from '../../images/8.jpg'
+// Use public assets for logo to avoid missing local files
+const LOGO_LIGHT = '/vercel.svg'
+const LOGO_DARK = '/vercel.svg'
 
 type NavStyle = 'traditional' | 'pill' | 'card'
 
@@ -26,6 +25,8 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   const { getButtonColor, getButtonTextColor } = useBackground()
   const [navStyle, setNavStyle] = useState<NavStyle>('traditional')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [lastFocusedElement, setLastFocusedElement] = useState<HTMLElement | null>(null)
+  const mobileMenuId = 'primary-navigation'
   const [isStyleSelectorMinimized, setIsStyleSelectorMinimized] = useState(true)
   const pathname = usePathname()
   const [isDark, setIsDark] = useState(false)
@@ -127,28 +128,79 @@ const Navigation = ({ className = '' }: NavigationProps) => {
     }
   }, [])
 
+  // Lock scroll and trap focus when mobile menu is open
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const body = document.body
+    const menu = document.getElementById(mobileMenuId)
+    if (!menu) return
+
+    if (isMobileMenuOpen) {
+      setLastFocusedElement(document.activeElement as HTMLElement)
+      const previousOverflow = body.style.overflow
+      body.style.overflow = 'hidden'
+
+      // Focus first focusable element inside menu
+      const focusable = menu.querySelector<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+      focusable?.focus()
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsMobileMenuOpen(false)
+        } else if (e.key === 'Tab') {
+          // Simple focus trap
+          const nodes = Array.from(
+            menu.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+          )
+          if (nodes.length === 0) return
+          const first = nodes[0]
+          const last = nodes[nodes.length - 1]
+          const current = document.activeElement as HTMLElement
+          if (e.shiftKey && current === first) {
+            e.preventDefault(); last.focus()
+          } else if (!e.shiftKey && current === last) {
+            e.preventDefault(); first.focus()
+          }
+        }
+      }
+      document.addEventListener('keydown', handleKeyDown)
+
+      return () => {
+        body.style.overflow = previousOverflow
+        document.removeEventListener('keydown', handleKeyDown)
+        lastFocusedElement?.focus()
+      }
+    }
+  }, [isMobileMenuOpen])
+
   // Traditional Navigation Component
   const TraditionalNav = () => (
-    <nav className={`traditional-nav ${className}`}>
+    <nav className={`traditional-nav ${className}`} aria-label="Primary">
       <div className="nav-container">
         <div className="nav-brand">
           <Link href="/" className="nav-logo">
             <Image
-              src={isDark ? TradDarkLogo : TradLightLogo}
+              src={isDark ? LOGO_DARK : LOGO_LIGHT}
               alt="Agency logo"
               priority
               style={{ height: 28, width: 'auto' }}
+              sizes="120px"
+              width={120}
+              height={28}
             />
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <div className="nav-menu desktop-menu">
+        <div className="nav-menu desktop-menu" role="menubar">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={`nav-link ${pathname === item.href ? 'active' : ''}`}
+              role="menuitem"
               style={pathname === item.href ? ({ 
                 borderBottomColor: getButtonColor(),
                 color: getButtonColor(),
@@ -172,13 +224,20 @@ const Navigation = ({ className = '' }: NavigationProps) => {
         <button
           className="mobile-menu-button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle mobile menu"
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-controls={mobileMenuId}
+          aria-expanded={isMobileMenuOpen}
         >
           <span className={`hamburger ${isMobileMenuOpen ? 'open' : ''}`}></span>
         </button>
 
         {/* Mobile Navigation */}
-        <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+        <div
+          id={mobileMenuId}
+          className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}
+          role="dialog"
+          aria-modal="true"
+        >
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -329,10 +388,13 @@ const Navigation = ({ className = '' }: NavigationProps) => {
           <PillNav
             logo={(
               <Image
-                src={isDark ? PillDarkLogo : PillLightLogo}
+                src={isDark ? LOGO_DARK : LOGO_LIGHT}
                 alt="Agency logo"
                 priority
                 style={{ height: 28, width: 'auto' }}
+                sizes="120px"
+                width={120}
+                height={28}
               />
             ) as unknown as string}
             items={navItems.map(item => ({

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative py-20 text-black overflow-hidden">
         {/* Threads Background */}
@@ -104,6 +104,7 @@ export default function AboutPage() {
                   width={96}
                   height={96}
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                  sizes="96px"
                 />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   <a href="https://www.linkedin.com/in/jensy-jimenez/" target="_blank" rel="noopener noreferrer" className="hover:underline">Jensy Jimenez</a>
@@ -132,6 +133,7 @@ export default function AboutPage() {
                   width={96}
                   height={96}
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                  sizes="96px"
                 />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   <a href="https://www.linkedin.com/in/ethan-kurtz/" target="_blank" rel="noopener noreferrer" className="hover:underline">Ethan Kurtz</a>
@@ -244,7 +246,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }
 

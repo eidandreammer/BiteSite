@@ -38,6 +38,7 @@ export default function InfiniteScroll({
   autoplaySpeed = 0.5,
   autoplayDirection = "down",
   pauseOnHover = false,
+  maxItems,
 }) {
   const wrapperRef = useRef(null);
   const containerRef = useRef(null);
@@ -153,6 +154,8 @@ export default function InfiniteScroll({
     negativeMargin,
   ]);
 
+  const limitedItems = typeof maxItems === 'number' ? items.slice(0, Math.max(1, maxItems)) : items;
+
   return (
     <>
       <style>
@@ -180,7 +183,7 @@ export default function InfiniteScroll({
             transform: getTiltTransform(),
           }}
         >
-          {items.map((item, i) => (
+          {limitedItems.map((item, i) => (
             <div className="infinite-scroll-item" key={i}>
               {item.content}
             </div>
