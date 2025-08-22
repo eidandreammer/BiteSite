@@ -15,6 +15,27 @@ import {
 import { gsap } from "gsap";
 import "./TextType.css";
 
+/**
+ * @param {Object} props
+ * @param {string|string[]} props.text
+ * @param {import('react').ElementType} [props.as]
+ * @param {number} [props.typingSpeed]
+ * @param {number} [props.initialDelay]
+ * @param {number} [props.pauseDuration]
+ * @param {number} [props.deletingSpeed]
+ * @param {boolean} [props.loop]
+ * @param {string} [props.className]
+ * @param {boolean} [props.showCursor]
+ * @param {boolean} [props.hideCursorWhileTyping]
+ * @param {string} [props.cursorCharacter]
+ * @param {string} [props.cursorClassName]
+ * @param {number} [props.cursorBlinkDuration]
+ * @param {string[]} [props.textColors]
+ * @param {{min:number,max:number}} [props.variableSpeed]
+ * @param {(text:string,index:number)=>void} [props.onSentenceComplete]
+ * @param {boolean} [props.startOnVisible]
+ * @param {boolean} [props.reverseMode]
+ */
 const TextType = ({
   text,
   as: Component = "div",
@@ -29,6 +50,7 @@ const TextType = ({
   cursorCharacter = "|",
   cursorClassName = "",
   cursorBlinkDuration = 0.5,
+  /** @type {string[]} */
   textColors = [],
   variableSpeed,
   onSentenceComplete,
