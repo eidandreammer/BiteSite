@@ -237,7 +237,7 @@
   top: 3em;
   left: 1rem;
   right: 1rem;
-  background: var(--base, #f0f0f0);
+  background: transparent;
   border-radius: 27px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   z-index: 998;
@@ -295,7 +295,7 @@
   top: calc(var(--nav-h, 42px) + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: var(--base, #f0f0f0);
+  background: transparent;
   border-radius: 9999px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   z-index: var(--z-overlay);
