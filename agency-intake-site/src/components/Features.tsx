@@ -7,6 +7,7 @@ import MagicBento from '@/components/MagicBento/MagicBento.jsx'
 import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack/ScrollStack.jsx'
 import ChromaGrid from '@/components/ChromaGrid/ChromaGrid.jsx'
 import InfiniteMenu from '@/components/InfiniteMenu/InfiniteMenu.jsx'
+import LayoutPicker from '@/components/LayoutPicker'
 
 const features = [
   {
@@ -114,10 +115,10 @@ export default function Features() {
         </motion.div>
 
         <div className="mb-10 flex items-center justify-center">
-          <label htmlFor="features-layout" className="mr-3 text-sm text-gray-700">Layout:</label>
+          <label htmlFor="features-layout" className="sr-only">Layout</label>
           <select
             id="features-layout"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+            className="sr-only"
             value={layout}
             onChange={(e) => setLayout(e.target.value as any)}
           >
@@ -127,6 +128,7 @@ export default function Features() {
             <option value="chroma-grid">Chroma Grid</option>
             <option value="infinite-menu">Infinite Menu</option>
           </select>
+          <LayoutPicker current={layout} onPick={(l) => setLayout(l as any)} />
         </div>
 
         {layout === 'grid' && (
