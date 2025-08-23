@@ -2,11 +2,14 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import BackgroundSlider from './BackgroundSlider'
 import { useBackground } from '@/contexts/BackgroundContext'
 import TextType from '@/TextAnimations/TextType/TextType.jsx'
+import TextCleaningStyles from './TextCleaningStyles'
+import { cleanText, validateCleanText } from '@/lib/textUtils'
+import { useTextMonitor } from '@/hooks/useTextMonitor'
 
 // Lazy-load heavy animated backgrounds to reduce initial JS and improve LCP
 const Orb = dynamic(() => import('@/Backgrounds/Orb/Orb.jsx'), { ssr: false })
@@ -18,6 +21,7 @@ const DarkVeil = dynamic(() => import('@/Backgrounds/DarkVeil/DarkVeil.jsx'), { 
 
 export default function Hero() {
   const { setCurrentBackground, getButtonColor, getButtonTextColor } = useBackground()
+  const textRef = useRef<HTMLSpanElement>(null)
   
   type BackgroundTextColors = {
     primary: string
@@ -51,7 +55,7 @@ export default function Hero() {
     { 
       key: 'galaxy', 
       label: 'Galaxy', 
-      word: 'Revolutionary', 
+      word: 'Revolutionary',
       Component: Galaxy, 
       props: {
         mouseInteraction: true,
@@ -151,6 +155,17 @@ export default function Hero() {
   const SelectedBg = backgrounds[bgIndex].Component
   const isWhitePricing = ['galaxy', 'liquid', 'prism', 'darkveil'].includes(backgrounds[bgIndex].key)
 
+  // Use the text monitoring hook to prevent periods
+  useTextMonitor([bgIndex], textRef)
+  
+  // Validate background words for periods
+  useEffect(() => {
+    const currentWord = backgrounds[bgIndex]?.word
+    if (currentWord) {
+      validateCleanText(currentWord, 'background word')
+    }
+  }, [bgIndex])
+
   // Update background context when bgIndex changes
   useEffect(() => {
     setCurrentBackground(backgrounds[bgIndex].key)
@@ -158,6 +173,8 @@ export default function Hero() {
 
   return (
     <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+      <TextCleaningStyles />
+      
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
         {/* Defer mounting animated background until idle to improve LCP */}
@@ -168,12 +185,12 @@ export default function Hero() {
           <motion.div initial={false} className="mb-8">
             <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${backgrounds[bgIndex].textColors.primary} mb-6 leading-tight`}>
               Transform Your Business with
-              <span className={`${backgrounds[bgIndex].textColors.accent} block`}>
+              <span className={`${backgrounds[bgIndex].textColors.accent} block`} ref={textRef}>
                 <TextType
                   key={backgrounds[bgIndex].key}
                   as="span"
                   className="underline font-extrabold"
-                  text={backgrounds[bgIndex].word.replace(/\.$/, '')}
+                  text={cleanText(backgrounds[bgIndex].word)}
                   typingSpeed={60}
                   deletingSpeed={30}
                   pauseDuration={1000}
@@ -181,7 +198,9 @@ export default function Hero() {
                   showCursor={true}
                   cursorBlinkDuration={0.5}
                   textColors={["currentColor"]}
-                />{' '}Web Design
+                  onSentenceComplete={(text) => validateCleanText(text, 'TextType output')}
+                />
+                Web Design
               </span>
             </h1>
             <p className={`text-xl lg:text-2xl ${backgrounds[bgIndex].textColors.secondary} max-w-3xl mx-auto leading-relaxed`}>
