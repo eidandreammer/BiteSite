@@ -14,6 +14,32 @@
   color-scheme: light dark;
 }
 
+/* Component-scoped tokens with sensible defaults */
+.bento-section {
+  /* Allow per-card overrides in light theme, but unify in dark */
+  --bento-bg: var(--bento-bg-override, var(--bg-elev));
+  --bento-text: var(--txt);
+  --bento-text-muted: var(--txt-muted);
+  --bento-border-color: var(--line);
+}
+
+/* Force black cards with white text in dark mode */
+:root[data-theme="dark"] .bento-section {
+  --bento-bg: #000000;
+  --bento-text: #ffffff;
+  --bento-text-muted: rgba(255, 255, 255, 0.75);
+  --bento-border-color: #2a2a2a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .bento-section {
+    --bento-bg: #000000;
+    --bento-text: #ffffff;
+    --bento-text-muted: rgba(255, 255, 255, 0.75);
+    --bento-border-color: #2a2a2a;
+  }
+}
+
 .card-grid {
   display: grid;
   gap: 1.5em;
@@ -34,8 +60,8 @@
   max-width: 100%;
   padding: 1.25em; /* keep spacing similar to grid */
   border-radius: 20px;
-  border: 1px solid var(--border-color);
-  background: var(--background-dark);
+  border: 1px solid var(--bento-border-color);
+  background: var(--bento-bg);
   font-weight: 300;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -55,7 +81,7 @@
 .card__content {
   display: flex;
   position: relative;
-  color: var(--txt);
+  color: var(--bento-text);
 }
 
 .card__header {
@@ -86,7 +112,7 @@
 .card__description {
   font-size: 14px;
   line-height: 1.5;
-  color: var(--txt-muted);
+  color: var(--bento-text-muted);
 }
 
 .card--text-autohide .card__title,

@@ -543,7 +543,7 @@ const MagicBento = ({
           const cardProps = {
             className: baseClassName,
             style: {
-              backgroundColor: card.color,
+              "--bento-bg-override": card.color,
               "--glow-color": glowColor,
             },
           };
