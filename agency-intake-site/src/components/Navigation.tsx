@@ -93,18 +93,35 @@ const Navigation = ({ className = '' }: NavigationProps) => {
       onClick={() => setTheme(!isDark)}
     >
       <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
-        <circle className="sun-core" cx="12" cy="12" r="5"></circle>
-        <g className="sun-rays">
-          <line x1="12" y1="1"  x2="12" y2="4"/>
-          <line x1="12" y1="20" x2="12" y2="23"/>
-          <line x1="1"  y1="12" x2="4"  y2="12"/>
-          <line x1="20" y1="12" x2="23" y2="12"/>
-          <line x1="4.2" y1="4.2" x2="6.6" y2="6.6"/>
-          <line x1="17.4" y1="17.4" x2="19.8" y2="19.8"/>
-          <line x1="4.2" y1="19.8" x2="6.6" y2="17.4"/>
-          <line x1="17.4" y1="6.6"  x2="19.8" y2="4.2"/>
+        <defs>
+          <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ffe066"/>
+            <stop offset="60%" stopColor="#ffca3a"/>
+            <stop offset="100%" stopColor="#ffb703"/>
+          </radialGradient>
+          <radialGradient id="moonGrad" cx="50%" cy="45%" r="60%">
+            <stop offset="0%" stopColor="#dbe3ff"/>
+            <stop offset="70%" stopColor="#a8b6ff"/>
+            <stop offset="100%" stopColor="#7e8df4"/>
+          </radialGradient>
+        </defs>
+        <g className="sun">
+          <circle className="sun-core" cx="12" cy="12" r="5" fill="url(#sunGrad)" />
+          <g className="sun-rays">
+            <line x1="12" y1="1"  x2="12" y2="4"/>
+            <line x1="12" y1="20" x2="12" y2="23"/>
+            <line x1="1"  y1="12" x2="4"  y2="12"/>
+            <line x1="20" y1="12" x2="23" y2="12"/>
+            <line x1="4.2" y1="4.2" x2="6.6" y2="6.6"/>
+            <line x1="17.4" y1="17.4" x2="19.8" y2="19.8"/>
+            <line x1="4.2" y1="19.8" x2="6.6" y2="17.4"/>
+            <line x1="17.4" y1="6.6"  x2="19.8" y2="4.2"/>
+          </g>
         </g>
-        <circle className="moon-bite" cx="15" cy="9" r="5"></circle>
+        <g className="moon">
+          <circle className="moon-core" cx="12" cy="12" r="5" fill="url(#moonGrad)" />
+          <circle className="moon-bite" cx="14" cy="10" r="5"></circle>
+        </g>
       </svg>
     </button>
   )

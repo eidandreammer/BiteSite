@@ -196,7 +196,7 @@ export async function submitIntake(intake: IntakeFormData, turnstileToken: strin
 }
 
 export function buildSimpleIntakePayload(intake: SimpleIntake) {
-	const mapRole = (r: SimpleIntake['role']) => ({ owner: 'Owner', manager: 'Manager', employee: 'Employee', investor: 'Investor', other: 'Other' }[r])
+	const mapRole = (r: SimpleIntake['role']) => ({ owner: 'Provider', manager: 'Provider', employee: 'Provider', investor: 'Investor', other: 'Other' }[r])
 	const mapUrgency = (u: SimpleIntake['urgency']) => (u === 'soon' ? 'Soon' : 'No Rush')
 	return {
 		name: intake.name,
