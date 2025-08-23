@@ -348,7 +348,7 @@ const PillNav = ({
 
   const containerStyle = sticky
     ? { top: `${topOffset}px` }
-    : { position: 'static', top: 'auto', transform: 'none' }
+    : { position: 'static', top: 'auto', left: 'auto', transform: 'none', margin: '0 auto', width: 'max-content', marginTop: `${topOffset}px` }
 
   return (
     <div className={`pill-nav-container${isMobileMenuOpen ? " menu-open" : ""}`} style={containerStyle}>
