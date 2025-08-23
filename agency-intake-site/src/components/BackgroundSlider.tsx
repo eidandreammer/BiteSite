@@ -63,8 +63,8 @@ export default function BackgroundSlider({
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div className="relative rounded-2xl bg-white/95 shadow-2xl ring-1 ring-black/5 p-5">
-        {/* Mobile-only theme toggle in top-right of the box */}
-        <div className="absolute right-3 top-3 md:hidden">
+        {/* Theme toggle in top-right of the box */}
+        <div className="absolute right-3 top-3">
           <ThemeToggle />
         </div>
         <div className="flex items-center justify-center mb-4">

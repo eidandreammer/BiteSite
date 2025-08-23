@@ -8,7 +8,7 @@ import PillNav from './PillNav/PillNavNext'
 import { useBackground } from '@/contexts/BackgroundContext'
 import './Navigation.css'
 import { LayoutGroup } from 'framer-motion'
-import ThemeToggle from './ThemeToggle'
+// Removed ThemeToggle from navigation to avoid duplicate toggles
 // Theme-specific logos are managed in LogoSwap
 
 interface NavigationProps {
@@ -98,7 +98,7 @@ const Navigation = ({ className = '' }: NavigationProps) => {
         onMobileMenuClick={() => {}}
         slotItem={null}
         slotIndex={undefined}
-        leftSlot={<div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><ThemeToggle /></div>}
+        leftSlot={null}
         rightSlot={null}
         sticky={isSticky}
         topOffset={14}
