@@ -50,6 +50,17 @@
     color-scheme: light dark;
   }
 
+  /* Ensure proper spacing for fixed navigation */
+  body {
+    padding-top: 80px; /* Account for fixed navigation height + offset */
+  }
+
+  /* Ensure navigation is always accessible */
+  header[role="banner"] {
+    position: relative;
+    z-index: 100000;
+  }
+
 
   :root[data-theme="dark"] {
     --bg: #0b0b0c;

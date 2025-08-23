@@ -484,15 +484,31 @@ const PillNav = ({
   };
 
   const containerStyle = sticky
-    ? { top: `${topOffset}px` }
-    : { position: 'static', top: 'auto', left: 'auto', transform: 'none', margin: '0 auto', width: 'max-content', marginTop: `${topOffset}px` }
+    ? { 
+        position: 'fixed',
+        top: `${topOffset}px`,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 'var(--z-nav)',
+        width: 'max-content'
+      }
+    : { 
+        position: 'static', 
+        top: 'auto', 
+        left: 'auto', 
+        transform: 'none', 
+        margin: '0 auto', 
+        width: 'max-content', 
+        marginTop: `${topOffset}px` 
+      }
 
   return (
     <div className={`pill-nav-container${isMobileMenuOpen ? " menu-open" : ""}`} style={containerStyle}>
       <nav
         className={`pill-nav ${className}`}
-        aria-label="Primary"
+        aria-label="Primary navigation"
         style={cssVars}
+        role="navigation"
       >
         {/* Logo - Only render on desktop */}
         {!isMobile && (
@@ -501,9 +517,10 @@ const PillNav = ({
               <Link
                 className="pill-logo"
                 href={(logoHref ?? items[0].href)}
-                aria-label="Home"
+                aria-label="Home - Navigate to homepage"
                 onMouseEnter={handleLogoEnter}
                 role="menuitem"
+                tabIndex={0}
                 ref={(el) => {
                   logoRef.current = el;
                 }}
@@ -514,8 +531,9 @@ const PillNav = ({
               <a
                 className="pill-logo"
                 href={(logoHref ?? items?.[0]?.href) || "#"}
-                aria-label="Home"
+                aria-label="Home - Navigate to homepage"
                 onMouseEnter={handleLogoEnter}
+                tabIndex={0}
                 ref={(el) => {
                   logoRef.current = el;
                 }}
@@ -557,8 +575,10 @@ const PillNav = ({
                       href={item.href}
                       className={`pill${activeHref === item.href ? " is-active" : ""}`}
                       aria-label={item.ariaLabel || item.label}
+                      aria-current={activeHref === item.href ? "page" : undefined}
                       onMouseEnter={() => handleEnter(i)}
                       onMouseLeave={() => handleLeave(i)}
+                      tabIndex={0}
                       style={activeHref === item.href ? { 
                         backgroundColor: getButtonColor(),
                         color: '#ffffff'
@@ -584,8 +604,10 @@ const PillNav = ({
                       href={item.href}
                       className={`pill${activeHref === item.href ? " is-active" : ""}`}
                       aria-label={item.ariaLabel || item.label}
+                      aria-current={activeHref === item.href ? "page" : undefined}
                       onMouseEnter={() => handleEnter(i)}
                       onMouseLeave={() => handleLeave(i)}
+                      tabIndex={0}
                       style={activeHref === item.href ? { 
                         backgroundColor: getButtonColor(),
                         color: '#ffffff'
@@ -627,7 +649,9 @@ const PillNav = ({
               className="pill-hamburger"
               onClick={toggleMobileMenu}
               aria-expanded={isMobileMenuOpen}
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-controls="mobile-navigation-menu"
+              tabIndex={0}
               ref={hamburgerRef}
             >
               <div className="hamburger-line" />
@@ -639,11 +663,13 @@ const PillNav = ({
                 className="pill-mobile-menu"
                 ref={mobileMenuRef}
                 aria-hidden={!isMobileMenuOpen}
+                id="mobile-navigation-menu"
+                role="menu"
                 style={cssVars}
               >
                 <ul className="pill-mobile-list" ref={mobileListRef}>
                   {items.map((item, i) => (
-                    <li key={item.href || `mobile-item-${i}`}>
+                    <li key={item.href || `mobile-item-${i}`} role="none">
                       {isRouterLink(item.href) ? (
                         <Link
                           href={item.href}
@@ -651,6 +677,9 @@ const PillNav = ({
                             activeHref === item.href ? " is-active" : ""
                           }`}
                           aria-label={item.ariaLabel || item.label}
+                          aria-current={activeHref === item.href ? "page" : undefined}
+                          role="menuitem"
+                          tabIndex={0}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {item.label}
@@ -662,6 +691,9 @@ const PillNav = ({
                             activeHref === item.href ? " is-active" : ""
                           }`}
                           aria-label={item.ariaLabel || item.label}
+                          aria-current={activeHref === item.href ? "page" : undefined}
+                          role="menuitem"
+                          tabIndex={0}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {item.label}

@@ -5,7 +5,7 @@
 /* z-index tokens */
 :root { 
   --z-background: 0; 
-  --z-nav: 100; 
+  --z-nav: 100000; /* Increased z-index to ensure navigation is above all content */
   --z-overlay: 9999; 
   --z-modal: 10000; 
   --z-mobile-nav: 200001; /* Higher than desktop nav */
@@ -19,6 +19,10 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-nav);
+  /* Ensure navigation is always on top */
+  pointer-events: auto;
+  /* Prevent any interference with other elements */
+  isolation: isolate;
 }
 
 @media (max-width: 768px) {
@@ -26,6 +30,76 @@
     width: 100%;
     left: 0;
     transform: none;
+    /* Ensure full width on mobile */
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+  
+  .pill-nav {
+    left: auto;
+    transform: none;
+    width: 100%;
+    justify-content: center;
+    padding: 0 1rem;
+    background: transparent;
+    /* Ensure proper mobile layout */
+    max-width: 100%;
+    overflow: visible;
+  }
+  
+  .pill-nav-mobile { 
+    display: flex; 
+    align-items: center; 
+    z-index: var(--z-mobile-nav); /* Ensure high z-index on mobile */
+    /* Ensure mobile navigation is always visible and accessible */
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  
+  .pill-hamburger { 
+    display: flex; 
+    /* Ensure hamburger button is always clickable */
+    position: relative;
+    z-index: var(--z-mobile-nav);
+  }
+  
+  .pill-mobile-menu { 
+    top: calc(var(--nav-h, 42px) + 23px); 
+    z-index: var(--z-mobile-nav); /* Ensure high z-index on mobile */
+    /* Ensure mobile menu is properly positioned and accessible */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 2rem);
+  }
+  
+  /* Force hide desktop navigation elements on mobile */
+  .pill-nav .pill-logo, 
+  .pill-nav .nav-actions,
+  .pill-nav .pill-list {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
+  /* Ensure mobile navigation is always visible on mobile */
+  .pill-nav-mobile {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Prevent any desktop navigation from showing on mobile */
+@media (max-width: 768px) {
+  .pill-nav .pill-list,
+  .pill-nav .pill-logo,
+  .pill-nav .nav-actions {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 }
 
@@ -335,6 +409,9 @@
   left: 50%; 
   transform: translateX(-50%); 
   z-index: var(--z-mobile-nav); /* Use higher z-index than desktop nav */
+  /* Ensure mobile navigation is always accessible */
+  pointer-events: auto;
+  isolation: isolate;
 }
 .pill-hamburger {
   width: var(--nav-h);
@@ -349,8 +426,19 @@
   gap: 4px;
   cursor: pointer;
   padding: 0;
+  /* Ensure button is clickable */
+  position: relative;
+  z-index: var(--z-mobile-nav);
 }
-.pill-hamburger:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.pill-hamburger:focus-visible { 
+  outline: 2px solid currentColor; 
+  outline-offset: 2px; 
+}
+.pill-hamburger:hover {
+  /* Ensure hover state is visible */
+  opacity: 0.8;
+  transform: scale(1.05);
+}
 .pill-mobile-menu {
   position: fixed;
   top: calc(var(--nav-h, 42px) + 8px);
@@ -364,6 +452,9 @@
   max-width: calc(100vw - 20px);
   overflow: hidden;
   white-space: nowrap;
+  /* Ensure mobile menu is always accessible */
+  pointer-events: auto;
+  isolation: isolate;
 }
 .pill-mobile-list {
   list-style: none;
@@ -419,13 +510,113 @@
   }
 }
 
-/* Prevent any desktop navigation from showing on mobile */
+/* Ensure all navigation elements are clickable and accessible */
+.pill-nav * {
+  pointer-events: auto;
+}
+
+.pill-nav a,
+.pill-nav button,
+.pill-nav .pill-logo {
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure pill navigation items are always clickable */
+.pill {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  /* Ensure proper touch targets on mobile */
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Ensure mobile navigation elements are always accessible */
+.pill-nav-mobile * {
+  pointer-events: auto;
+}
+
+.pill-mobile-link {
+  /* Ensure proper touch targets on mobile */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure links are always clickable */
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+/* Ensure focus states are visible for accessibility */
+.pill:focus-visible,
+.pill-hamburger:focus-visible,
+.pill-mobile-link:focus-visible {
+  outline: 2px solid var(--focus, #005fcc);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+/* Ensure hover states work properly */
+.pill:hover,
+.pill-mobile-link:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+/* Ensure navigation is always visible and accessible */
+.pill-nav-container {
+  /* Prevent any hiding or interference */
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+  /* Ensure proper stacking context */
+  transform-style: preserve-3d;
+  /* Prevent any clipping */
+  overflow: visible;
+}
+
+/* Ensure navigation elements are never hidden */
+.pill-nav,
+.pill-nav-mobile {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+  /* Ensure proper stacking context */
+  transform-style: preserve-3d;
+  /* Prevent any clipping */
+  overflow: visible;
+}
+
+/* Ensure mobile navigation is always accessible on mobile */
 @media (max-width: 768px) {
-  .pill-nav .pill-list,
-  .pill-nav .pill-logo,
-  .pill-nav .nav-actions {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
+  .pill-nav-container {
+    /* Force visibility on mobile */
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    /* Ensure proper mobile positioning */
+    position: fixed !important;
+    top: 10px !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    width: 100% !important;
+    z-index: var(--z-mobile-nav) !important;
+  }
+  
+  .pill-nav-mobile {
+    /* Force visibility on mobile */
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+    /* Ensure proper mobile positioning */
+    position: relative !important;
+    width: 100% !important;
+    justify-content: center !important;
+    z-index: var(--z-mobile-nav) !important;
   }
 }

@@ -20,7 +20,8 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   const pathname = usePathname()
   const [isDark, setIsDark] = useState(false)
 
-  const isSticky = pathname !== '/start'
+  // Navigation should always be sticky for better accessibility and UX
+  const isSticky = true
 
   // Navigation items
   const navItems = [
@@ -30,16 +31,15 @@ const Navigation = ({ className = '' }: NavigationProps) => {
     { href: '/start', label: 'Get Started' }
   ]
 
-  // Toggle body padding only when nav is sticky
+  // Always add body padding for fixed navigation to prevent content overlap
   useEffect(() => {
     if (typeof document === 'undefined') return
     const body = document.body
-    if (isSticky) body.classList.add('has-fixed-nav')
-    else body.classList.remove('has-fixed-nav')
+    body.classList.add('has-fixed-nav')
     return () => {
       body.classList.remove('has-fixed-nav')
     }
-  }, [isSticky])
+  }, [])
 
   // Initialize theme from document
   useEffect(() => {

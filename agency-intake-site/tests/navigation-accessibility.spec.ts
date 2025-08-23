@@ -8,7 +8,7 @@ test.describe('Navigation Accessibility', () => {
       
       // Main navigation should have proper role
       const nav = page.locator('.pill-nav')
-      await expect(nav).toHaveAttribute('aria-label', 'Primary')
+      await expect(nav).toHaveAttribute('aria-label', 'Primary navigation')
       
       // Navigation items should have proper roles
       const navItems = page.locator('.pill-list')
@@ -47,7 +47,7 @@ test.describe('Navigation Accessibility', () => {
       await expect(logo).toBeFocused()
       
       // Logo should have proper aria-label
-      await expect(logo).toHaveAttribute('aria-label', 'Home')
+      await expect(logo).toHaveAttribute('aria-label', 'Home - Navigate to homepage')
     })
   })
 
@@ -61,14 +61,14 @@ test.describe('Navigation Accessibility', () => {
       
       // Hamburger should have proper ARIA attributes
       await expect(hamburger).toHaveAttribute('aria-expanded', 'false')
-      await expect(hamburger).toHaveAttribute('aria-label', 'Open menu')
+      await expect(hamburger).toHaveAttribute('aria-label', 'Open navigation menu')
       
       // Open menu
       await hamburger.click()
       
       // ARIA attributes should update
       await expect(hamburger).toHaveAttribute('aria-expanded', 'true')
-      await expect(hamburger).toHaveAttribute('aria-label', 'Close menu')
+      await expect(hamburger).toHaveAttribute('aria-label', 'Close navigation menu')
       
       // Mobile menu should have proper ARIA attributes
       const mobileMenu = page.locator('.pill-mobile-menu')
@@ -79,7 +79,7 @@ test.describe('Navigation Accessibility', () => {
       
       // ARIA attributes should update back
       await expect(hamburger).toHaveAttribute('aria-expanded', 'false')
-      await expect(hamburger).toHaveAttribute('aria-label', 'Open menu')
+      await expect(hamburger).toHaveAttribute('aria-label', 'Open navigation menu')
       await expect(mobileMenu).toHaveAttribute('aria-hidden', 'true')
     })
 
@@ -118,7 +118,7 @@ test.describe('Navigation Accessibility', () => {
       
       // Check desktop accessibility
       const desktopNav = page.locator('.pill-nav')
-      await expect(desktopNav).toHaveAttribute('aria-label', 'Primary')
+      await expect(desktopNav).toHaveAttribute('aria-label', 'Primary navigation')
       
       // Switch to mobile
       await page.setViewportSize({ width: 390, height: 844 })
@@ -134,7 +134,7 @@ test.describe('Navigation Accessibility', () => {
       await page.waitForTimeout(100)
       
       // Desktop accessibility should be restored
-      await expect(desktopNav).toHaveAttribute('aria-label', 'Primary')
+      await expect(desktopNav).toHaveAttribute('aria-label', 'Primary navigation')
     })
 
     test('should have consistent focus indicators', async ({ page }) => {
@@ -186,12 +186,98 @@ test.describe('Navigation Accessibility', () => {
       await page.goto('/')
       
       // Main navigation should be in a nav landmark
-      const primaryNav = page.locator('nav[aria-label="Primary"]')
+      const primaryNav = page.locator('nav[aria-label="Primary navigation"]')
       await expect(primaryNav).toBeVisible()
       
       // Should have main content area
       const main = page.locator('main')
       await expect(main).toBeVisible()
+    })
+  })
+
+  test.describe('Sticky Navigation', () => {
+    test('should be sticky on all pages', async ({ page }) => {
+      await page.setViewportSize({ width: 1200, height: 800 })
+      
+      // Test on home page
+      await page.goto('/')
+      const navContainer = page.locator('.pill-nav-container')
+      await expect(navContainer).toHaveCSS('position', 'fixed')
+      
+      // Test on about page
+      await page.goto('/about')
+      await expect(navContainer).toHaveCSS('position', 'fixed')
+      
+      // Test on pricing page
+      await page.goto('/pricing')
+      await expect(navContainer).toHaveCSS('position', 'fixed')
+      
+      // Test on start page (should also be sticky)
+      await page.goto('/start')
+      await expect(navContainer).toHaveCSS('position', 'fixed')
+    })
+
+    test('should maintain sticky behavior on scroll', async ({ page }) => {
+      await page.setViewportSize({ width: 1200, height: 800 })
+      await page.goto('/')
+      
+      const navContainer = page.locator('.pill-nav-container')
+      
+      // Check initial position
+      const initialTop = await navContainer.evaluate(el => el.getBoundingClientRect().top)
+      
+      // Scroll down
+      await page.evaluate(() => window.scrollTo(0, 500))
+      
+      // Navigation should still be in the same position (sticky)
+      const scrolledTop = await navContainer.evaluate(el => el.getBoundingClientRect().top)
+      expect(scrolledTop).toBe(initialTop)
+    })
+
+    test('should have proper body padding for fixed navigation', async ({ page }) => {
+      await page.setViewportSize({ width: 1200, height: 800 })
+      await page.goto('/')
+      
+      // Body should have padding-top to prevent content overlap
+      const body = page.locator('body')
+      await expect(body).toHaveCSS('padding-top', '80px')
+    })
+  })
+
+  test.describe('Mobile Sticky Navigation', () => {
+    test('should be sticky on mobile for all pages', async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 })
+      
+      // Test on home page
+      await page.goto('/')
+      const navContainer = page.locator('.pill-nav-container')
+      await expect(navContainer).toHaveCSS('position', 'fixed')
+      
+      // Test on start page (should also be sticky)
+      await page.goto('/start')
+      await expect(navContainer).toHaveCSS('position', 'fixed')
+    })
+
+    test('should maintain mobile navigation accessibility on scroll', async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 })
+      await page.goto('/')
+      
+      const navContainer = page.locator('.pill-nav-container')
+      const hamburger = page.locator('.pill-hamburger')
+      
+      // Check initial position
+      const initialTop = await navContainer.evaluate(el => el.getBoundingClientRect().top)
+      
+      // Scroll down
+      await page.evaluate(() => window.scrollTo(0, 300))
+      
+      // Navigation should still be in the same position (sticky)
+      const scrolledTop = await navContainer.evaluate(el => el.getBoundingClientRect().top)
+      expect(scrolledTop).toBe(initialTop)
+      
+      // Hamburger button should still be clickable
+      await expect(hamburger).toBeVisible()
+      await expect(hamburger).toBeEnabled()
     })
   })
 })

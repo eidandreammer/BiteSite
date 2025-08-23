@@ -680,9 +680,21 @@
   }
 }
 
-/* Ensure content doesn't hide behind fixed nav only for traditional nav */
+/* Ensure content doesn't hide behind fixed nav for all navigation types */
 body.has-fixed-nav {
-  padding-top: 70px;
+  padding-top: 80px; /* Increased padding to account for navigation height + offset */
+}
+
+/* Ensure navigation is always accessible and properly positioned */
+header[role="banner"] {
+  position: relative;
+  z-index: 100000;
+}
+
+/* Ensure navigation container is properly positioned */
+.navigation-container {
+  position: relative;
+  z-index: 100000;
 }
 
 /* Non-sticky traditional nav overrides */
