@@ -266,6 +266,8 @@ html.theme-switching body::before {
 
 /* Ensure app content stays above veil */
 main, header, footer { position: relative; z-index: 1; }
+/* Always keep primary nav/menu interactive above decorative layers */
+#primary-navigation { z-index: 10001; position: fixed; left: 0; right: 0; }
 
 @media print {
   :root { --bg:#ffffff; --txt:#000000; }

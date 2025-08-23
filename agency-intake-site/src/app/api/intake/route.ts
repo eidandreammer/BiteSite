@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'edge'
-import { intakeSchema } from '@/lib/schema'
-import { submitIntake } from '@/lib/supabase'
+import { simpleIntakeSchema } from '@/lib/simple-intake.schema'
+import { submitSimpleIntake } from '@/lib/supabase'
 
 // Simple in-memory rate limiting for API route
 const RATE_LIMIT_WINDOW_MS = 60_000
@@ -39,17 +39,17 @@ export async function POST(request: NextRequest) {
     }
     
     // Validate the intake data
-    const validatedData = intakeSchema.parse(intakeData)
+    const validatedData = simpleIntakeSchema.parse({ ...intakeData, turnstileToken })
     
     // Submit to Supabase with turnstile token
-    const result = await submitIntake(validatedData, turnstileToken)
+    const result = await submitSimpleIntake(validatedData, turnstileToken)
     
     if (result.success) {
       return NextResponse.json(
         { 
           success: true, 
           id: result.id,
-          message: 'Intake submitted successfully' 
+          message: 'Lead submitted successfully' 
         },
         { status: 201 }
       )

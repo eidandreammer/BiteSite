@@ -3,6 +3,7 @@
 */
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { useBackground } from '@/contexts/BackgroundContext';
@@ -35,6 +36,8 @@ import "./PillNav.css";
  * @property {import('react').ReactNode} [slotAfterNode]
  * @property {import('react').ReactNode} [rightSlot]
  * @property {import('react').ReactNode} [leftSlot]
+ * @property {boolean} [sticky]
+ * @property {number} [topOffset]
  */
 
 /** @param {PillNavProps} props */
@@ -57,6 +60,8 @@ const PillNav = ({
   slotAfterNode = null,
   rightSlot,
   leftSlot,
+  sticky = true,
+  topOffset = 14,
 }) => {
   const { getButtonColor } = useBackground();
   const resolvedPillTextColor = pillTextColor ?? baseColor;
@@ -71,6 +76,7 @@ const PillNav = ({
   const mobileListRef = useRef(null);
   const navItemsRef = useRef(null);
   const logoRef = useRef(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     const layout = () => {
@@ -174,6 +180,28 @@ const PillNav = ({
 
     return () => window.removeEventListener("resize", onResize);
   }, [items, ease, initialLoadAnimation]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Lock/unlock body scroll when pill mobile menu opens/closes
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const body = document.body;
+    const previousOverflow = body.style.overflow;
+    if (isMobileMenuOpen) {
+      body.style.overflow = 'hidden';
+    }
+    return () => {
+      body.style.overflow = previousOverflow;
+    };
+  }, [isMobileMenuOpen]);
+
+  // Close menu on route changes to avoid persistent scroll lock
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [activeHref]);
 
   const handleEnter = (i) => {
     const tl = tlRefs.current[i];
@@ -305,8 +333,12 @@ const PillNav = ({
     ["--pill-text"]: resolvedPillTextColor,
   };
 
+  const containerStyle = sticky
+    ? { top: `${topOffset}px` }
+    : { position: 'static', top: 'auto', transform: 'none' }
+
   return (
-    <div className="pill-nav-container">
+    <div className={`pill-nav-container${isMobileMenuOpen ? " menu-open" : ""}`} style={containerStyle}>
       <nav
         className={`pill-nav ${className}`}
         aria-label="Primary"
@@ -432,6 +464,7 @@ const PillNav = ({
           <button
             className="pill-hamburger"
             onClick={toggleMobileMenu}
+            aria-expanded={isMobileMenuOpen}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             ref={hamburgerRef}
           >
@@ -439,47 +472,50 @@ const PillNav = ({
             <div className="hamburger-line" />
           </button>
 
-          <div
-            className="pill-mobile-menu"
-            ref={mobileMenuRef}
-            aria-hidden={!isMobileMenuOpen}
-          >
-            <ul className="pill-mobile-list" ref={mobileListRef}>
-              {items.map((item, i) => (
-                <li key={item.href || `mobile-item-${i}`}>
-                  {isRouterLink(item.href) ? (
-                    <Link
-                      href={item.href}
-                      className={`pill-mobile-link${
-                        activeHref === item.href ? " is-active" : ""
-                      }`}
-                      aria-label={item.ariaLabel || item.label}
-                      style={activeHref === item.href ? { 
-                        backgroundColor: getButtonColor(),
-                        color: '#ffffff'
-                      } : {}}
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={item.href}
-                      className={`pill-mobile-link${
-                        activeHref === item.href ? " is-active" : ""
-                      }`}
-                      aria-label={item.ariaLabel || item.label}
-                      style={activeHref === item.href ? { 
-                        backgroundColor: getButtonColor(),
-                        color: '#ffffff'
-                      } : {}}
-                    >
-                      {item.label}
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {isMounted && createPortal(
+            <div
+              className="pill-mobile-menu"
+              ref={mobileMenuRef}
+              aria-hidden={!isMobileMenuOpen}
+            >
+              <ul className="pill-mobile-list" ref={mobileListRef}>
+                {items.map((item, i) => (
+                  <li key={item.href || `mobile-item-${i}`}>
+                    {isRouterLink(item.href) ? (
+                      <Link
+                        href={item.href}
+                        className={`pill-mobile-link${
+                          activeHref === item.href ? " is-active" : ""
+                        }`}
+                        aria-label={item.ariaLabel || item.label}
+                        style={activeHref === item.href ? { 
+                          backgroundColor: getButtonColor(),
+                          color: '#ffffff'
+                        } : {}}
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={item.href}
+                        className={`pill-mobile-link${
+                          activeHref === item.href ? " is-active" : ""
+                        }`}
+                        aria-label={item.ariaLabel || item.label}
+                        style={activeHref === item.href ? { 
+                          backgroundColor: getButtonColor(),
+                          color: '#ffffff'
+                        } : {}}
+                      >
+                        {item.label}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>,
+            document.body
+          )}
         </div>
       </nav>
     </div>

@@ -3,7 +3,7 @@ import Hero from '@/components/Hero'
 import Features from '@/components/Features'
 import Pricing from '@/components/Pricing'
 import LazyVisible from '@/components/LazyVisible'
-import IntakeForm from '@/components/IntakeForm'
+import SimpleIntakeForm from '@/components/SimpleIntakeForm'
 
 export const metadata: Metadata = {
   title: 'Professional Web Design Services - Transform Your Business',
@@ -48,7 +48,7 @@ export default function Home() {
             </p>
           </div>
           
-          <IntakeForm />
+          <SimpleIntakeForm />
         </div>
       </section>
     </div>

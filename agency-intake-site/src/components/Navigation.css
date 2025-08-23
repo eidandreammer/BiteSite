@@ -1,3 +1,5 @@
+/* z-index tokens */
+:root { --z-background: 0; --z-nav: 100; --z-overlay: 9999; --z-modal: 10000; }
 /* Style Selector */
 .style-selector {
   position: fixed;
@@ -214,7 +216,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1001;
+  z-index: 200000; /* Ensure above backgrounds/effects */
   background: color-mix(in oklab, var(--bg) 92%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
@@ -311,6 +313,8 @@
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 200006;
+  pointer-events: auto;
 }
 
 .hamburger {
@@ -354,10 +358,12 @@
 }
 
 /* Mobile Menu */
+.mobile-menu-portal { position: fixed; inset: 0; z-index: 200001; }
+.mobile-scrim { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 200001; }
 .mobile-menu {
   display: none;
-  position: absolute;
-  top: 100%;
+  position: fixed;
+  top: 70px;
   left: 0;
   right: 0;
   background: color-mix(in oklab, var(--bg) 98%, transparent);
@@ -366,17 +372,11 @@
   padding: 1rem;
   flex-direction: column;
   gap: 0.5rem;
-  transform: translateY(-100%);
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
+  z-index: 200002; /* above nav and overlay */
+  will-change: transform, opacity;
 }
 
-.mobile-menu.open {
-  transform: translateY(0);
-  opacity: 1;
-  visibility: visible;
-}
+.mobile-menu.open { display: flex; }
 
 .mobile-nav-link {
   font-size: 1.1rem;
@@ -551,9 +551,9 @@
     display: flex;
   }
 
-  .mobile-menu {
-    display: flex;
-  }
+  /* Keep mobile menu hidden until explicitly opened */
+  .mobile-menu { display: none; }
+  .mobile-menu.open { display: flex; }
 
   .style-selector {
     top: 10px;
@@ -679,6 +679,14 @@ body.has-fixed-nav {
   padding-top: 70px;
 }
 
+/* Non-sticky traditional nav overrides */
+.traditional-nav.non-sticky {
+  position: static;
+  background: transparent;
+  border-bottom: none;
+  backdrop-filter: none;
+}
+
 /* Smooth transitions for all interactive elements */
 * {
   transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
@@ -692,11 +700,13 @@ body.has-fixed-nav {
 .theme-toggle-icon .sun-core,
 .theme-toggle-icon .sun-rays line,
 .theme-toggle-icon .moon-bite { fill: none; stroke: var(--txt); stroke-width: 2; }
-.theme-toggle-icon .sun-core { fill: var(--txt); }
+.theme-toggle-icon .sun-core { fill: var(--txt); transition: transform 200ms ease; }
 :root[data-theme="dark"] .theme-toggle-icon .icon { transform: rotate(40deg); }
 :root[data-theme="dark"] .theme-toggle-icon .sun-rays line { transform: scale(0.4); transform-origin: center; opacity: 0; transition: transform var(--t-med) var(--ease), opacity var(--t-med) var(--ease); }
-.theme-toggle-icon .moon-bite { fill: var(--bg); transition: transform var(--t-med) var(--ease), opacity var(--t-med) var(--ease); opacity: 0; transform: translateX(-4px) translateY(-3px) scale(0.7); }
-:root[data-theme="dark"] .theme-toggle-icon .moon-bite { opacity: 1; transform: translateX(0) translateY(0) scale(1); }
+.theme-toggle-icon .moon-bite { fill: var(--bg); transition: transform 200ms ease, opacity 200ms ease; opacity: 0; transform: translateX(-4px) translateY(-3px) scale(0.7); }
+:root[data-theme="dark"] .theme-toggle-icon .moon-bite { opacity: 1; transform: translateX(-2px) translateY(-1px) scale(1.15); }
+:root[data-theme="light"] .theme-toggle-icon .sun-core { transform: scale(1.12); }
+:root[data-theme="dark"] .theme-toggle-icon .sun-core { transform: scale(0.85); }
 
 /* Pill context: make the minimized selector look like a pill */
 .pill-selector-inline .style-selector.minimized .customize-button,

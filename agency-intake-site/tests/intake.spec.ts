@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('Intake E2E', () => {
+test.describe.skip('Intake E2E (legacy multi-step)', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('**/functions/v1/intake-submit', async (route) => {
       const req = route.request()

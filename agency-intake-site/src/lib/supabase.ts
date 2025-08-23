@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { IntakeFormData, Business } from './schema'
 import { IntakePayload } from './intake.schema'
+import type { SimpleIntake } from './simple-intake.schema'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '')
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
@@ -192,6 +193,73 @@ export async function submitIntake(intake: IntakeFormData, turnstileToken: strin
       error: error instanceof Error ? error.message : 'Unknown error occurred' 
     }
   }
+}
+
+export function buildSimpleIntakePayload(intake: SimpleIntake) {
+	const mapRole = (r: SimpleIntake['role']) => ({ owner: 'Owner', manager: 'Manager', employee: 'Employee', investor: 'Investor', other: 'Other' }[r])
+	const mapUrgency = (u: SimpleIntake['urgency']) => (u === 'soon' ? 'Soon' : 'No Rush')
+	return {
+		name: intake.name,
+		company: intake.company,
+		role: mapRole(intake.role),
+		email: intake.email,
+		urgency: mapUrgency(intake.urgency),
+		turnstileToken: intake.turnstileToken
+	}
+}
+
+export async function submitSimpleIntake(intake: SimpleIntake, turnstileToken: string): Promise<{ success: boolean; id?: string; error?: string }> {
+	if (typeof window !== 'undefined') {
+		try {
+			const response = await fetch('/api/intake', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ ...intake, turnstileToken })
+			})
+			const result = await response.json()
+			if (!response.ok || !result.success) {
+				throw new Error(result.error || 'Failed to submit intake')
+			}
+			return { success: true, id: result.id }
+		} catch (error) {
+			console.error('Error submitting simple intake (client):', error)
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Unknown error occurred'
+			}
+		}
+	}
+
+	try {
+		const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '')
+		const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
+		if (!supabaseUrl || !supabaseKey) {
+			throw new Error('Missing Supabase environment variables')
+		}
+
+		const payload = buildSimpleIntakePayload(intake)
+		const response = await fetch(`${supabaseUrl}/functions/v1/lead-submit`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${supabaseKey}`
+			},
+			body: JSON.stringify(payload)
+		})
+
+		const result = await response.json()
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to submit lead')
+		}
+
+		return { success: true, id: result.id || result.leadId }
+	} catch (error) {
+		console.error('Error submitting simple intake:', error)
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : 'Unknown error occurred'
+		}
+	}
 }
 
 export async function getIntake(id: string): Promise<{ success: boolean; data?: Business; error?: string }> {

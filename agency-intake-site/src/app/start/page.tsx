@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import IntakeForm from '@/components/IntakeForm'
+import SimpleIntakeForm from '@/components/SimpleIntakeForm'
 
 export const metadata: Metadata = {
 	title: 'Start a Project | Your Agency Name',
@@ -12,7 +12,7 @@ export default function StartPage() {
 			<div className="container mx-auto px-4">
 				<h1 className="text-4xl font-bold text-gray-900 mb-6">Start a Project</h1>
 				<p className="text-gray-700 mb-10 max-w-2xl">Tell us about your business, goals, and preferences. We’ll follow up with a clear plan and next steps.</p>
-				<IntakeForm />
+				<SimpleIntakeForm />
 			</div>
 		</div>
 	)

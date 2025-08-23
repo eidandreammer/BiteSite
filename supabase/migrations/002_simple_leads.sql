@@ -2,7 +2,7 @@ create table if not exists public.leads (
 	id uuid primary key default gen_random_uuid(),
 	name text not null,
 	company text not null,
-	role text not null check (role in ('Patient','Provider','Investor','Other')),
+	role text not null check (role in ('Owner','Manager','Employee','Investor','Other')),
 	email text not null,
 	urgency text not null check (urgency in ('Soon','No Rush')),
 	created_at timestamptz default now()
