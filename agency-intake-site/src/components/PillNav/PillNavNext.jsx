@@ -203,6 +203,17 @@ const PillNav = ({
     setIsMobileMenuOpen(false);
   }, [activeHref]);
 
+  // Ensure hamburger animation resets whenever menu closes (e.g., link click or route change)
+  useEffect(() => {
+    if (isMobileMenuOpen) return;
+    const hamburger = hamburgerRef.current;
+    if (!hamburger) return;
+    const lines = hamburger.querySelectorAll('.hamburger-line');
+    if (!lines || lines.length < 2) return;
+    gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
+    gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
+  }, [isMobileMenuOpen]);
+
   const handleEnter = (i) => {
     const tl = tlRefs.current[i];
     if (!tl) return;
@@ -477,6 +488,7 @@ const PillNav = ({
               className="pill-mobile-menu"
               ref={mobileMenuRef}
               aria-hidden={!isMobileMenuOpen}
+              style={cssVars}
             >
               <ul className="pill-mobile-list" ref={mobileListRef}>
                 {items.map((item, i) => (
@@ -488,10 +500,7 @@ const PillNav = ({
                           activeHref === item.href ? " is-active" : ""
                         }`}
                         aria-label={item.ariaLabel || item.label}
-                        style={activeHref === item.href ? { 
-                          backgroundColor: getButtonColor(),
-                          color: '#ffffff'
-                        } : {}}
+                        onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.label}
                       </Link>
@@ -502,10 +511,7 @@ const PillNav = ({
                           activeHref === item.href ? " is-active" : ""
                         }`}
                         aria-label={item.ariaLabel || item.label}
-                        style={activeHref === item.href ? { 
-                          backgroundColor: getButtonColor(),
-                          color: '#ffffff'
-                        } : {}}
+                        onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.label}
                       </a>

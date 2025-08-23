@@ -6,6 +6,7 @@ import { useBackground } from '@/contexts/BackgroundContext'
 import GradientText from '@/TextAnimations/GradientText/GradientText'
 import '@/TextAnimations/GradientText/GradientText.css'
 import { Fredoka } from 'next/font/google'
+import ThemeToggle from './ThemeToggle'
 
 const fredoka = Fredoka({
   subsets: ['latin'],
@@ -62,6 +63,10 @@ export default function BackgroundSlider({
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div className="relative rounded-2xl bg-white/95 shadow-2xl ring-1 ring-black/5 p-5">
+        {/* Mobile-only theme toggle in top-right of the box */}
+        <div className="absolute right-3 top-3 md:hidden">
+          <ThemeToggle />
+        </div>
         <div className="flex items-center justify-center mb-4">
           <div className={`${fredoka.className} text-xl sm:text-2xl font-extrabold ${textColors.slider || textColors.secondary} text-center`}>
             <GradientText animationSpeed={6}>Customize Background</GradientText>

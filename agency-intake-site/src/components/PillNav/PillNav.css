@@ -334,4 +334,5 @@
 @media (max-width: 768px) {
   .pill-nav-mobile { display: flex; align-items: center; }
   .pill-hamburger { display: flex; }
+  .pill-mobile-menu { top: calc(var(--nav-h, 42px) + 23px); }
 }
