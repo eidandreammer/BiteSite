@@ -239,7 +239,7 @@
   right: 1rem;
   background: transparent;
   border-radius: 27px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: none;
   z-index: 998;
   opacity: 0;
   transform-origin: top center;
@@ -297,7 +297,7 @@
   transform: translateX(-50%);
   background: transparent;
   border-radius: 9999px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: none;
   z-index: var(--z-overlay);
   width: max-content;
   max-width: calc(100vw - 20px);
