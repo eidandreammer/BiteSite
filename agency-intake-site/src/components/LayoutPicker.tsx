@@ -67,7 +67,7 @@ export default function LayoutPicker({ current, onPick }: LayoutPickerProps) {
 							aria-controls="layout-options"
 							onClick={() => setExpanded(true)}
 							className="px-6 py-3 rounded-full border text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-							style={{ ...buttonStyles, transform: 'scale(2)', transformOrigin: 'center' }}
+							style={{ ...buttonStyles }}
 							initial={{ opacity: 0.95 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
