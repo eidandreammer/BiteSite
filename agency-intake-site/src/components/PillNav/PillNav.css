@@ -2,7 +2,14 @@
 	Installed from https://reactbits.dev/default/
 */
 
-:root { --z-background: 0; --z-nav: 100; --z-overlay: 1000; --z-modal: 1100; }
+/* z-index tokens */
+:root { 
+  --z-background: 0; 
+  --z-nav: 100; 
+  --z-overlay: 9999; 
+  --z-modal: 10000; 
+  --z-mobile-nav: 200001; /* Higher than desktop nav */
+}
 :root[data-theme="light"] { --hamburger-bg: #000; --hamburger-fg: #fff; }
 :root[data-theme="dark"] { --hamburger-bg: #fff; --hamburger-fg: #000; }
 
@@ -321,7 +328,14 @@
 }
 
 /* PillNavNext mobile aliases (ensure mobile menu appears on small screens) */
-.pill-nav-mobile { display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: var(--z-overlay); }
+.pill-nav-mobile { 
+  display: none; 
+  position: fixed; 
+  top: 10px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  z-index: var(--z-mobile-nav); /* Use higher z-index than desktop nav */
+}
 .pill-hamburger {
   width: var(--nav-h);
   height: var(--nav-h);
@@ -345,7 +359,7 @@
   background: transparent;
   border-radius: 9999px;
   box-shadow: none;
-  z-index: var(--z-overlay);
+  z-index: var(--z-mobile-nav); /* Use higher z-index than desktop nav */
   width: max-content;
   max-width: calc(100vw - 20px);
   overflow: hidden;
@@ -379,7 +393,39 @@
   color: var(--hover-text, #fff);
 }
 @media (max-width: 768px) {
-  .pill-nav-mobile { display: flex; align-items: center; }
+  .pill-nav-mobile { 
+    display: flex; 
+    align-items: center; 
+    z-index: var(--z-mobile-nav); /* Ensure high z-index on mobile */
+  }
   .pill-hamburger { display: flex; }
-  .pill-mobile-menu { top: calc(var(--nav-h, 42px) + 23px); }
+  .pill-mobile-menu { 
+    top: calc(var(--nav-h, 42px) + 23px); 
+    z-index: var(--z-mobile-nav); /* Ensure high z-index on mobile */
+  }
+  
+  /* Force hide desktop navigation elements on mobile */
+  .pill-nav .pill-logo, 
+  .pill-nav .nav-actions,
+  .pill-nav .pill-list {
+    display: none !important;
+  }
+  
+  /* Ensure mobile navigation is always visible on mobile */
+  .pill-nav-mobile {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Prevent any desktop navigation from showing on mobile */
+@media (max-width: 768px) {
+  .pill-nav .pill-list,
+  .pill-nav .pill-logo,
+  .pill-nav .nav-actions {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
 }

@@ -41,6 +41,7 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
 			aria-label="Toggle dark mode"
 			aria-pressed={isDark}
 			title="Toggle theme"
+			data-background-customization="true"
 			onClick={() => setTheme(!isDark)}
 		>
 			<svg className="icon" viewBox="0 0 24 24" aria-hidden="true">

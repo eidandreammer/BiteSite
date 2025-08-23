@@ -62,7 +62,7 @@ export default function BackgroundSlider({
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="relative rounded-2xl bg-white/95 shadow-2xl ring-1 ring-black/5 p-5">
+      <div className="relative rounded-2xl bg-white/95 shadow-2xl ring-1 ring-black/5 p-5" data-background-customization="true">
         {/* Theme toggle in top-right of the box */}
         <div className="absolute right-3 top-3">
           <ThemeToggle />
@@ -87,6 +87,8 @@ export default function BackgroundSlider({
                   : { backgroundColor: buttonColor, color: buttonTextColor, borderColor: buttonColor }
                 ) : {}}
                 aria-pressed={isActive}
+                data-background-customization="true"
+                data-background={label.toLowerCase().replace(/\s+/g, '-')}
                 whileHover={isActive ? { scale: 1.03 } : { scale: 1.05, y: -1 }}
                 whileTap={{ scale: 0.97 }}
               >

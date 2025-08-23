@@ -1,5 +1,11 @@
 /* z-index tokens */
-:root { --z-background: 0; --z-nav: 100; --z-overlay: 9999; --z-modal: 10000; }
+:root { 
+  --z-background: 0; 
+  --z-nav: 100; 
+  --z-overlay: 9999; 
+  --z-modal: 10000; 
+  --z-mobile-nav: 200001; /* Higher than desktop nav */
+}
 /* Style Selector */
 .style-selector {
   position: fixed;
