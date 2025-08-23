@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import './ThemeToggle.css'
 
 interface ThemeToggleProps {
 	className?: string
