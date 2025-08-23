@@ -70,6 +70,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  transition: all var(--t-med, 220ms) var(--ease, cubic-bezier(.2,.6,.2,1));
 }
 
 .pill-logo img {
@@ -78,6 +79,52 @@
   object-fit: cover;
   display: block;
 }
+
+/* Logo morph + crossfade */
+.pill-logo .logo-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.pill-logo .logo-text {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.pill-logo .logo-img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  display: none;
+  transition: opacity var(--t-med, 220ms) var(--ease, cubic-bezier(.2,.6,.2,1));
+}
+/* Theme filtering */
+:root[data-theme="dark"] .pill-logo .logo-img.is-dark { display: block; }
+:root[data-theme="dark"] .pill-logo .logo-img.is-light { display: none; }
+:root[data-theme="light"] .pill-logo .logo-img.is-dark { display: none; }
+:root[data-theme="light"] .pill-logo .logo-img.is-light { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .pill-logo .logo-img.is-dark { display: block; }
+  :root:not([data-theme]) .pill-logo .logo-img.is-light { display: none; }
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .pill-logo .logo-img.is-dark { display: none; }
+  :root:not([data-theme]) .pill-logo .logo-img.is-light { display: block; }
+}
+
+/* Default to normal state visible */
+.pill-logo .logo-img.state-normal { opacity: 1; }
+.pill-logo .logo-img.state-hover { opacity: 0; }
+
+/* Hover: expand, morph, and swap image */
+.pill-logo:hover {
+  width: calc(var(--nav-h) + 10px);
+  height: calc(var(--nav-h) + 10px);
+  border-radius: 20px;
+}
+.pill-logo:hover .logo-img.state-normal { opacity: 0; }
+.pill-logo:hover .logo-img.state-hover { opacity: 1; }
 
 .pill-list {
   list-style: none;

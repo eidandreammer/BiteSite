@@ -5,6 +5,14 @@ import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { useBackground } from '@/contexts/BackgroundContext'
 import GradientText from '@/TextAnimations/GradientText/GradientText'
 import '@/TextAnimations/GradientText/GradientText.css'
+import { Fredoka } from 'next/font/google'
+
+const fredoka = Fredoka({
+	subsets: ['latin'],
+	weight: ['400', '600', '700'],
+	variable: '--font-fredoka',
+	display: 'swap',
+})
 
 export type FeaturesLayout = 'grid' | 'magic-bento' | 'scroll-stack' | 'chroma-grid' | 'infinite-menu'
 
@@ -65,7 +73,9 @@ export default function LayoutPicker({ current, onPick }: LayoutPickerProps) {
 							exit={{ opacity: 0 }}
 							transition={{ duration: 0.18 }}
 						>
-							<GradientText animationSpeed={6}>Customize Layout</GradientText>
+							<div className={`${fredoka.className}`}>
+								<GradientText animationSpeed={6}>Customize Layout</GradientText>
+							</div>
 						</motion.button>
 					) : (
 						<motion.div
@@ -79,7 +89,7 @@ export default function LayoutPicker({ current, onPick }: LayoutPickerProps) {
 							transition={{ duration: 0.2 }}
 						>
 							<div className="flex items-center justify-center mb-3">
-								<div className="text-xl font-extrabold text-gray-800 text-center">
+								<div className={`${fredoka.className} text-xl font-extrabold text-gray-800 text-center`}>
 									<GradientText animationSpeed={6}>Customize Layout</GradientText>
 								</div>
 							</div>

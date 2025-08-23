@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import LogoSwap from './LogoSwap'
 import { usePathname } from 'next/navigation'
 import PillNav from './PillNav/PillNavNext'
 import { useBackground } from '@/contexts/BackgroundContext'
 import './Navigation.css'
 import { LayoutGroup } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
-// Use public assets for logo to avoid missing local files
-const LOGO_LIGHT = '/vercel.svg'
-const LOGO_DARK = '/vercel.svg'
+// Theme-specific logos are managed in LogoSwap
 
 interface NavigationProps {
   className?: string
@@ -84,23 +83,14 @@ const Navigation = ({ className = '' }: NavigationProps) => {
   return (
     <LayoutGroup id="nav-customize">
       <PillNav
-        logo={(
-          <Image
-            src={isDark ? LOGO_DARK : LOGO_LIGHT}
-            alt="Agency logo"
-            priority
-            style={{ width: 'auto' }}
-            sizes="120px"
-            width={120}
-            height={28}
-          />
-        ) as unknown as string}
+        logo={(<LogoSwap />) as unknown as string}
+        logoHref="/about"
         items={navItems.map(item => ({
           href: item.href,
           label: item.label
         }))}
         activeHref={pathname}
-        baseColor="var(--bg-elev)"
+        baseColor={isDark ? '#000000' : '#ffffff'}
         pillColor={getButtonColor()}
         pillTextColor="#ffffff"
         hoveredPillTextColor="#1f2937"

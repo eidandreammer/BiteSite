@@ -28,6 +28,7 @@ import "./PillNav.css";
  * @property {string} [pillColor]
  * @property {string} [hoveredPillTextColor]
  * @property {string} [pillTextColor]
+ * @property {string} [logoHref]
  * @property {() => void} [onMobileMenuClick]
  * @property {boolean} [initialLoadAnimation]
  * @property {import('react').ReactNode} [rightListItem]
@@ -52,6 +53,7 @@ const PillNav = ({
   pillColor = "#060010",
   hoveredPillTextColor = "#060010",
   pillTextColor,
+  logoHref,
   onMobileMenuClick,
   initialLoadAnimation = true,
   rightListItem = null,
@@ -355,10 +357,10 @@ const PillNav = ({
         aria-label="Primary"
         style={cssVars}
       >
-        {isRouterLink(items?.[0]?.href) ? (
+        {isRouterLink(logoHref ?? items?.[0]?.href) ? (
           <Link
             className="pill-logo"
-            href={items[0].href}
+            href={(logoHref ?? items[0].href)}
             aria-label="Home"
             onMouseEnter={handleLogoEnter}
             role="menuitem"
@@ -371,7 +373,7 @@ const PillNav = ({
         ) : (
           <a
             className="pill-logo"
-            href={items?.[0]?.href || "#"}
+            href={(logoHref ?? items?.[0]?.href) || "#"}
             aria-label="Home"
             onMouseEnter={handleLogoEnter}
             ref={(el) => {
