@@ -6,14 +6,10 @@ import { simpleIntakeSchema } from '@/lib/simple-intake.schema'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('Missing environment variables:', {
-    supabaseUrl: !!supabaseUrl,
-    supabaseServiceKey: !!supabaseServiceKey
-  })
-}
-
-const supabase = createClient(supabaseUrl!, supabaseServiceKey!)
+// Only create client if environment variables are available
+const supabase = supabaseUrl && supabaseServiceKey 
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : null
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,6 +41,15 @@ export async function POST(request: NextRequest) {
       urgency: validatedData.urgency === 'soon' ? 'Soon' : 'No Rush'
     }
     
+    // Check if Supabase is configured
+    if (!supabase) {
+      console.error('Supabase not configured. Missing environment variables.')
+      return NextResponse.json(
+        { success: false, error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     // Insert into database
     console.log('Attempting to insert lead data:', leadData)
     const { data, error } = await supabase
