@@ -562,6 +562,11 @@ const MagicBento = ({
               >
                 <div className="card__header">
                   <div className="card__label">{card.label}</div>
+                  {card.icon && (
+                    <div className="card__icon">
+                      <card.icon className="w-6 h-6" style={{ color: card.iconColor || '#6B7280' }} />
+                    </div>
+                  )}
                 </div>
                 <div className="card__content">
                   <h2 className="card__title">{card.title}</h2>
@@ -685,6 +690,11 @@ const MagicBento = ({
             >
               <div className="card__header">
                 <div className="card__label">{card.label}</div>
+                {card.icon && (
+                  <div className="card__icon">
+                    <card.icon className="w-6 h-6" style={{ color: card.iconColor || '#6B7280' }} />
+                  </div>
+                )}
               </div>
               <div className="card__content">
                 <h2 className="card__title">{card.title}</h2>

@@ -14,7 +14,7 @@ const fredoka = Fredoka({
 	display: 'swap',
 })
 
-export type FeaturesLayout = 'grid' | 'magic-bento' | 'scroll-stack' | 'chroma-grid' | 'infinite-menu'
+export type FeaturesLayout = 'grid' | 'magic-bento' | 'scroll-stack' | 'chroma-grid'
 
 interface LayoutPickerProps {
 	current: FeaturesLayout
@@ -44,7 +44,6 @@ export default function LayoutPicker({ current, onPick }: LayoutPickerProps) {
 			{ value: 'magic-bento', label: 'Magic Bento' },
 			{ value: 'scroll-stack', label: 'Scroll Stack' },
 			{ value: 'chroma-grid', label: 'Chroma Grid' },
-			{ value: 'infinite-menu', label: 'Infinite Menu' },
 		],
 		[]
 	)

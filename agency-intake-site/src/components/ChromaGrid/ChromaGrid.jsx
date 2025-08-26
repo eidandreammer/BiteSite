@@ -24,7 +24,8 @@ export const ChromaGrid = ({
 
   const demo = [
     {
-      image: "https://i.pravatar.cc/300?img=8",
+      icon: null,
+      iconColor: "#4F46E5",
       title: "Alex Rivera",
       subtitle: "Full Stack Developer",
       handle: "@alexrivera",
@@ -33,7 +34,8 @@ export const ChromaGrid = ({
       url: "https://github.com/",
     },
     {
-      image: "https://i.pravatar.cc/300?img=11",
+      icon: null,
+      iconColor: "#10B981",
       title: "Jordan Chen",
       subtitle: "DevOps Engineer",
       handle: "@jordanchen",
@@ -42,7 +44,8 @@ export const ChromaGrid = ({
       url: "https://linkedin.com/in/",
     },
     {
-      image: "https://i.pravatar.cc/300?img=3",
+      icon: null,
+      iconColor: "#F59E0B",
       title: "Morgan Blake",
       subtitle: "UI/UX Designer",
       handle: "@morganblake",
@@ -51,7 +54,8 @@ export const ChromaGrid = ({
       url: "https://dribbble.com/",
     },
     {
-      image: "https://i.pravatar.cc/300?img=16",
+      icon: null,
+      iconColor: "#EF4444",
       title: "Casey Park",
       subtitle: "Data Scientist",
       handle: "@caseypark",
@@ -60,7 +64,8 @@ export const ChromaGrid = ({
       url: "https://kaggle.com/",
     },
     {
-      image: "https://i.pravatar.cc/300?img=25",
+      icon: null,
+      iconColor: "#8B5CF6",
       title: "Sam Kim",
       subtitle: "Mobile Developer",
       handle: "@thesamkim",
@@ -69,7 +74,8 @@ export const ChromaGrid = ({
       url: "https://github.com/",
     },
     {
-      image: "https://i.pravatar.cc/300?img=60",
+      icon: null,
+      iconColor: "#06B6D4",
       title: "Tyler Rodriguez",
       subtitle: "Cloud Architect",
       handle: "@tylerrod",
@@ -159,7 +165,13 @@ export const ChromaGrid = ({
           }}
         >
           <div className="chroma-img-wrapper">
-            <img src={c.image} alt={c.title} loading="lazy" />
+            {c.icon ? (
+              <div className="chroma-icon-wrapper">
+                <c.icon className="chroma-icon" style={{ color: c.iconColor || '#ffffff' }} />
+              </div>
+            ) : (
+              <img src={c.image || `https://picsum.photos/seed/${i}/300/300`} alt={c.title} loading="lazy" />
+            )}
           </div>
           <footer className="chroma-info">
             <h3 className="name">{c.title}</h3>

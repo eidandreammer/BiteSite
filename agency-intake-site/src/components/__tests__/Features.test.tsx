@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 
 jest.mock('@/components/MagicBento/MagicBento.jsx', () => ({
@@ -21,25 +21,15 @@ jest.mock('@/components/ChromaGrid/ChromaGrid.jsx', () => ({
   default: () => <div data-testid="chroma-grid" />
 }))
 
-jest.mock('@/components/InfiniteScroll/InfiniteScroll.jsx', () => ({
+jest.mock('@/components/LayoutPicker', () => ({
   __esModule: true,
-  default: () => <div className="infinite-scroll-container" data-testid="infinite-scroll" />
-}))
-
-jest.mock('@/components/InfiniteMenu/InfiniteMenu.jsx', () => ({
-  __esModule: true,
-  default: () => <div data-testid="infinite-menu" />
-}))
-
-jest.mock('@/components/Stack/Stack.jsx', () => ({
-  __esModule: true,
-  default: () => <div className="stack-container" data-testid="stack" />
+  default: () => <div data-testid="layout-picker" />
 }))
 
 import Features from '@/components/Features'
 
-describe('Features section layout toggle', () => {
-  it('renders Grid by default and switches to Stack', () => {
+describe('Features component', () => {
+  it('renders the main heading and description', () => {
     render(<Features />)
 
     // Default heading
@@ -47,15 +37,34 @@ describe('Features section layout toggle', () => {
       screen.getByRole('heading', { name: /why choose our web design services\?/i })
     ).toBeInTheDocument()
 
-    // Grid card content present
+    // Description
+    expect(
+      screen.getByText(/we combine creativity with technical expertise/i)
+    ).toBeInTheDocument()
+  })
+
+  it('renders all feature cards in grid layout by default', () => {
+    render(<Features />)
+
+    // Check that all feature titles are present
     expect(screen.getByText(/custom design/i)).toBeInTheDocument()
+    expect(screen.getByText(/mobile-first/i)).toBeInTheDocument()
+    expect(screen.getByText(/fast performance/i)).toBeInTheDocument()
+    expect(screen.getByText(/conversion focused/i)).toBeInTheDocument()
+    expect(screen.getByText(/user experience/i)).toBeInTheDocument()
+    expect(screen.getByText(/seo optimized/i)).toBeInTheDocument()
+  })
 
-    // Switch layout to Stack
-    const select = screen.getByLabelText(/layout/i)
-    fireEvent.change(select, { target: { value: 'stack' } })
+  it('renders the call-to-action section', () => {
+    render(<Features />)
 
-    // Stack container should render
-    expect(document.querySelector('.stack-container')).toBeInTheDocument()
+    expect(
+      screen.getByText(/ready to transform your online presence\?/i)
+    ).toBeInTheDocument()
+    
+    expect(
+      screen.getByText(/start your project/i)
+    ).toBeInTheDocument()
   })
 })
 

@@ -17,7 +17,7 @@ const sections = [
     copy:
       'Tailored interfaces clarify your value proposition and reduce decision friction, increasing conversion versus generic templates.',
     sources: [
-      { label: 'Nielsen Norman Group', href: 'https://www.nngroup.com/articles/' }
+      { label: 'Nielsen Norman Group', href: 'https://www.nngroup.com/reports/customization-features/' }
     ]
   },
   {
@@ -26,8 +26,8 @@ const sections = [
     copy:
       'Mobile usability directly impacts revenue. Even a 0.1s speed gain can lift conversions, and mobile friendliness affects rankings.',
     sources: [
-      { label: 'Think with Google', href: 'https://www.thinkwithgoogle.com/intl/en-154/marketing-strategies/app-and-mobile/milliseconds-earn-millions/' },
-      { label: 'Google Mobile‑Friendly', href: 'https://developers.google.com/search/mobile-sites/' }
+      { label: 'Think with Google', href: 'https://business.google.com/us/think/' },
+      { label: 'Google Mobile‑Friendly', href: 'https://developers.google.com/search/docs/crawling-indexing/mobile/mobile-sites-mobile-first-indexing' }
     ]
   },
   {
@@ -36,7 +36,7 @@ const sections = [
     copy:
       'Faster sites reduce bounce and boost engagement. Small latency improvements can yield outsized conversion gains.',
     sources: [
-      { label: 'SOASTA/Google Study', href: 'https://services.google.com/fh/files/misc/2017_online_retail_performance_whitepaper.pdf' },
+      { label: 'SOASTA/Google Study', href: 'https://think.storage.googleapis.com/docs/mobile-page-speed-new-industry-benchmarks.pdf' },
       { label: 'Page Experience', href: 'https://developers.google.com/search/docs/appearance/page-experience' }
     ]
   },
@@ -65,7 +65,7 @@ const sections = [
     copy:
       'Reliable analytics and conversion tracking enable evidence‑based iteration, improving ROAS over time.',
     sources: [
-      { label: 'Think with Google', href: 'https://www.thinkwithgoogle.com/intl/en-154/marketing-strategies/app-and-mobile/milliseconds-earn-millions/' }
+      { label: 'Think with Google', href: 'https://business.google.com/us/think/measurement/' }
     ]
   },
   {
@@ -82,7 +82,9 @@ const sections = [
     icon: ShieldCheck,
     copy:
       'Up‑to‑date dependencies, secure headers, and monitoring protect your brand and minimize downtime costs.',
-    sources: []
+    sources: [
+      { label: 'Google SRE', href: 'https://sre.google/' }
+    ]
   },
   {
     title: 'Paid Media Readiness (Google Ads)',

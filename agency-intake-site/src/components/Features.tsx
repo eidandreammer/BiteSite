@@ -6,7 +6,6 @@ import { Palette, Smartphone, Zap, Target, Users, Shield } from 'lucide-react'
 import MagicBento from '@/components/MagicBento/MagicBento.jsx'
 import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack/ScrollStack.jsx'
 import ChromaGrid from '@/components/ChromaGrid/ChromaGrid.jsx'
-import InfiniteMenu from '@/components/InfiniteMenu/InfiniteMenu.jsx'
 import LayoutPicker from '@/components/LayoutPicker'
 
 const features = [
@@ -48,10 +47,8 @@ const features = [
   }
 ]
 
-
-
 export default function Features() {
-  const [layout, setLayout] = useState<'grid' | 'magic-bento' | 'scroll-stack' | 'chroma-grid' | 'infinite-menu'>('grid')
+  const [layout, setLayout] = useState<'grid' | 'magic-bento' | 'scroll-stack' | 'chroma-grid'>('grid')
 
   const palette = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4']
 
@@ -61,7 +58,9 @@ export default function Features() {
         color: '#ffffff',
         title: f.title,
         description: f.description,
-        label: 'Feature'
+        label: 'Feature',
+        icon: f.icon,
+        iconColor: f.color
       })),
     []
   )
@@ -69,7 +68,8 @@ export default function Features() {
   const chromaItems = useMemo(
     () =>
       features.map((f, i) => ({
-        image: `https://picsum.photos/seed/feat${i}/300/300`,
+        icon: f.icon,
+        iconColor: f.color,
         title: f.title,
         subtitle: f.description,
         handle: '',
@@ -79,21 +79,6 @@ export default function Features() {
       })),
     []
   )
-
-
-
-  const infiniteMenuItems = useMemo(
-    () =>
-      features.map((f, i) => ({
-        image: `https://picsum.photos/seed/menu${i}/900/900`,
-        link: '#start-project',
-        title: f.title,
-        description: f.description
-      })),
-    []
-  )
-
-  // removed infinite-scroll variant
 
   return (
     <section className="py-20 bg-white">
@@ -126,7 +111,6 @@ export default function Features() {
             <option value="magic-bento">Magic Bento</option>
             <option value="scroll-stack">Scroll Stack</option>
             <option value="chroma-grid">Chroma Grid</option>
-            <option value="infinite-menu">Infinite Menu</option>
           </select>
           <LayoutPicker current={layout} onPick={(l) => setLayout(l as any)} />
         </div>
@@ -189,19 +173,9 @@ export default function Features() {
           </div>
         )}
 
-
-
         {layout === 'chroma-grid' && (
           <div className="mt-6">
             <ChromaGrid items={chromaItems} columns={3} rows={2} />
-          </div>
-        )}
-
-        {/* infinite-scroll removed */}
-
-        {layout === 'infinite-menu' && (
-          <div className="mt-6" style={{ minHeight: 400 }}>
-            <InfiniteMenu items={infiniteMenuItems} />
           </div>
         )}
 
