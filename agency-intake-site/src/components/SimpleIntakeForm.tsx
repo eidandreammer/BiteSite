@@ -11,7 +11,7 @@ export default function SimpleIntakeForm() {
 	const [message, setMessage] = useState<string | null>(null)
 	const tokenRef = useRef<string>('')
 
-	const { register, handleSubmit, formState: { errors, isValid }, setValue, watch } = useForm<SimpleIntake>({
+	const { register, handleSubmit, formState: { errors, isValid }, setValue, watch, trigger } = useForm<SimpleIntake>({
 		resolver: zodResolver(simpleIntakeSchema),
 		mode: 'onBlur',
 		defaultValues: { role: 'owner', urgency: 'soon' }
@@ -93,8 +93,28 @@ export default function SimpleIntakeForm() {
 
 				<div>
 					<label className="block text-sm font-medium text-gray-700">Feel free to contact me at*</label>
-					<input {...register('email')} type="email" className="mt-2 w-full rounded-md border-gray-300 focus:ring-2 focus:ring-gray-900" placeholder="jane@acme.com" />
+					<input 
+						{...register('email', {
+							onBlur: () => trigger('email')
+						})} 
+						type="email" 
+						className="mt-2 w-full rounded-md border-gray-300 focus:ring-2 focus:ring-gray-900" 
+						placeholder="jane@acme.com" 
+					/>
 					{errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+				</div>
+
+				<div>
+					<label className="block text-sm font-medium text-gray-700">Phone number*</label>
+					<input 
+						{...register('phone', {
+							onBlur: () => trigger('phone')
+						})} 
+						type="tel" 
+						className="mt-2 w-full rounded-md border-gray-300 focus:ring-2 focus:ring-gray-900" 
+						placeholder="(555) 123-4567" 
+					/>
+					{errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>}
 				</div>
 
 				<div>
