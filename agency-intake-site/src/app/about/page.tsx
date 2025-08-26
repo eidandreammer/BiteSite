@@ -3,6 +3,7 @@ import ThreadsBackground from '@/components/ThreadsBackground'
 import Image from 'next/image'
 import JensyPic from '../../../images/Jensy.JPG'
 import EthanPic from '../../../images/Ethan.jpeg'
+import KasaiPic from '../../../images/Kasai.jpeg'
 
 export const metadata: Metadata = {
   title: 'About Us - Professional Web Design Agency',
@@ -96,7 +97,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-3 gap-8">
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
                 <Image
                   src={JensyPic}
@@ -151,6 +152,24 @@ export default function AboutPage() {
                 <p className="text-blue-600 mb-3">Lead Risk Management Officer, Front End Developer</p>
                 <p className="text-gray-600 text-sm">
                   With years of experience in Risk Management and Expertise in Psychology and Business Management, Ethan Kurtz brings to the table a breadth of knowledge to propel Bite Sites into competitive spaces in the web development ecosystem.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-md p-6 text-center">
+                <Image
+                  src={KasaiPic}
+                  alt="Portrait of Kasai Sanchez"
+                  width={96}
+                  height={96}
+                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                  sizes="96px"
+                />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Kasai Sanchez
+                </h3>
+                <p className="text-blue-600 mb-3">Engagement and Experience Director, Customer Engagement Lead</p>
+                <p className="text-gray-600 text-sm">
+                  An award winning Community Organizer and Social Justice Activist, who believes in granting people the tools necessary to grow both personally and professionally, Kasai Sanchez gracefully brings BiteSites a client tailored approach to web development.
                 </p>
               </div>
             </div>

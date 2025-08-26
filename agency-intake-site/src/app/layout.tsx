@@ -79,8 +79,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
@@ -96,7 +96,7 @@ export default function RootLayout({
               "@type": "Organization",
               name: 'Your Agency Name',
               url: 'https://bitesites.org',
-              logo: '/favicon.ico'
+              logo: '/favicon.png'
             })
           }}
         />
