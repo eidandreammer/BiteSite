@@ -16,7 +16,7 @@ interface NavigationProps {
 }
 
 const Navigation = ({ className = '' }: NavigationProps) => {
-  const { getButtonColor, getButtonTextColor } = useBackground()
+  const { getButtonColor, getButtonTextColor, getNavigationTextColor } = useBackground()
   const pathname = usePathname()
   const [isDark, setIsDark] = useState(false)
 
@@ -92,7 +92,7 @@ const Navigation = ({ className = '' }: NavigationProps) => {
         activeHref={pathname}
         baseColor={isDark ? '#000000' : '#ffffff'}
         pillColor={getButtonColor()}
-        pillTextColor="#ffffff"
+        pillTextColor={getNavigationTextColor()}
         hoveredPillTextColor="#1f2937"
         className={className}
         onMobileMenuClick={() => {}}

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import ThreadsBackground from '@/components/ThreadsBackground'
 import Image from 'next/image'
-import JensyPic from '../../../images/Jensy.JPG'
+import JensyPic from '../../../images/Jensy.jpeg'
 import EthanPic from '../../../images/Ethan.jpeg'
 import KasaiPic from '../../../images/Kasai.jpeg'
 
@@ -167,7 +167,17 @@ export default function AboutPage() {
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   Kasai Sanchez
                 </h3>
-                <p className="text-blue-600 mb-3">Engagement and Experience Director, Customer Engagement Lead</p>
+                <div className="mb-3">
+                  <a
+                    href="https://www.linkedin.com/in/kasai-sanchez-083207307/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+                  >
+                    LinkedIn
+                  </a>
+                </div>
+                <p className="text-blue-600 mb-3">Experience Director, Customer Engagement Lead</p>
                 <p className="text-gray-600 text-sm">
                   An award winning Community Organizer and Social Justice Activist, who believes in granting people the tools necessary to grow both personally and professionally, Kasai Sanchez gracefully brings BiteSites a client tailored approach to web development.
                 </p>

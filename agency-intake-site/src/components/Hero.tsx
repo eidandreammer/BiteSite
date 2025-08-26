@@ -85,9 +85,9 @@ export default function Hero() {
       Component: LiquidChrome, 
       props: {},
       textColors: {
-        primary: 'text-white',
-        secondary: 'text-gray-100',
-        accent: 'text-blue-200'
+        primary: 'text-black',
+        secondary: 'text-gray-800',
+        accent: 'text-blue-600'
       }
     },
     {

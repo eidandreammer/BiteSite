@@ -7,6 +7,7 @@ interface BackgroundContextType {
   setCurrentBackground: (background: string) => void
   getButtonColor: () => string
   getButtonTextColor: () => string
+  getNavigationTextColor: () => string
   getSliderThumbColor: () => string
 }
 
@@ -43,6 +44,15 @@ export function BackgroundProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const getNavigationTextColor = () => {
+    switch (currentBackground) {
+      case 'galaxy':
+        return 'rgb(245, 245, 245)' // Off-white text for galaxy background
+      default:
+        return 'rgb(17, 24, 39)' // Dark text for all other backgrounds
+    }
+  }
+
   const getSliderThumbColor = () => {
     return getButtonColor()
   }
@@ -53,6 +63,7 @@ export function BackgroundProvider({ children }: { children: ReactNode }) {
       setCurrentBackground,
       getButtonColor,
       getButtonTextColor,
+      getNavigationTextColor,
       getSliderThumbColor
     }}>
       {children}
