@@ -165,7 +165,7 @@ export default function AboutPage() {
                   sizes="96px"
                 />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Kasai Sanchez
+                  <a href="https://www.linkedin.com/in/kasai-sanchez-083207307/" target="_blank" rel="noopener noreferrer" className="hover:underline">Kasai Sanchez</a>
                 </h3>
                 <div className="mb-3">
                   <a
