@@ -116,11 +116,11 @@ export default function PricingPage() {
                 We invest where it moves the needle: performance, UX, SEO, and analytics. The result is a website that looks incredible, ranks better, and converts more — backed by credible research.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <a href="#plans" className="btn-primary">
+                <a href="#plans" className="btn-primary relative z-10">
                   View Plans
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </a>
-                <a href="#value" className="btn-secondary">See the Value</a>
+                <Link href="/start" className="btn-secondary relative z-10">See the Value</Link>
               </div>
             </div>
             <div className="mt-10 lg:mt-0 flex justify-end">

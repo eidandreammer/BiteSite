@@ -171,6 +171,26 @@ export default function Pricing() {
           ))}
         </div>
 
+        {/* Horizontal Free Consultation card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-8 max-w-6xl mx-auto"
+        >
+          <div className="relative p-6 md:p-8 rounded-2xl border-2 border-gray-200 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap">Free Consultation:</h3>
+              <ul className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> A.I Automation</li>
+                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> Web Development</li>
+                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> Social Media Management</li>
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
