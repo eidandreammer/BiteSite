@@ -224,7 +224,7 @@ export default function Hero() {
               <ArrowRight className="ml-2 w-5 h-5" />
             </a>
             <a
-              href="#pricing"
+              href="/pricing"
               className={`inline-flex items-center justify-center px-8 py-4 font-semibold rounded-lg transition-all duration-200 ${
                 isWhitePricing
                   ? 'bg-white text-black border border-gray-200 hover:bg-white/90 shadow-sm'

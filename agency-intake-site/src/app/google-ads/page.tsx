@@ -54,7 +54,7 @@ export default function GoogleAdsPage() {
 								Start a Project
 								<ArrowRight className="ml-2 w-5 h-5" />
 							</a>
-							<a href="#pricing" className="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 text-gray-800 font-semibold rounded-lg hover:border-gray-400 transition-all duration-200">View Pricing</a>
+							<a href="/pricing" className="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 text-gray-800 font-semibold rounded-lg hover:border-gray-400 transition-all duration-200">View Pricing</a>
 						</div>
 					</div>
 				</div>

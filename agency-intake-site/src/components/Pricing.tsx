@@ -6,8 +6,25 @@ import { useBackground } from '@/contexts/BackgroundContext'
 
 const plans = [
   {
+    name: 'Starter',
+    price: 'Starting at $800',
+    description: 'Focused one-page site to launch quickly',
+    features: [
+      'Custom design (1 page)',
+      'Mobile-responsive layout',
+      'Basic SEO optimization',
+      'Contact form',
+      'Social media integration',
+      '1 round of revision',
+      'Launch support',
+      'Basic analytics setup'
+    ],
+    popular: false,
+    color: 'border-gray-200'
+  },
+  {
     name: 'Basic',
-    price: '$2,500',
+    price: '$1,500',
     description: 'Perfect for small businesses getting started online',
     features: [
       'Custom design (up to 5 pages)',
@@ -24,7 +41,7 @@ const plans = [
   },
   {
     name: 'Standard',
-    price: '$4,500',
+    price: '$3,000',
     description: 'Ideal for growing businesses with more complex needs',
     features: [
       'Custom design (up to 10 pages)',
@@ -43,7 +60,7 @@ const plans = [
   },
   {
     name: 'Premium',
-    price: '$7,500',
+    price: '$5,000',
     description: 'Comprehensive solution for established businesses',
     features: [
       'Custom design (unlimited pages)',
@@ -94,7 +111,7 @@ export default function Pricing() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -110,7 +127,7 @@ export default function Pricing() {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center"
+                  <div className="text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center whitespace-nowrap"
                        style={{ backgroundColor: getButtonColor() }}>
                     <Star className="w-4 h-4 mr-1" />
                     Most Popular
@@ -139,17 +156,13 @@ export default function Pricing() {
               <div className="text-center">
                 <a
                   href="#start-project"
-                  className={`inline-block w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
-                    plan.popular
-                      ? 'text-white'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
-                  style={plan.popular ? ({ 
+                  className="inline-block w-full py-3 px-6 rounded-lg font-semibold transition-colors"
+                  style={({
                     backgroundColor: getButtonColor(),
                     color: getButtonTextColor(),
                     ['--tw-shadow-color' as any]: getButtonColor(),
                     ['--tw-shadow' as any]: `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
-                  } as React.CSSProperties) : {}}
+                  } as React.CSSProperties)}
                 >
                   Start Project
                 </a>
