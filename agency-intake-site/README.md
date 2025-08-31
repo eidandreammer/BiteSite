@@ -328,3 +328,18 @@ For support and questions:
 - [ ] File upload support for assets
 - [ ] Email notifications
 - [ ] Payment integration
+
+## Discount Banner (Pricing Page)
+
+Enable a themed discount banner on the Pricing page using environment variables:
+
+- `NEXT_PUBLIC_DISCOUNT_ENABLED` (true|false): Toggle the banner. Default: false
+- `NEXT_PUBLIC_DISCOUNT_PERCENT`: Percentage shown. Default: 15%
+- `NEXT_PUBLIC_DISCOUNT_HEADLINE`: Main line. Default: "Limited‑time offer: Save {percent}"
+- `NEXT_PUBLIC_DISCOUNT_SUBTEXT`: Supporting line. Default: "Get {percent} off any plan. New clients only."
+- `NEXT_PUBLIC_DISCOUNT_CTA_LABEL`: CTA text. Default: "Claim Discount"
+- `NEXT_PUBLIC_DISCOUNT_CTA_HREF`: CTA link. Default: `/start`
+- `NEXT_PUBLIC_DISCOUNT_EXPIRES_AT`: ISO datetime for countdown (e.g., `2025-12-31T23:59:59Z`). Optional.
+- `NEXT_PUBLIC_DISCOUNT_DISMISSIBLE` (true|false): Allow users to dismiss. Default: true
+
+The banner automatically matches the selected background/theme and supports light/dark modes.

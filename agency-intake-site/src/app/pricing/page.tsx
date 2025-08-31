@@ -4,6 +4,8 @@ import Image from 'next/image'
 import pay from '../../../images/pay.png'
 import { ExternalLink, ArrowRight, Sparkles, Gauge, Search, BarChart3, Accessibility, ShieldCheck, Layers } from 'lucide-react'
 import Pricing from '@/components/Pricing'
+import DiscountBanner from '@/components/DiscountBanner'
+import { getDiscountBannerConfig } from '@/lib/discount'
 
 export const metadata: Metadata = {
   title: 'Pricing | Your Agency Name',
@@ -98,8 +100,10 @@ const sections = [
 ]
 
 export default function PricingPage() {
+  const discount = getDiscountBannerConfig()
   return (
     <div className="min-h-screen">
+      {discount.enabled && <DiscountBanner config={discount} />}
       {/* Hero */}
       <section className="relative py-16 md:py-24 bg-gradient-to-br from-neutral to-white overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl" aria-hidden="true"></div>
