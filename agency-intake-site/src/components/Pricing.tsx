@@ -111,6 +111,40 @@ export default function Pricing() {
           </div>
         </motion.div>
 
+        {/* Horizontal Free Consultation card (moved above plans) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-8 mb-12 md:mb-16 max-w-6xl mx-auto"
+        >
+          <div className="relative p-6 md:p-8 rounded-2xl border-2 border-gray-200 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap">Free Consultation:</h3>
+              <ul className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> A.I Automation</li>
+                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> Web Development</li>
+                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> Social Media Management</li>
+              </ul>
+              <a
+                href="https://calendar.app.google/wt5eP9xbkrrAVoYU7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-5 py-3 rounded-lg font-semibold whitespace-nowrap"
+                style={({ 
+                  backgroundColor: getButtonColor(), 
+                  color: getButtonTextColor(),
+                  ['--tw-shadow-color' as any]: getButtonColor(),
+                  ['--tw-shadow' as any]: `0 4px 6px -1px ${getButtonColor()}40, 0 2px 4px -1px ${getButtonColor()}40`
+                } as React.CSSProperties)}
+              >
+                Book Free Consultation
+              </a>
+            </div>
+          </div>
+        </motion.div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
@@ -171,26 +205,6 @@ export default function Pricing() {
           ))}
         </div>
 
-        {/* Horizontal Free Consultation card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-8 max-w-6xl mx-auto"
-        >
-          <div className="relative p-6 md:p-8 rounded-2xl border-2 border-gray-200 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
-              <h3 className="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap">Free Consultation:</h3>
-              <ul className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> A.I Automation</li>
-                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> Web Development</li>
-                <li className="inline-flex items-center text-gray-700"><Check className="w-5 h-5 text-green-500 mr-2" /> Social Media Management</li>
-              </ul>
-            </div>
-          </div>
-        </motion.div>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -207,7 +221,9 @@ export default function Pricing() {
               let's discuss your specific requirements and create a tailored proposal.
             </p>
             <a
-              href="/start"
+              href="https://calendar.app.google/wt5eP9xbkrrAVoYU7"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center px-8 py-3 text-white font-semibold rounded-lg transition-colors"
               style={({ 
                 backgroundColor: getButtonColor(),
