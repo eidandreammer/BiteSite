@@ -4,6 +4,7 @@ import './globals.css'
 import Navigation from '@/components/Navigation'
 import SkipLink from '@/components/SkipLink'
 import Footer from '@/components/Footer'
+import GradualBlurOverlay from '@/components/GradualBlurOverlay'
 import { BackgroundProvider } from '@/contexts/BackgroundContext'
 
 const inter = Inter({ 
@@ -179,6 +180,7 @@ export default function RootLayout({
           </header>
           <main id="content" role="main">
             {children}
+            <GradualBlurOverlay />
           </main>
           <footer role="contentinfo">
             <Footer />
