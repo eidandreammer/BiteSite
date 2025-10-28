@@ -43,16 +43,10 @@ describe('Features component', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders all feature cards in grid layout by default', () => {
+  it('renders the Magic Bento layout by default', () => {
     render(<Features />)
 
-    // Check that all feature titles are present
-    expect(screen.getByText(/custom design/i)).toBeInTheDocument()
-    expect(screen.getByText(/mobile-first/i)).toBeInTheDocument()
-    expect(screen.getByText(/fast performance/i)).toBeInTheDocument()
-    expect(screen.getByText(/conversion focused/i)).toBeInTheDocument()
-    expect(screen.getByText(/user experience/i)).toBeInTheDocument()
-    expect(screen.getByText(/seo optimized/i)).toBeInTheDocument()
+    expect(screen.getByTestId('magic-bento')).toBeInTheDocument()
   })
 
   it('renders the call-to-action section', () => {
