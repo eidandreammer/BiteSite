@@ -7,6 +7,7 @@ import MagicBento from '@/components/MagicBento/MagicBento.jsx'
 import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack/ScrollStack.jsx'
 import ChromaGrid from '@/components/ChromaGrid/ChromaGrid.jsx'
 import LayoutPicker from '@/components/LayoutPicker'
+import GlareCtaCard from '@/components/CallToAction/GlareCtaCard'
 
 const features = [
   {
@@ -184,22 +185,14 @@ export default function Features() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center mt-16"
+          className="mt-16"
         >
-          <div className="bg-gradient-to-r from-primary to-accent p-8 rounded-2xl text-white">
-            <h3 className="text-2xl font-bold mb-4">
-              Ready to Transform Your Online Presence?
-            </h3>
-            <p className="text-lg mb-6 opacity-90">
-              Let's discuss your project and create something amazing together.
-            </p>
-            <a
-              href="#start-project"
-              className="inline-flex items-center px-8 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              Start Your Project
-            </a>
-          </div>
+          <GlareCtaCard
+            title="Ready to Transform Your Online Presence?"
+            description="Let's discuss your project and create something amazing together."
+            actionHref="#start-project"
+            actionLabel="Start Your Project"
+          />
         </motion.div>
       </div>
     </section>
