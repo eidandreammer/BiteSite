@@ -1,12 +1,13 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useMemo, useEffect, useState } from 'react'
+import { useMemo, useEffect, useState, type CSSProperties } from 'react'
 import { useBackground } from '@/contexts/BackgroundContext'
 import GradientText from '@/TextAnimations/GradientText/GradientText'
 import '@/TextAnimations/GradientText/GradientText.css'
 import { Fredoka } from 'next/font/google'
 import ThemeToggle from './ThemeToggle'
+import StarBorder from '@/components/StarBorder/StarBorder'
 
 const fredoka = Fredoka({
   subsets: ['latin'],
@@ -35,10 +36,9 @@ export default function BackgroundSlider({
   labels, 
   textColors 
 }: BackgroundSliderProps) {
-  const { getButtonColor, getButtonTextColor } = useBackground()
+  const { getButtonColor } = useBackground()
 
   const buttonColor = getButtonColor()
-  const buttonTextColor = getButtonTextColor()
   const inactiveClass = 'text-gray-700'
 
   // Important: don't read from document during initial render to avoid SSR/CSR mismatch
@@ -73,27 +73,46 @@ export default function BackgroundSlider({
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="flex flex-wrap gap-3 justify-center">
           {labels.map((label, index) => {
             const isActive = index === clampedValue
+            const glowColor = isDark
+              ? (isActive ? '#38bdf8' : '#64748b')
+              : (isActive ? buttonColor : '#cbd5f5')
+            const starStyles = {
+              '--star-border-bg': isDark
+                ? (isActive ? 'rgba(15,23,42,0.92)' : 'rgba(15,23,42,0.78)')
+                : (isActive ? 'rgba(255,255,255,0.95)' : 'rgba(248,250,252,0.9)'),
+              '--star-border-text': isDark ? '#f8fafc' : '#0f172a',
+              '--star-border-border': isDark
+                ? (isActive ? '#38bdf8' : 'rgba(71,85,105,0.85)')
+                : (isActive ? buttonColor : 'rgba(148,163,184,0.75)'),
+              '--star-border-padding-y': '0.5rem',
+              '--star-border-padding-x': '1.25rem',
+              '--star-border-radius': '9999px',
+              '--star-border-font-size': '0.85rem',
+            } as CSSProperties
+
             return (
-              <motion.button
+              <StarBorder
                 key={index}
+                as={motion.button}
                 type="button"
                 onClick={() => onChange(index)}
-                className={`px-3.5 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${isActive ? 'shadow-lg' : 'hover:shadow'} ${isActive ? '' : 'border-gray-300'}`}
-                style={isActive ? (isDark 
-                  ? { backgroundColor: '#000', color: '#fff', borderColor: '#000' } 
-                  : { backgroundColor: buttonColor, color: buttonTextColor, borderColor: buttonColor }
-                ) : {}}
+                className={`transition-shadow duration-200 ${isActive ? 'shadow-lg shadow-slate-400/40 dark:shadow-blue-500/30' : 'hover:shadow-md hover:shadow-slate-300/40 dark:hover:shadow-slate-700/40'}`}
+                contentClassName={`font-semibold tracking-wide ${isActive ? '' : 'opacity-80'} ${isDark ? 'text-slate-50' : 'text-slate-900'}`}
+                color={glowColor}
+                speed={isActive ? '4s' : '7s'}
+                thickness={isActive ? 6 : 3}
+                style={starStyles}
                 aria-pressed={isActive}
                 data-background-customization="true"
                 data-background={label.toLowerCase().replace(/\s+/g, '-')}
                 whileHover={isActive ? { scale: 1.03 } : { scale: 1.05, y: -1 }}
                 whileTap={{ scale: 0.97 }}
               >
-                <span className={isActive ? '' : `${inactiveClass}`}>{label}</span>
-              </motion.button>
+                <span className={`whitespace-nowrap ${isActive ? '' : `${inactiveClass} dark:text-slate-200`}`}>{label}</span>
+              </StarBorder>
             )
           })}
         </div>

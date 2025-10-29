@@ -1,0 +1,95 @@
+.star-border-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--star-border-radius, 1.25rem);
+  --star-border-bg: rgba(15, 23, 42, 0.85);
+  --star-border-text: #f8fafc;
+  --star-border-border: rgba(51, 65, 85, 0.75);
+  --star-border-padding-y: 0.75rem;
+  --star-border-padding-x: 1.5rem;
+  --star-border-font-size: clamp(0.78rem, 1.75vw, 0.95rem);
+  transition: transform 0.2s ease;
+}
+
+.border-gradient {
+  position: absolute;
+  width: 260%;
+  height: 60%;
+  opacity: 0.65;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(2px);
+}
+
+.border-gradient-bottom {
+  bottom: -22%;
+  right: -210%;
+  animation-name: star-movement-bottom;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.border-gradient-top {
+  top: -22%;
+  left: -210%;
+  animation-name: star-movement-top;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.inner-content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: var(--star-border-padding-y) var(--star-border-padding-x);
+  border-radius: calc(var(--star-border-radius, 1.25rem) - 2px);
+  background: var(--star-border-bg);
+  color: var(--star-border-text);
+  border: 1px solid var(--star-border-border);
+  font-size: var(--star-border-font-size);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  z-index: 1;
+  min-width: max-content;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+@keyframes star-movement-bottom {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-100%, 0%);
+    opacity: 0;
+  }
+}
+
+@keyframes star-movement-top {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(100%, 0%);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .star-border-container {
+    --star-border-padding-y: 0.55rem;
+    --star-border-padding-x: 1rem;
+    --star-border-font-size: 0.85rem;
+  }
+}
+
